@@ -1,0 +1,32 @@
+/*Cor de fundo da página*/
+.body {
+    background-color: #F5F6FA;
+}
+
+/* Barra lateral */
+.sidebar {
+    background-color: #ffff;
+    height: 100vh;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 250px;
+    width: 100%;
+}
+
+/* Cores do hover */
+.servicos ul li.nav-item:hover a.nav-link {
+    background-color: #1BAC4B;
+    color: #ffffff;
+}
+
+/* Cor do texto sem o hover */
+.servicos ul li.nav-item a.nav-link {
+    color: #000;
+}
+
+/* Alinhamento dos icones */
+.icon {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
