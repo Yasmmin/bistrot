@@ -4,7 +4,7 @@ import axios from "axios";
 import { useState } from "react";
 import logoLogin from '../../../assets/LogoLogin.svg'
 import './login.css'
-export default Login;
+import Swal from 'sweetalert2'
 // Import de icones do react-icons
 import { MdAttachEmail } from "react-icons/md";
 import { IoIosLock } from 'react-icons/io';
@@ -23,7 +23,28 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post('http://localhost:8081/login', values)
+
+    // Validação do formato do email
+    if (!isValidEmail(values.email)) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "O email deve ter um formato válido!",
+      });
+      return;
+    }
+
+    // Validação da senha
+    if (values.senha.length < 8) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "A senha deve ter pelo menos 8 caracteres!",
+      });
+      return;
+    }
+
+    axios.post('http://localhost:6969/login', values)
       .then(res => {
         if (res.data.Status === "Sucesso!") {
           // Verifica o papel (role) do usuário e redireciona com base nele
@@ -33,10 +54,30 @@ function Login() {
             navigate('/');
           }
         } else {
-          alert(res.data.Error);
+          // Se ocorrer erro, exibe uma mensagem usando Swal
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: res.data.Error,
+          });
         }
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        // Em caso de erro, exibe uma mensagem genérica
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Erro ao fazer login. Verifique o console para mais detalhes.",
+        });
+      });
+  }
+
+  // Função para validar o formato do email
+  const isValidEmail = (email) => {
+    // Expressão regular para verificar o formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   return (
@@ -53,8 +94,7 @@ function Login() {
             <MdAttachEmail style={{ fontSize: '1.5em' }} />
           </span>
           <input
-            type="email"
-            placeholder="email"
+            placeholder="Email"
             name="email"
             className="form-control rounded-start-0 rounded-3" 
             style={{ fontSize: '1em' }}
@@ -69,7 +109,7 @@ function Login() {
           </span>
           <input
             type={showPassword ? "text" : "password"}
-            placeholder="senha"
+            placeholder="Senha"
             name="senha"
             className="form-control rounded-0"
             style={{ fontSize: '1em' }}
@@ -103,4 +143,4 @@ function Login() {
   );
 }
 
-
+export default Login;

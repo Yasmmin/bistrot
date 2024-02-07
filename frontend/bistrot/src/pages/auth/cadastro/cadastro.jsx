@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import logo from '../../../assets/logoCadastro.svg';
-import './cadastro'
+import Swal from 'sweetalert2'
+import './cadastro.css'; // corrigido o nome do arquivo de estilo
 
 // import de icones
 import { FcGoogle } from 'react-icons/fc';
@@ -23,11 +24,40 @@ function Cadastro() {
     });
 
     const [showPassword, setShowPassword] = useState(false);
+    const [submitAttempted, setSubmitAttempted] = useState(false);
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        setSubmitAttempted(true);
 
-        axios.post('http://localhost:8081/cadastro', { ...values, role: 'cliente' })
+        if (values.nome.length < 3) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "O nome deve ter pelo menos 3 caracteres!",
+            });
+            return;
+        }
+
+        if (!isValidEmail(values.email)) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "O email deve ter um formato válido!",
+            });
+            return;
+        }
+
+        if (values.senha.length < 8) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "A senha deve ter pelo menos 8 caracteres!",
+            });
+            return;
+        }
+
+        axios.post('http://localhost:6969/cadastro', { ...values, role: 'cliente' })
             .then(res => {
                 console.log(res.data); // Log the response data
                 if (res.data.Status === "Sucesso!") {
@@ -40,6 +70,17 @@ function Cadastro() {
                 console.log(err);
                 alert("Erro ao cadastrar. Verifique o console para mais detalhes.");
             });
+    }
+
+    const handlePasswordChange = (e) => {
+        const password = e.target.value;
+        setValues({ ...values, senha: password });
+    }
+
+    const isValidEmail = (email) => {
+        // Expressão regular para verificar o formato de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     }
 
     return (
@@ -64,9 +105,6 @@ function Cadastro() {
                             setValues({ ...values, nome: e.target.value });
                             e.target.setCustomValidity('');
                         }}
-                        pattern=".{3,}"
-                        required
-                        title="Mínimo 3 caracteres"
                     />
                 </div>
 
@@ -75,7 +113,6 @@ function Cadastro() {
                         <MdAttachEmail />
                     </span>
                     <input
-                        type="email"
                         placeholder="Email"
                         name="email"
                         className="form-control rounded-0"
@@ -94,13 +131,7 @@ function Cadastro() {
                         name="senha"
                         className="form-control rounded-0"
                         style={{ backgroundColor: '#F5F5F5', borderLeft: 'none' }}
-                        onChange={(e) => {
-                            setValues({ ...values, senha: e.target.value });
-                            e.target.setCustomValidity(''); 
-                        }}
-                        pattern=".{8,}"
-                        required
-                        title="Mínimo 8 caracteres"
+                        onChange={handlePasswordChange}
                     />
 
                     <button
@@ -118,13 +149,13 @@ function Cadastro() {
                 </div>
 
                 <div className="mb-3 form-check d-flex align-items-center justify-content-center">
-                    <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                    <input type="checkbox" className="form-check-input" id="exampleCheck1"  />
                     <label className="form-check-label mx-2 mt-1" htmlFor="exampleCheck1">
                         Lembrar de mim
                     </label>
                 </div>
 
-                <button type="submit" className="btn btn-dark w-100 rounded-4 mb-3">Cadastre-se</button>
+                <button type="submit" className="btn btn-dark w-100 rounded-4 mb-3" >Cadastre-se</button>
 
                 <div className="text-center">
                     <p> ou continue com</p>

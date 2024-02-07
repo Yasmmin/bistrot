@@ -6,7 +6,7 @@ CREATE TABLE `cliente` (
   `email` varchar(150) NOT NULL,
   `senha` varchar(290) NOT NULL,
   `role` varchar(20) NOT NULL,
-  `foto` blob NOT NULL
+  `foto` varchar(250) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
@@ -19,7 +19,7 @@ CREATE TABLE `pedido` (
   `hora_prevista` int(11) NOT NULL,
   `obs` int(11) NOT NULL,
   `cliente` int(11) NOT NULL,
-  `produto` int(11) NOT NULL
+  `produto` int(11) NUlL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
@@ -31,7 +31,7 @@ CREATE TABLE `produto` (
   `tamanho` varchar(50) NOT NULL,
   `categoria` varchar(50) NOT NULL,
   `restricaoalergica` varchar(50) NOT NULL,
-  `foto` blob NOT NULL
+  `foto` varchar(250) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ALTER TABLE `cliente`
