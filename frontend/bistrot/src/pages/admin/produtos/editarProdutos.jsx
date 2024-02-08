@@ -20,10 +20,11 @@ function EditarProdutos() {
     const [tamanho, setTamanho] = useState('');
     const [restricaoalergica, setRestricaoalergica] = useState('');
     const [foto, setFoto] = useState('');
+    const [novaImagem, setNovaImagem] = useState(null);
 
     useEffect(() => {
         axios
-            .get(`http://localhost:8081/edit/${id}`)
+            .get(`http://localhost:6969/edit/${id}`)
             .then(res => {
                 setNome(res.data[0].nome);
                 setPreco(res.data[0].preco);
@@ -37,21 +38,58 @@ function EditarProdutos() {
             .catch(err => console.error(err));
     }, [id]);
 
+    const [newTamanhoOptions, setNewTamanhoOptions] = useState([]);
+
+    useEffect(() => {
+        if (categoria === 'bebida') {
+            setNewTamanhoOptions([
+                { value: '200ml', label: '200ml' },
+                { value: '290ml', label: '290ml' },
+                { value: '350ml', label: '350ml' },
+                { value: '473ml', label: '473ml' },
+                { value: '500ml', label: '500ml' },
+                { value: '510ml', label: '510ml' },
+                { value: '1L', label: '1L' },
+                { value: '2L', label: '2L' },
+            ]);
+        } else if (categoria === 'Marmita') {
+            setNewTamanhoOptions([
+                { value: 'Pequena', label: 'Pequena' },
+                { value: 'Média', label: 'Média' },
+                { value: 'Grande', label: 'Grande' },
+            ]);
+        } else if (categoria === 'Porção') {
+            setNewTamanhoOptions([
+                { value: 'Pequena', label: 'Pequena - 100g' },
+                { value: 'Média', label: 'Média - 500g' },
+                { value: 'Grande', label: 'Grande - 1kg' },
+            ]);
+        }
+    }, [categoria]);
+
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        const formData = new FormData();
+        formData.append('nome', nome);
+        formData.append('preco', preco);
+        formData.append('descricao', descricao);
+        formData.append('categoria', categoria);
+        formData.append('tamanho', tamanho);
+        formData.append('restricaoalergica', restricaoalergica);
+
+        // Check if novaImagem is provided, if not, use the existing image (foto)
+        if (novaImagem) {
+            formData.append('novaImagem', novaImagem);
+        } else {
+            formData.append('foto', foto);
+        }
+
         axios
-            .put(`http://localhost:8081/edit/${id}`, {
-                nome: nome,
-                preco: preco,
-                descricao: descricao,
-                categoria: categoria,
-                tamanho: tamanho,
-                restricaoalergica: restricaoalergica,
-                foto: foto,
-            })
-            .then(res => {
+            .put(`http://localhost:6969/edit/${id}`, formData)
+            .then((res) => {
                 if (res.data.atualizado) {
                     navigate('/produtos');
                 } else {
@@ -145,7 +183,7 @@ function EditarProdutos() {
                                     <select
                                         type="text"
                                         placeholder="Categoria"
-                                        className="form-control "
+                                        className="form-select "
                                         value={categoria}
                                         onChange={(e) => setCategoria(e.target.value)}
                                     >
@@ -163,13 +201,20 @@ function EditarProdutos() {
                                     <span className="input-group-text" style={{ backgroundColor: '#ffff' }}>
                                         <FaRuler />
                                     </span>
-                                    <input
-                                        type="text"
-                                        placeholder="Tamanho"
-                                        className="form-control "
+                                    <select
+                                        className="form-select "
                                         value={tamanho}
                                         onChange={(e) => setTamanho(e.target.value)}
-                                    />
+                                    >
+                                        <option disabled value="">
+                                            Tamanho
+                                        </option>
+                                        {newTamanhoOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 {/* Campo restricao alergica */}
@@ -202,7 +247,7 @@ function EditarProdutos() {
                                             <label className="input-group-text" htmlFor="inputGroupFile01">
                                                 <SlPicture />
                                             </label>
-                                            <input type="file" className="form-control" onChange={(e) => setFoto(e.target.value)} />
+                                            <input type="file" className="form-control" onChange={(e) => setNovaImagem(e.target.files[0])} />
                                         </div>
                                     </div>
                                 </div>

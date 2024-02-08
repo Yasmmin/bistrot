@@ -61,12 +61,12 @@ function Produtos() {
         await axios.delete(`http://localhost:6969/produtos/${id}`);
         setProdutos(produtos.filter(produto => produto.id !== id));
         Swal.fire('Excluído!', 'O produto foi excluído com sucesso.', 'success');
-        
+
         // Aguarda 1,5 segundos antes de recarregar a página
         setTimeout(() => {
           window.location.reload();
         }, 1500);
-        
+
       } catch (err) {
         console.error(err);
         Swal.fire('Erro', 'Houve um erro ao excluir o produto.', 'error');
@@ -84,7 +84,7 @@ function Produtos() {
             {/*campo de pesquisa com icone dentro*/}
             <div className="input-group">
               <input
-                className="form-control flex-grow-1 mr-2"
+                className="form-control flex-grow-1 mr-2 mb-3"
                 type="search"
                 placeholder="pesquisar"
                 onChange={Filter}
@@ -106,16 +106,29 @@ function Produtos() {
         </div>
 
         <div className="d-flex flex-wrap justify-content-start align-items-start mx-3">
-          {records.map((produto) => (
-            <div key={produto.id} className=" produto-card m-3" style={{ width: '13rem', height:'27rem' }}>
+          {records.length === 0 ? (
+            <div className="m-3">
+              <p>Nenhum produto encontrado.</p>
+            </div>
+          ) : (
+            records.map((produto) => (
+            <div key={produto.id} className=" produto-card m-3" style={{}}>
               <img
+                className="mt-3 mb-3"
                 src={`http://localhost:6969/files/${produto.foto}`}
                 alt=""
-                style={{ width: '100%', height: '230px', display: 'block', margin: '0 auto', objectFit: 'cover', borderTopLeftRadius: '5px', borderTopRightRadius: '5px' }}
+                style={{
+                  width: '100%',
+                  height: '160px',
+                  display: 'block',
+                  margin: '0 auto',
+                  objectFit: 'contain', 
+                  borderRadius: '23px'
+                }}
               />
               <div className="produto mx-3">
 
-                <h3 style={{ borderTop: '1px solid #E0E0E0' }}>{produto.nome}</h3>
+                <h4>{produto.nome}</h4>
                 <p>{produto.descricao}</p>
                 <h5 className="preco">R${produto.preco}</h5>
 
@@ -133,11 +146,11 @@ function Produtos() {
                 </button>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>
   );
 }
-
 export default Produtos;

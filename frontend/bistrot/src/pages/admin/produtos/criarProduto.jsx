@@ -65,6 +65,7 @@ function CriarProduto() {
           { value: '473ml', label: '473ml' },
           { value: '500ml', label: '500ml' },
           { value: '510ml', label: '510ml' },
+          { value: '600ml', label: '600ml' },
           { value: '1L', label: '1L' },
           { value: '2L', label: '2L' },
         ];
@@ -90,6 +91,39 @@ function CriarProduto() {
     }
     setTamanhoOptions(newTamanhoOptions);
     setValues({ ...values, categoria: selectedCategoria });
+  };
+
+  // Verificação da extenção do arquivo (pdf,png,..)
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+
+    // Verifica se um arquivo foi selecionado
+    if (selectedFile) {
+      // Obtém a extensão do arquivo
+      const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
+
+      // Array de extensões permitidas
+      const allowedExtensions = ['png', 'jpeg', 'jpg'];
+
+      // Verifica se a extensão está na lista de extensões permitidas
+      if (!allowedExtensions.includes(fileExtension)) {
+        // Exibe um alerta de erro se a extensão não for permitida
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro!',
+          text: 'Por favor, selecione um arquivo PNG, JPEG ou JPG.',
+        });
+
+        // Limpa o campo de arquivo
+        event.target.value = null;
+        // Limpa o estado do arquivo
+        setFile(null);
+
+        return; // Retorna para evitar a execução do código abaixo
+      }
+      // Atualiza o estado do arquivo
+      setFile(selectedFile);
+    }
   };
 
   const handleChangeTamanho = (event) => {
@@ -150,6 +184,8 @@ function CriarProduto() {
           });
         }
       })
+
+      
   };
 
   return (
@@ -227,7 +263,7 @@ function CriarProduto() {
                 <label className="input-group-text" htmlFor="inputGroupFile01">
                   <SlPicture />
                 </label>
-                <input type="file" className="form-control" onChange={(e) => setFile(e.target.files[0])} required />
+                <input type="file" className="form-control" onChange={handleFileChange} required />
 
               </div>
 

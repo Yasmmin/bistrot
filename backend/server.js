@@ -10,6 +10,8 @@ import multer from "multer";
 import path from 'path'
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import fs from 'fs';
+
 
 // Configuração do valor de "salt" para o bcrypt
 const salt = 10;
@@ -65,14 +67,17 @@ app.post('/cadastro', (req, res) => {
     });
 });
 
+
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        return cb(null, "../backend/image/produtos")
+        cb(null, "../backend/image/produtos");
     },
     filename: function (req, file, cb) {
-        return cb(null, `${Date.now()}_${file.originalname}`)
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, `${uniqueSuffix}_${file.originalname}`);
     }
-})
+});
 
 const upload = multer({ storage })
 
@@ -111,13 +116,35 @@ app.get('/Produtos', async (req, res) => {
 });
 
 app.delete("/produtos/:id", (req, res) => {
-
     const produtoId = req.params.id;
-    const q = " DELETE FROM produto WHERE id = ? ";
+    const selectQuery = "SELECT foto FROM produto WHERE id = ?";
 
-    db.query(q, [produtoId], (err, data) => {
-        if (err) return res.send(err);
-        return res.json(data);
+    // Select the product's image filename before deleting the product
+    db.query(selectQuery, [produtoId], (err, resultSelect) => {
+        if (err) {
+            return res.json({ error: err });
+        }
+
+        const imagemAntiga = resultSelect[0].foto;
+
+        const deleteQuery = "DELETE FROM produto WHERE id = ?";
+
+        // Delete the product from the database
+        db.query(deleteQuery, [produtoId], (err, data) => {
+            if (err) {
+                return res.json({ error: err });
+            }
+
+            // Delete the corresponding image file from the server
+            const imagemAntigaPath = path.join(imagePath, imagemAntiga);
+            fs.unlink(imagemAntigaPath, (unlinkErr) => {
+                if (unlinkErr) {
+                    console.error("Error deleting the image file:", unlinkErr);
+                }
+
+                return res.json(data);
+            });
+        });
     });
 });
 
@@ -131,12 +158,34 @@ app.get('/edit/:id', (req, res) => {
     })
 })
 
-app.put('/edit/:id', (req, res) => {
-    const sql = "UPDATE produto SET `nome`= ?, `descricao`= ?,`preco`= ?,`categoria`= ?,`tamanho`= ?,`restricaoalergica`= ?,`foto`= ? WHERE id = ?";
+app.put('/edit/:id', upload.single('novaImagem'), (req, res) => {
+    const sqlSelect = "SELECT foto FROM produto WHERE id = ?";
     const id = req.params.id;
-    db.query(sql, [req.body.nome, req.body.descricao,req.body.preco,req.body.categoria,req.body.tamanho,req.body.restricaoalergica,req.body.foto, id], (err, result) => {
+
+    db.query(sqlSelect, [id], (err, resultSelect) => {
         if (err) return res.json({ error: err });
-        return res.json({ atualizado: true });
+
+        const imagemAntiga = resultSelect[0].foto;
+
+        const sqlUpdate = "UPDATE produto SET `nome`= ?, `descricao`= ?,`preco`= ?,`categoria`= ?,`tamanho`= ?,`restricaoalergica`= ?,`foto`= ? WHERE id = ?";
+
+        const novaImagem = req.file ? req.file.filename : imagemAntiga;
+
+        db.query(sqlUpdate, [req.body.nome, req.body.descricao, req.body.preco, req.body.categoria, req.body.tamanho, req.body.restricaoalergica, novaImagem, id], (err, resultUpdate) => {
+            if (err) return res.json({ error: err });
+
+            // Remove the old image if a new image is uploaded
+            if (req.file) {
+                const imagemAntigaPath = path.join(imagePath, 'produtos', imagemAntiga);
+                fs.unlink(imagemAntigaPath, (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error("Erro ao excluir a imagem antiga:", unlinkErr);
+                    }
+                });
+            }
+
+            return res.json({ atualizado: true });
+        });
     });
 });
 
