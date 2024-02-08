@@ -99,7 +99,7 @@ function Cadastro() {
                         type="text"
                         placeholder="Nome completo"
                         name="nome"
-                        className="form-control rounded-0"
+                        className="form-control rounded-start-0 rounded-3"
                         style={{ backgroundColor: '#F5F5F5', borderLeft: 'none' }}
                         onChange={(e) => {
                             setValues({ ...values, nome: e.target.value });
@@ -115,7 +115,7 @@ function Cadastro() {
                     <input
                         placeholder="Email"
                         name="email"
-                        className="form-control rounded-0"
+                        className="form-control rounded-start-0 rounded-3"
                         style={{ backgroundColor: '#F5F5F5', borderLeft: 'none' }}
                         onChange={e => setValues({ ...values, email: e.target.value })}
                     />

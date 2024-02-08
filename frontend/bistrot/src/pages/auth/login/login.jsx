@@ -135,7 +135,7 @@ function Login() {
 
         {/* Rota/botão criar uma conta e recuperar senha*/}
         <div className="text-center mb-0">
-          <p>Esqueceu seu login? <Link to="/" className="recCad">Recupere aqui!</Link></p>
+          <p>Esqueceu seu login? <Link to="/senha" className="recCad">Recupere aqui!</Link></p>
           <p>Não tem uma conta? <Link to="/cadastro" className="recCad" >Cadastre-se</Link></p>
         </div>
       </form>

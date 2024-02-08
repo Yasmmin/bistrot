@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Inicial from './pages/client/inicial/inicial'
 import Cadastro from './pages/auth/cadastro/cadastro';
 import Login from './pages/auth/login/login';
+import Senha from './pages/auth/senha/Senha';
 import EditarProdutos from './pages/admin/produtos/editarProdutos';
 
 //Rotas que serão privadas
@@ -16,6 +17,7 @@ function App() {
         <Route path='/' element={<Inicial />}></Route>
         <Route path='/cadastro' element={<Cadastro />}></Route>
         <Route path='/login' element={<Login/>}></Route>
+        <Route path='/senha' element={<Senha/>}></Route>
 
         {/*Rotas que serão privadas - tem que fazer*/}
         <Route path='/sidebar' element={<Sidebar/>}></Route>
