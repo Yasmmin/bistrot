@@ -102,7 +102,7 @@ function EditarProdutos() {
     const handlePrecoChange = (event) => {
         const inputPreco = event.target.value.replace(/[^\d]/g, '');
         const precoNumerico = parseFloat(inputPreco) / 100;
-        const precoFormatado = precoNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const precoFormatado = precoNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL',minimumFractionDigits: 2 });
 
         setPreco(precoNumerico);
         setPrecoFormatado(precoFormatado);

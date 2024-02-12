@@ -35,7 +35,7 @@ const db = mysql.createConnection({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port:process.env.DB_PORT
+    port: process.env.DB_PORT
 });
 
 // lidar com a recuperação de fotos cadastradas
@@ -234,16 +234,17 @@ app.post('/login', (req, res) => {
             return res.json({ Error: "Email não encontrado" });
         }
 
-        const user = data[0];
+        const cliente = data[0];
 
-        bcrypt.compare(senha.toString(), user.senha, (err, response) => {
+        bcrypt.compare(senha.toString(), cliente.senha, (err, response) => {
             if (err) {
                 console.error("Erro ao comparar senhas:", err);
                 return res.json({ Error: "Erro ao comparar senhas" });
             }
 
             if (response) {
-                const { nome, role } = user;
+                const { nome, role } = cliente;
+
                 const token = jwt.sign({ nome, role }, "jwt-secret-key", { expiresIn: '1d' });
                 res.cookie('token', token);
                 return res.json({ Status: "Sucesso!", role });

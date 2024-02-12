@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 // icones 
 import { FaPen } from "react-icons/fa";
 import { IoTrash } from "react-icons/io5";
-import { CiFilter } from "react-icons/ci";
+
 
 //import de arquivos
 import './style.css'
@@ -88,18 +88,14 @@ function Produtos() {
                 type="search"
                 placeholder="pesquisar"
                 onChange={Filter}
-                style={{ borderRight: "none" }}
+                style={{ borderRight: "none", height:'3rem' }}
+
               />
-              <div className="input-group-prepend">
-                <span className="input-group-text"
-                  style={{ borderLeft: "none", borderRadius: "0", borderTopRightRadius: '5px', borderBottomRightRadius: '5px', backgroundColor: "#ffff" }}>
-                  <CiFilter size={24} />
-                </span>
-              </div>
+
             </div>
 
             {/*Botão de add*/}
-            <button onClick={handleAdicionarProdutoClick} className="btn mx-1" type="submit" style={{ whiteSpace: 'nowrap', background: '#1BAC4B', color: 'white' }}>
+            <button onClick={handleAdicionarProdutoClick} className="btn mx-1" type="submit" style={{ whiteSpace: 'nowrap', background: '#1BAC4B', color: 'white',height:'3rem' }}>
               <IoIosAddCircleOutline size={20} /> Adicionar produto
             </button>
           </form>

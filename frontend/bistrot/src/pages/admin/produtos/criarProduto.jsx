@@ -29,13 +29,17 @@ function CriarProduto() {
 
   // Função para formatar o preço à medida que o usuário digita
   const handlePrecoChange = (event) => {
-    const inputPreco = event.target.value.replace(/[^\d]/g, ''); // Remover caracteres não numéricos
-    const precoNumerico = parseFloat(inputPreco) / 100; // Converter para valor numérico (dividir por 100)
+    const inputPreco = event.target.value.replace(/[^\d]/g, '');
+    // Convertendo o valor para número e mantendo duas casas decimais
+    const precoNumerico = parseFloat(inputPreco / 100).toFixed(2);
+    // Formatação do preço com duas casas decimais
     const precoFormatado = precoNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     setValues({ ...values, preco: precoNumerico });
     setPrecoFormatado(precoFormatado);
   };
+
+
 
   // Função para voltar à página de Produtos com a seta <
   const handleBack = () => {
@@ -185,7 +189,7 @@ function CriarProduto() {
         }
       })
 
-      
+
   };
 
   return (
@@ -238,7 +242,7 @@ function CriarProduto() {
               </div>
 
               {/* Campo descrição do produto */}
-              <div className="input-group mb-2">
+              <div className="input-group mb-4">
                 <div style={{ position: 'relative', width: '36rem' }}>
                   <textarea
                     type="text-area"
@@ -248,7 +252,6 @@ function CriarProduto() {
                     onChange={(e) => setDescricao(e.target.value)}
                     maxLength={150}
                     rows={4}
-                    style={{backgroundColor: '#f8f9fa'}}
                   />
                   <div className="position-absolute bottom-0 end-0 text-secondary p-2" style={{ fontSize: '10px' }}>
                     {descricao.length}/150

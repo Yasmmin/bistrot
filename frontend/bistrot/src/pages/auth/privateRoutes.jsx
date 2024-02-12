@@ -13,7 +13,6 @@ const PrivateRoute = ({ element, requiredRoles }) => {
     if (userRole === 'admin' && requiredRoles.includes('admin')) {
       return <Navigate to="/sidebar" />;
     }
-    return <Navigate to="/" />;
   } else {
     return <Navigate to="/login" />;
   }

@@ -18,7 +18,7 @@ function Inicial() {
 
   // Verificar a autenticação ao carregar o componente
   useEffect(() => {
-    axios.get("http://localhost:8081")
+    axios.get("http://localhost:6969")
       .then(res => {
         if (res.data.Status === "Sucesso!") {
           setAuth(true);
@@ -33,7 +33,7 @@ function Inicial() {
 
   // Função para realizar o logout
   const handleLogout = () => {
-    axios.get("http://localhost:8081/logout")
+    axios.get("http://localhost:6969/logout")
       .then(() => {
         // Recarrega a página após o logout
         window.location.reload(true);
@@ -55,7 +55,7 @@ function Inicial() {
         // Se não autenticado, exibe mensagens e botão de login
         <div>
           <h3>{mensagem}</h3>
-          <h3>Login Now</h3>
+          <h3>Faça login</h3>
           <Link to="/login" className="btn btn-primary">
             Login
           </Link>
