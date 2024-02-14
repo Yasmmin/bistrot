@@ -13,6 +13,7 @@ import CriarProduto from './pages/admin/produtos/criarProduto';
 import EditarProdutos from './pages/admin/produtos/editarProdutos';
 import Funcionarios from './pages/admin/funcionarios/funcionarios';
 import AddFuncionarios from './pages/admin/funcionarios/addFuncionarios';
+import EditFuncionarios from './pages/admin/funcionarios/editFuncionario';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path='/EditarProdutos/:id' element={<EditarProdutos/>}></Route>
         <Route path='/funcionarios' element={<Funcionarios/>}></Route>
         <Route path='/Addfuncionarios' element={<AddFuncionarios/>}></Route>
+        <Route path='/EditFuncionarios/:id' element={<EditFuncionarios/>}></Route>
 
       </Routes>
     </BrowserRouter>

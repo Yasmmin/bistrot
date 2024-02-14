@@ -76,6 +76,25 @@ function AddFuncionarios() {
     }
   };
 
+  const formatPhoneNumber = (input) => {
+    const onlyDigits = input.replace(/\D/g, '');
+    let formattedValue = '';
+    if (onlyDigits.length > 0) {
+      formattedValue = '(' + onlyDigits.substring(0, 2);
+      if (onlyDigits.length > 2) {
+        formattedValue += ') ' + onlyDigits.substring(2, 7);
+        if (onlyDigits.length > 7) {
+          formattedValue += '-' + onlyDigits.substring(7, 11);
+        }
+      }
+    }
+    return formattedValue;
+  };
+
+  const handleTelefoneChange = (event) => {
+    const formattedValue = formatPhoneNumber(event.target.value);
+    setValues({ ...values, telefone: formattedValue });
+  };
   //--------------------------------------ESTRUTURA VISUAL DA PÁGINA--------------------------------------------------------//
   return (
     <div className="container-fluid d-flex">
@@ -84,7 +103,7 @@ function AddFuncionarios() {
           <div className="w-100 bg-white rounded p-3">
             {/* Botão para voltar pra tela de produtos */}
             <div className="d-flex align-items-center mt-2 mx-5 mb-4">
-              <Link to="/produtos" className="btn border-0">
+              <Link to="/funcionarios" className="btn border-0">
                 <IoIosArrowBack size={32} />
               </Link>
               <h2 className="ms-2">Adicionar Funcionário</h2>
@@ -124,6 +143,7 @@ function AddFuncionarios() {
                         placeholder="Email"
                         className="form-control linha-lateral-form"
                         onChange={e => setValues({ ...values, email: e.target.value })}
+               
                       />
                     </div>
 
@@ -135,10 +155,11 @@ function AddFuncionarios() {
                         <FaPhoneAlt />
                       </span>
                       <input
-                        type="number"
+                        type="text"
                         placeholder="Telefone"
                         className="form-control linha-lateral-form"
-                        onChange={e => setValues({ ...values, telefone: e.target.value })}
+                        value={values.telefone}
+                        onChange={handleTelefoneChange}
                       />
                     </div>
 
@@ -159,7 +180,7 @@ function AddFuncionarios() {
                         <option value="Gerente">Gerente</option>
                         <option value="Recepcionista">Recepcionista</option>
                         <option value="Garçom">Garçom</option>
-                        <option value="Cozinheiro">Cozinheiro</option>
+                        <option value="Cozinheiro(a)">Cozinheiro(a)</option>
                         <option value="aux. de cozinha">aux. de cozinha</option>
                         <option value="aux. de limpeza">aux. de limpeza</option>
                       </select>

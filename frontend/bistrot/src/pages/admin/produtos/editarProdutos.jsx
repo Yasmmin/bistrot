@@ -80,7 +80,7 @@ function EditarProdutos() {
         formData.append('tamanho', tamanho);
         formData.append('restricaoalergica', restricaoalergica);
 
-        // Check if novaImagem is provided, if not, use the existing image (foto)
+  
         if (novaImagem) {
             formData.append('novaImagem', novaImagem);
         } else {

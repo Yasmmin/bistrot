@@ -29,7 +29,7 @@ function Produtos() {
       try {
         const res = await axios.get("http://localhost:6969/produtos");
         setProdutos(res.data);
-        setRecords([...res.data]); // Cópia dos produtos para o estado de records
+        setRecords([...res.data]); 
       } catch (err) {
         console.error(err);
       }

@@ -83,7 +83,6 @@ const upload = multer({ storage })
 
 // Endpoint para lidar com o cadastro de produtos
 app.post('/Produtos', upload.single('file'), (req, res) => {
-    // Converta o valor formatado de volta para um número
     const precoNumerico = parseFloat(req.body.preco.replace(/[^\d]/g, '')) / 100;
 
     if (!req.file || !req.file.filename) {
@@ -118,34 +117,30 @@ app.get('/Produtos', async (req, res) => {
     });
 });
 
+//------------------------------------------------------------------------------------------------------------------------//
+
 // realiza a exclusão do produto no banco de dados
 app.delete("/produtos/:id", (req, res) => {
     const produtoId = req.params.id;
     const selectQuery = "SELECT foto FROM produto WHERE id = ?";
 
-    // Select the product's image filename before deleting the product
     db.query(selectQuery, [produtoId], (err, resultSelect) => {
         if (err) {
             return res.json({ error: err });
         }
-
         const imagemAntiga = resultSelect[0].foto;
-
         const deleteQuery = "DELETE FROM produto WHERE id = ?";
 
-        // Delete the product from the database
         db.query(deleteQuery, [produtoId], (err, data) => {
             if (err) {
                 return res.json({ error: err });
             }
 
-            // Delete the corresponding image file from the server
             const imagemAntigaPath = path.join(imagePath, imagemAntiga);
             fs.unlink(imagemAntigaPath, (unlinkErr) => {
                 if (unlinkErr) {
                     console.error("Error deleting the image file:", unlinkErr);
                 }
-
                 return res.json(data);
             });
         });
@@ -271,9 +266,12 @@ app.post('/login', (req, res) => {
 });
 
 //------------------------------------------------------------------------------------------------------------------------//
+const caminho = path.join(__dirname, 'image', 'funcionarios'); 
+app.use('/files', express.static(caminho))
+
 const armazenar = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, 'image', 'funcionarios')); // Corrigindo o caminho de destino
+        cb(null, path.join(__dirname, 'image', 'funcionarios')); 
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -301,6 +299,106 @@ app.post('/AddFuncionarios', enviar.single('file'), (req, res) => {
         console.log("Dados inseridos com sucesso:", result);
         return res.json({ Status: "Sucesso!" });
     })
+});
+//------------------------------------------------------------------------------------------------------------------------//
+
+// Mostra as informações do funcionario na tela de funcionarios
+app.get('/funcionarios', async (req, res) => {
+    const produtos = "SELECT * FROM funcionarios";
+    db.query(produtos, (err, data) => {
+        if (err) {
+            console.log(err);
+            return res.json({ Error: "Erro ao buscar produtos", details: err.message });
+        }
+        return res.json(data);
+    });
+});
+
+//------------------------------------------------------------------------------------------------------------------------//
+
+app.delete("/funcionarios/:id", (req, res) => {
+    const funcionarioId = req.params.id;
+    const selectQuery = "SELECT foto FROM funcionarios WHERE id = ?";
+
+    db.query(selectQuery, [funcionarioId], (err, resultSelect) => {
+        if (err) {
+            return res.status(500).json({ error: "Erro ao buscar funcionário", details: err.message });
+        }
+
+        if (resultSelect.length === 0) {
+            return res.status(404).json({ error: "Funcionário não encontrado" });
+        }
+
+        const imagemAntiga = resultSelect[0].foto;
+        const imagemAntigaPath = path.join(caminho, imagemAntiga);
+
+        // Verifica se a imagem existe antes de tentar excluir
+        fs.access(imagemAntigaPath, (accessErr) => {
+            if (accessErr) {
+                console.error("Imagem não encontrada:", accessErr);
+                return res.status(500).json({ error: "Imagem não encontrada", details: accessErr.message });
+            }
+
+            const deleteQuery = "DELETE FROM funcionarios WHERE id = ?";
+            db.query(deleteQuery, [funcionarioId], (deleteErr, data) => {
+                if (deleteErr) {
+                    return res.status(500).json({ error: "Erro ao excluir funcionário", details: deleteErr.message });
+                }
+
+                // Exclui a imagem do disco
+                fs.unlink(imagemAntigaPath, (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error("Erro ao excluir imagem:", unlinkErr);
+                    }
+
+                    return res.json(data);
+                });
+            });
+        });
+    });
+});
+//------------------------------------------------------------------------------------------------------------------------//
+
+// Pega as informações dois produtos e mostra nos campos
+app.get('/EditFuncionarios/:id', (req, res) => {
+    const sql = "SELECT * FROM  funcionarios WHERE id = ?";
+    const id = req.params.id;
+    db.query(sql, [id], (err, result) => {
+        if (err) return res.json({ Error: err })
+        return res.json(result)
+    })
+})
+//------------------------------------------------------------------------------------------------------------------------//
+
+//Realiza a edição de funcionarios
+app.put('/EditFuncionarios/:id', enviar.single('novaImagem'), (req, res) => {
+    const sqlSelect = "SELECT foto FROM funcionarios WHERE id = ?";
+    const id = req.params.id;
+
+    db.query(sqlSelect, [id], (err, resultSelect) => {
+        if (err) return res.json({ error: err });
+
+        const imagemAntiga = resultSelect[0].foto;
+
+        const sqlUpdate = "UPDATE funcionarios SET `nome`= ?, `email`= ?,`funcao`= ?,`telefone`= ?,`foto`= ? WHERE id = ?";
+
+        const novaImagem = req.file ? req.file.filename : imagemAntiga;
+
+        db.query(sqlUpdate, [req.body.nome, req.body.email, req.body.funcao, req.body.telefone, novaImagem, id], (err, resultUpdate) => {
+            if (err) return res.json({ error: err });
+
+            if (req.file) {
+                const imagemAntigaPath = path.join(caminho, imagemAntiga);
+                fs.unlink(imagemAntigaPath, (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error("Erro ao excluir a imagem antiga:", unlinkErr);
+                    }
+                });
+            }
+
+            return res.json({ atualizado: true });
+        });
+    });
 });
 //------------------------------------------------------------------------------------------------------------------------//
 
