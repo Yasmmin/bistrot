@@ -117,7 +117,7 @@ function Sidebar() {
 
                             {/*Funcionários*/}
                             <li className="nav-item">
-                                <Link to="#" className="nav-link " aria-current="page">
+                                <Link to="/funcionarios" className="nav-link " aria-current="page">
                                     <div className="icon">
                                         <FaUsersCog />
                                     </div>

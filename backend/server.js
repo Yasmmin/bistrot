@@ -1,5 +1,4 @@
 // Importação de dependências do projeto
-
 import express from "express";
 import mysql from "mysql2";
 import cors from 'cors';
@@ -12,22 +11,20 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import fs from 'fs';
 
-
-// Configuração do valor de "salt" para o bcrypt
+//------------------------------------------------------------------------------------------------------------------------//
 const salt = 10;
-
-// Inicialização da aplicação Express
 const app = express();
-
-// Configuração de middleware para processar dados JSON e cookies
+app.use(cookieParser());
 app.use(express.json());
+
+//------------------------------------------------------------------------------------------------------------------------//
 app.use(cors({
     origin: ["http://localhost:5173"],
     methods: ["POST", "GET", "DELETE", "UPDATE", "PUT"],
     credentials: true
 }));
-app.use(cookieParser());
 
+//-------------------------------------------CONEXÃO COM O BANCO DE DADOS------------------------------------------------//
 // Conexão com o banco de dados "cafebistrot"
 dotenv.config();
 const db = mysql.createConnection({
@@ -38,11 +35,15 @@ const db = mysql.createConnection({
     port: process.env.DB_PORT
 });
 
+//------------------------------------------------------------------------------------------------------------------------//
+
 // lidar com a recuperação de fotos cadastradas
 const __filename = fileURLToPath(import.meta.url); //Obter o caminho absoluto do arquivo atual
 const __dirname = path.dirname(__filename);
 const imagePath = path.join(__dirname, 'image', 'produtos'); //Caminho para o diretório de imagens de produtos
 app.use('/files', express.static(imagePath)); //rota para arquivos estáticos (fotos de produtos)
+
+//------------------------------------------------------------------------------------------------------------------------//
 
 // Endpoint para lidar com o cadastro de usuários
 app.post('/cadastro', (req, res) => {
@@ -67,8 +68,7 @@ app.post('/cadastro', (req, res) => {
     });
 });
 
-
-
+//------------------------------------------------------------------------------------------------------------------------//
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "../backend/image/produtos");
@@ -104,6 +104,9 @@ app.post('/Produtos', upload.single('file'), (req, res) => {
     })
 })
 
+//------------------------------------------------------------------------------------------------------------------------//
+
+// pega as informações do produto
 app.get('/Produtos', async (req, res) => {
     const produtos = "SELECT * FROM produto";
     db.query(produtos, (err, data) => {
@@ -115,6 +118,7 @@ app.get('/Produtos', async (req, res) => {
     });
 });
 
+// realiza a exclusão do produto no banco de dados
 app.delete("/produtos/:id", (req, res) => {
     const produtoId = req.params.id;
     const selectQuery = "SELECT foto FROM produto WHERE id = ?";
@@ -148,7 +152,9 @@ app.delete("/produtos/:id", (req, res) => {
     });
 });
 
-// edição de produtos
+//------------------------------------------------------------------------------------------------------------------------//
+
+// Pega as informações dois produtos e mostra nos campos
 app.get('/edit/:id', (req, res) => {
     const sql = "SELECT * FROM  produto WHERE id = ?";
     const id = req.params.id;
@@ -158,6 +164,9 @@ app.get('/edit/:id', (req, res) => {
     })
 })
 
+//------------------------------------------------------------------------------------------------------------------------//
+
+//Realiza a edição de produtos 
 app.put('/edit/:id', upload.single('novaImagem'), (req, res) => {
     const sqlSelect = "SELECT foto FROM produto WHERE id = ?";
     const id = req.params.id;
@@ -189,6 +198,8 @@ app.put('/edit/:id', upload.single('novaImagem'), (req, res) => {
     });
 });
 
+//------------------------------------------------------------------------------------------------------------------------//
+
 // Middleware para verificar a autenticação do usuário e seu papel (role)
 const verifyUser = (req, res, next) => {
     const token = req.cookies.token;
@@ -207,6 +218,8 @@ const verifyUser = (req, res, next) => {
     }
 };
 
+//------------------------------------------------------------------------------------------------------------------------//
+
 // Endpoint protegido por autenticação para retornar informações do usuário autenticado
 app.get('/', verifyUser, (req, res) => {
     return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role });
@@ -214,6 +227,8 @@ app.get('/', verifyUser, (req, res) => {
 app.get('/sidebar', verifyUser, (req, res) => {
     return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role });
 });
+
+//------------------------------------------------------------------------------------------------------------------------//
 
 // Endpoint para lidar com o login de usuários
 app.post('/login', (req, res) => {
@@ -255,11 +270,47 @@ app.post('/login', (req, res) => {
     });
 });
 
+//------------------------------------------------------------------------------------------------------------------------//
+const armazenar = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, 'image', 'funcionarios')); // Corrigindo o caminho de destino
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, `${uniqueSuffix}_${file.originalname}`);
+    }
+});
+
+const enviar = multer({ storage: armazenar }); 
+
+// Endpoint para lidar com o cadastro de funcionários
+app.post('/AddFuncionarios', enviar.single('file'), (req, res) => {
+    const sql = "INSERT INTO funcionarios (`nome`,`email`,`telefone`,`funcao`,`foto`) VALUES (?,?,?,?,?)";
+    const values = [req.body.nome, req.body.email, req.body.telefone, req.body.funcao, req.file.filename];
+    
+    if (!req.file || !req.file.filename) {
+        return res.json({ Error: "Arquivo não encontrado" })
+    }
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error("Erro ao inserir dados no servidor:", err);
+            return res.json({ Error: "Erro ao inserir dados no servidor", details: err.message });
+        }
+
+        console.log("Dados inseridos com sucesso:", result);
+        return res.json({ Status: "Sucesso!" });
+    })
+});
+//------------------------------------------------------------------------------------------------------------------------//
+
 // Endpoint para realizar o logout do usuário
 app.get('/logout', (req, res) => {
     res.clearCookie('token');
     return res.json({ Status: "Sucesso!" })
 });
+
+//------------------------------------------------------------------------------------------------------------------------//
 
 // Inicialização do servidor na porta 8081
 app.listen(6969, () => {

@@ -4,12 +4,16 @@ import Inicial from './pages/client/inicial/inicial'
 import Cadastro from './pages/auth/cadastro/cadastro';
 import Login from './pages/auth/login/login';
 import Senha from './pages/auth/senha/Senha';
-import EditarProdutos from './pages/admin/produtos/editarProdutos';
+
 
 //Rotas que serão privadas
 import Sidebar from './components/sidebar/sidebar';
 import Produtos from './pages/admin/produtos/produtos';
 import CriarProduto from './pages/admin/produtos/criarProduto';
+import EditarProdutos from './pages/admin/produtos/editarProdutos';
+import Funcionarios from './pages/admin/funcionarios/funcionarios';
+import AddFuncionarios from './pages/admin/funcionarios/addFuncionarios';
+
 function App() {
   return (
     <BrowserRouter>
@@ -24,6 +28,8 @@ function App() {
         <Route path='/produtos' element={<Produtos/>}></Route>
         <Route path='/criarproduto' element={<CriarProduto/>}></Route>
         <Route path='/EditarProdutos/:id' element={<EditarProdutos/>}></Route>
+        <Route path='/funcionarios' element={<Funcionarios/>}></Route>
+        <Route path='/Addfuncionarios' element={<AddFuncionarios/>}></Route>
 
       </Routes>
     </BrowserRouter>
