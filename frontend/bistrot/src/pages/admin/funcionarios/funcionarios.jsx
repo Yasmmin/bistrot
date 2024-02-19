@@ -69,7 +69,7 @@ function Funcionarios() {
                                 className="form-control flex-grow-1 mr-2 mb-3"
                                 type="search"
                                 placeholder="pesquisar"
-                                style={{ borderRight: "none", height: '3rem' }}
+                                style={{ height: '3rem' }}
                             />
                         </div>
                         {/*Botão de add*/}
@@ -89,9 +89,10 @@ function Funcionarios() {
                                 src={`http://localhost:6969/files/${funcionario.foto}`}
                                 alt=""
                                 style={{
-                                    width: '70%',
-                                    objectFit: 'contain',
-                                    borderRadius: '100%',
+                                    width: '150px',
+                                    height: '150px',
+                                    objectFit: 'cover',
+                                    borderRadius: '50%', 
                                     border: '3px solid #1BAC4B'
                                 }}
                             />
@@ -117,19 +118,19 @@ function Funcionarios() {
 
                                 {/* Botão para editar produtos */}
                                 <div className="d-flex flex-column mb-1">
-                                
-                                    <Link to={`/EditFuncionarios/${funcionario.id}`} className="btn" style={{backgroundColor:'#5ec580', color:'black',fontWeight:'450'}}>
-                                    <FaPen className='mx-2 '/>
+
+                                    <Link to={`/EditFuncionarios/${funcionario.id}`} className="btn" style={{ backgroundColor: '#5ec580', color: 'black', fontWeight: '450' }}>
+                                        <FaPen className='mx-2 ' />
                                         Editar
                                     </Link>
                                 </div>
 
                                 {/* Botão para Excluir produtos */}
                                 <div className='d-flex flex-column mb-1'>
-                                <button className="btn mt-2 mb-4 w-100" onClick={() => handleDelete(funcionario.id)}  style={{backgroundColor:'#ff4d4d',color:"white",fontWeight:'450'}}>
-                                <FaTrashAlt className='mx-2'/>
-                                    Remover
-                                </button>
+                                    <button className="btn mt-2 mb-4 w-100" onClick={() => handleDelete(funcionario.id)} style={{ backgroundColor: '#ff4d4d', color: "white", fontWeight: '450' }}>
+                                        <FaTrashAlt className='mx-2' />
+                                        Remover
+                                    </button>
                                 </div>
                             </div>
                         </div>

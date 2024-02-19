@@ -174,7 +174,7 @@ function AddFuncionarios() {
                         className="form-select"
                         onChange={e => setValues({ ...values, funcao: e.target.value })}
                       >
-                        <option disabled value="funcao">
+                        <option selected disabled value="funcao">
                           Função Desempenhada
                         </option>
                         <option value="Gerente">Gerente</option>

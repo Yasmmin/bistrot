@@ -97,7 +97,7 @@ function Sidebar() {
 
                             {/*Clientes*/}
                             <li className="nav-item">
-                                <Link to="#" className="nav-link " aria-current="page">
+                                <Link to="/cliente" className="nav-link " aria-current="page">
                                     <div className="icon">
                                         <BsPersonLinesFill />
                                     </div>

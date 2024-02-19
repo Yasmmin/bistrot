@@ -49,7 +49,7 @@ function Login() {
         if (res.data.Status === "Sucesso!") {
           // Verifica o papel (role) do usuário e redireciona com base nele
           if (res.data.role === 'admin') {
-            navigate('/sidebar'); // Substitua com a rota do admin
+            navigate('/produtos'); 
           } else {
             navigate('/');
           }

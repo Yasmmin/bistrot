@@ -1,12 +1,13 @@
 /*Cor de fundo da página*/
 .body {
     background-color: #F5F6FA;
+    height: 100vh;
 }
 
 /* Barra lateral */
 .sidebar {
     background-color: #ffff;
-    height: 100vh;
+    height: 100%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     max-width: 250px;
     width: 100%;

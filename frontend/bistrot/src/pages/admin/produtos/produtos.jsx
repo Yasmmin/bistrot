@@ -76,7 +76,7 @@ function Produtos() {
 
   return (
     <div className="container-fluid d-flex">
-      <Sidebar />
+      <Sidebar style={{height:'100vh'}}/>
       <div className="d-flex flex-column w-100 ml-2">
         <div className="d-flex justify-content-between align-items-center mt-3 mx-4">
           <form className="d-flex w-100 ">
@@ -88,14 +88,14 @@ function Produtos() {
                 type="search"
                 placeholder="pesquisar"
                 onChange={Filter}
-                style={{ borderRight: "none", height:'3rem' }}
+                style={{height:'3rem' }}
 
               />
 
             </div>
 
             {/*Botão de add*/}
-            <button onClick={handleAdicionarProdutoClick} className="btn mx-1" type="submit" style={{ whiteSpace: 'nowrap', background: '#1BAC4B', color: 'white',height:'3rem' }}>
+            <button onClick={handleAdicionarProdutoClick} className="btn mx-2" type="submit" style={{ whiteSpace: 'nowrap', background: '#1BAC4B', color: 'white',height:'3rem' }}>
               <IoIosAddCircleOutline size={20} /> Adicionar produto
             </button>
           </form>
