@@ -1,10 +1,10 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Inicial from './pages/client/inicial/inicial'
+import Inicial from './pages/client/inicial/inicial' //Rota temporária da tela inicial
 import Cadastro from './pages/auth/cadastro/cadastro';
 import Login from './pages/auth/login/login';
 import Senha from './pages/auth/senha/Senha';
-
+import Home from './pages/client/inicial/home'; // Rota definitiva da tela Inicial
 
 //Rotas que serão privadas
 import Sidebar from './components/sidebar/sidebar';
@@ -14,7 +14,7 @@ import EditarProdutos from './pages/admin/produtos/editarProdutos';
 import Funcionarios from './pages/admin/funcionarios/funcionarios';
 import AddFuncionarios from './pages/admin/funcionarios/addFuncionarios';
 import EditFuncionarios from './pages/admin/funcionarios/editFuncionario';
-
+import Perfil from './pages/client/perfil/perfil';
 function App() {
   return (
     <BrowserRouter>
@@ -23,6 +23,9 @@ function App() {
         <Route path='/cadastro' element={<Cadastro />}></Route>
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/senha' element={<Senha/>}></Route>
+        <Route path='/home' element={<Home/>}></Route>
+        <Route path='/perfil' element={<Perfil/>}></Route>
+        
 
         {/*Rotas que serão privadas - tem que fazer*/}
         <Route path='/sidebar' element={<Sidebar/>}></Route>

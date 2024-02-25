@@ -42,9 +42,9 @@ function AddFuncionarios() {
         formData.append('email', email);
         formData.append('telefone', telefone);
         if (novaImagem) {
-            formData.append('novaImagem', novaImagem); // Alterado de 'foto' para 'novaImagem'
+            formData.append('novaImagem', novaImagem); 
         } else {
-            formData.append('foto', file); // Mantido 'foto' quando não há nova imagem
+            formData.append('foto', file); 
         }
     
         axios

@@ -207,6 +207,8 @@ const verifyUser = (req, res, next) => {
             } else {
                 req.nome = decoded.nome;
                 req.role = decoded.role;
+                req.email = decoded.email;
+                req.rua = decoded.rua;
                 next();
             }
         });
@@ -217,12 +219,14 @@ const verifyUser = (req, res, next) => {
 
 // Endpoint protegido por autenticação para retornar informações do usuário autenticado
 app.get('/', verifyUser, (req, res) => {
-    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role });
+    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role, email: req.email });
 });
 app.get('/sidebar', verifyUser, (req, res) => {
-    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role });
+    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role});
 });
-
+app.get('/Perfil-user', verifyUser, (req, res) => {
+    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role, email: req.email, rua: req.rua });
+});
 //------------------------------------------------------------------------------------------------------------------------//
 
 // Endpoint para lidar com o login de usuários
@@ -253,11 +257,13 @@ app.post('/login', (req, res) => {
             }
 
             if (response) {
-                const { nome, role } = cliente;
 
-                const token = jwt.sign({ nome, role }, "jwt-secret-key", { expiresIn: '1d' });
+                const { nome, email, role, rua } = cliente;
+
+                const token = jwt.sign({ nome, email, role, rua}, "jwt-secret-key", { expiresIn: '1d' });
                 res.cookie('token', token);
                 return res.json({ Status: "Sucesso!", role });
+                
             } else {
                 return res.json({ Error: "Senha incorreta" });
             }
@@ -266,12 +272,12 @@ app.post('/login', (req, res) => {
 });
 
 //------------------------------------------------------------------------------------------------------------------------//
-const caminho = path.join(__dirname, 'image', 'funcionarios'); 
+const caminho = path.join(__dirname, 'image', 'funcionarios');
 app.use('/files', express.static(caminho))
 
 const armazenar = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, 'image', 'funcionarios')); 
+        cb(null, path.join(__dirname, 'image', 'funcionarios'));
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -279,13 +285,13 @@ const armazenar = multer.diskStorage({
     }
 });
 
-const enviar = multer({ storage: armazenar }); 
+const enviar = multer({ storage: armazenar });
 
 // Endpoint para lidar com o cadastro de funcionários
 app.post('/AddFuncionarios', enviar.single('file'), (req, res) => {
     const sql = "INSERT INTO funcionarios (`nome`,`email`,`telefone`,`funcao`,`foto`) VALUES (?,?,?,?,?)";
     const values = [req.body.nome, req.body.email, req.body.telefone, req.body.funcao, req.file.filename];
-    
+
     if (!req.file || !req.file.filename) {
         return res.json({ Error: "Arquivo não encontrado" })
     }
@@ -401,6 +407,17 @@ app.put('/EditFuncionarios/:id', enviar.single('novaImagem'), (req, res) => {
     });
 });
 //------------------------------------------------------------------------------------------------------------------------//
+// pega as informações do cliente
+app.get('/perfil/:id', (req, res) => {
+    const sql = "SELECT * FROM  cliente WHERE id = ?";
+    const id = req.params.id;
+    db.query(sql, [id], (err, result) => {
+        if (err) return res.json({ Error: err })
+        return res.json(result)
+    })
+})
+
+
 
 // Endpoint para realizar o logout do usuário
 app.get('/logout', (req, res) => {
