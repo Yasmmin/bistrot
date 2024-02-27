@@ -10,30 +10,36 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { CiUser } from "react-icons/ci";
 import { MdOutlineEmail } from "react-icons/md";
 //---tela perfil do usuário------------------------------------------------------------------------------//
-function Perfil() {
-
+function EditPerfil() {
+    const [userId, setUserId] = useState("")
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [rua, setRua] = useState("");
-  const [perfil, setPerfil] = useState(false);
-
+  const [edit, editPerfil] = useState(false);
+  
   axios.defaults.withCredentials = true;
-
   useEffect(() => {
-    axios.get("http://localhost:6969/Perfil-user")
+    const userId = '?'
+    setUserId(userId);
+    
+    axios.get(`http://localhost:6969/perfil/${userId}`)
       .then(res => {
-        console.log("Resposta da requisição:", res.data);
-        if (res.data.Status === "Sucesso!") {
-          setPerfil(true);
-          setNome(res.data.nome);
-          setEmail(res.data.email);
-          setRua(res.data.rua);
-        } else {
-          setPerfil(false);
-        }
+        const { nome, email, rua } = res.data[0];
+        setNome(nome);
+        setEmail(email);
+        setRua(rua);
       })
-      .catch(err => console.log("Erro na requisição:", err));
+      .catch(err => console.log("Erro ao carregar perfil do cliente:", err));
   }, []);
+
+  const handleEditProfile = () => {
+    axios.put(`http://localhost:6969/editarPerfil/${userId}`, { nome, email, rua })
+      .then(res => {
+        console.log("Resposta da requisição de edição:", res.data);
+      
+      })
+      .catch(err => console.log("Erro na requisição de edição:", err));
+  };
 
 
   // Função para realizar o logout
@@ -47,7 +53,7 @@ function Perfil() {
 
   return (
     <div>
-      {perfil ? (
+      {editPerfil ? (
         <div className='container-fluid'>
           <div className="d-flex flex-column text-center ">
 
@@ -59,17 +65,7 @@ function Perfil() {
             </div>
 
             <div className="m-3 text-center" style={{ flex: '100%', minWidth: '400px' }}>
-              <img
-                className="mt-3 mb-3 img-fluid"
-                src={`https://s2-oglobo.glbimg.com/-0dni84YWVLwPxS6-f6_Wqkmy-4=/0x0:850x572/888x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_da025474c0c44edd99332dddb09cabe8/internal_photos/bs/2022/d/v/kFDwF0T3q2wkwvGH0DjA/whatsapp-image-2022-10-03-at-15.34.37.jpeg`}
-                alt=""
-                style={{
-                  width: '15rem',
-                  height: '15rem',
-                  objectFit: 'cover',
-                  borderRadius: '50%'
-                }}
-              />
+             
             </div>
 
             {/*input de nome*/}
@@ -86,7 +82,7 @@ function Perfil() {
                   style={{ backgroundColor: '#f8f9fa' }}
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
-                  readOnly
+                  
                 />
               </div>
             </div>
@@ -104,7 +100,7 @@ function Perfil() {
                   placeholder="Email"
                   style={{ backgroundColor: '#f8f9fa' }}
                   value={email}
-                  readOnly
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -121,7 +117,8 @@ function Perfil() {
                   className="form-control "
                   placeholder="Bairro"
                   style={{ backgroundColor: '#f8f9fa' }}
-                  readOnly
+                  
+                  onChange={(e) => setBairro(e.target.value)}
                 />
               </div>
 
@@ -140,7 +137,7 @@ function Perfil() {
                         placeholder="Rua"
                         style={{ backgroundColor: '#f8f9fa' }}
                         value={rua}
-                        readOnly
+                    
                       />
                     </div>
                   </div>
@@ -159,18 +156,18 @@ function Perfil() {
                         className="form-control"
                         placeholder="Nº da casa"
                         style={{ backgroundColor: '#f8f9fa' }}
-                        readOnly
+                        
                       />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-                
-           <Link to="/editperfil"> <button className='btn btn-primary w-100 mb-2 mt-3' style={{ minWidth: '350px' }}>Editar</button></Link>
-            <button onClick={handleLogout} className='btn btn-danger w-100 mb-5' style={{ minWidth: '350px' }}>Sair</button>
+
+            <button className='btn btn-primary w-100 mb-2 mt-3' onClick={handleEditProfile} style={{ minWidth: '350px' }}>Salvar</button>
 
           </div>
+
         </div>
       ) : (
         // se o usuario não tiver permissão para acessar mostrará uma mensagem
@@ -185,4 +182,4 @@ function Perfil() {
   );
 }
 
-export default Perfil;
+export default EditPerfil;

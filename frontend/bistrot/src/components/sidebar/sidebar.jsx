@@ -26,7 +26,7 @@ function Sidebar() {
 
     // Função de logout específica para a Sidebar
     const handleSidebarLogout = () => {
-        axios.get("http://localhost:8081/logout")
+        axios.get("http://localhost:6969/logout")
             .then(() => {
                 document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
                 window.location.href = "/login";

@@ -417,8 +417,6 @@ app.get('/perfil/:id', (req, res) => {
     })
 })
 
-
-
 // Endpoint para realizar o logout do usuário
 app.get('/logout', (req, res) => {
     res.clearCookie('token');
