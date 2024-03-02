@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import Sidebar from "../../../components/sidebar/sidebar";
 import axios from "axios";
 

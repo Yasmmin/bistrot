@@ -8,7 +8,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-function AddFuncionarios() {
+function EditFuncionarios() {
     const { id } = useParams();
     const [file, setFile] = useState(null);
     const [nome, setNome] = useState("");
@@ -204,4 +204,4 @@ function AddFuncionarios() {
     );
 }
 
-export default AddFuncionarios;
+export default EditFuncionarios;

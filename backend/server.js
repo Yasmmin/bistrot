@@ -24,8 +24,8 @@ app.use(cors({
     credentials: true
 }));
 
-//-------------------------------------------CONEXÃO COM O BANCO DE DADOS------------------------------------------------//
-// Conexão com o banco de dados "cafebistrot"
+//--- Conexão com o banco de dados ---------------------------------------------------------------------------------------//
+
 dotenv.config();
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -35,17 +35,15 @@ const db = mysql.createConnection({
     port: process.env.DB_PORT
 });
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Recuperação de fotos cadastradas---------------------------------------------------------------------------------------------------------------------//
 
-// lidar com a recuperação de fotos cadastradas
 const __filename = fileURLToPath(import.meta.url); //Obter o caminho absoluto do arquivo atual
 const __dirname = path.dirname(__filename);
 const imagePath = path.join(__dirname, 'image', 'produtos'); //Caminho para o diretório de imagens de produtos
 app.use('/files', express.static(imagePath)); //rota para arquivos estáticos (fotos de produtos)
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Cadastro de usuários ---------------------------------------------------------------------------------------------------------------------//
 
-// Endpoint para lidar com o cadastro de usuários
 app.post('/cadastro', (req, res) => {
     bcrypt.hash(req.body.senha.toString(), salt, (err, hash) => {
         if (err) {
@@ -68,7 +66,7 @@ app.post('/cadastro', (req, res) => {
     });
 });
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Cadastro de produto ---------------------------------------------------------------------------------------------------------------------//
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "../backend/image/produtos");
@@ -81,7 +79,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-// Endpoint para lidar com o cadastro de produtos
 app.post('/Produtos', upload.single('file'), (req, res) => {
     const precoNumerico = parseFloat(req.body.preco.replace(/[^\d]/g, '')) / 100;
 
@@ -103,9 +100,8 @@ app.post('/Produtos', upload.single('file'), (req, res) => {
     })
 })
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Pega as informações do produto ---------------------------------------------------------------------------------------------------------------------//
 
-// pega as informações do produto
 app.get('/Produtos', async (req, res) => {
     const produtos = "SELECT * FROM produto";
     db.query(produtos, (err, data) => {
@@ -117,9 +113,8 @@ app.get('/Produtos', async (req, res) => {
     });
 });
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Exclusão do produto ---------------------------------------------------------------------------------------------------------------------//
 
-// realiza a exclusão do produto no banco de dados
 app.delete("/produtos/:id", (req, res) => {
     const produtoId = req.params.id;
     const selectQuery = "SELECT foto FROM produto WHERE id = ?";
@@ -147,9 +142,8 @@ app.delete("/produtos/:id", (req, res) => {
     });
 });
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Pega as informações dos produtos e mostra nos campos ---------------------------------------------------------------------------------------------------------------------//
 
-// Pega as informações dois produtos e mostra nos campos
 app.get('/edit/:id', (req, res) => {
     const sql = "SELECT * FROM  produto WHERE id = ?";
     const id = req.params.id;
@@ -159,9 +153,8 @@ app.get('/edit/:id', (req, res) => {
     })
 })
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Edição de produtos ---------------------------------------------------------------------------------------------------------------------//
 
-//Realiza a edição de produtos 
 app.put('/edit/:id', upload.single('novaImagem'), (req, res) => {
     const sqlSelect = "SELECT foto FROM produto WHERE id = ?";
     const id = req.params.id;
@@ -193,9 +186,8 @@ app.put('/edit/:id', upload.single('novaImagem'), (req, res) => {
     });
 });
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Verificar a autenticação do usuário e seu papel (role) ---------------------------------------------------------------------------------------------------------------------//
 
-// Middleware para verificar a autenticação do usuário e seu papel (role)
 const verifyUser = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
@@ -209,27 +201,28 @@ const verifyUser = (req, res, next) => {
                 req.role = decoded.role;
                 req.email = decoded.email;
                 req.rua = decoded.rua;
+                req.casa = decoded.casa;
+                req.userId = decoded.id; 
                 next();
             }
         });
     }
 };
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Retornar informações do usuário autenticado ---------------------------------------------------------------------------------------------------------------------//
 
-// Endpoint protegido por autenticação para retornar informações do usuário autenticado
 app.get('/', verifyUser, (req, res) => {
     return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role, email: req.email });
 });
 app.get('/sidebar', verifyUser, (req, res) => {
-    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role});
+    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role });
 });
 app.get('/Perfil-user', verifyUser, (req, res) => {
-    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role, email: req.email, rua: req.rua });
+    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role, email: req.email, rua: req.rua, casa: req.casa });
 });
-//------------------------------------------------------------------------------------------------------------------------//
 
-// Endpoint para lidar com o login de usuários
+//--- Login de usuários ---------------------------------------------------------------------------------------------------------------------//
+
 app.post('/login', (req, res) => {
     const { email, senha } = req.body;
 
@@ -258,12 +251,12 @@ app.post('/login', (req, res) => {
 
             if (response) {
 
-                const { nome, email, role, rua } = cliente;
+                const { nome, email, role, rua, casa,id } = cliente;
 
-                const token = jwt.sign({ nome, email, role, rua}, "jwt-secret-key", { expiresIn: '1d' });
+                const token = jwt.sign({ nome, email, role, rua, casa,id }, "jwt-secret-key", { expiresIn: '1d' });
                 res.cookie('token', token);
                 return res.json({ Status: "Sucesso!", role });
-                
+
             } else {
                 return res.json({ Error: "Senha incorreta" });
             }
@@ -271,7 +264,8 @@ app.post('/login', (req, res) => {
     });
 });
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Pegar diretório de imagem e armazenar ---------------------------------------------------------------------------------------------------------------------//
+
 const caminho = path.join(__dirname, 'image', 'funcionarios');
 app.use('/files', express.static(caminho))
 
@@ -287,7 +281,8 @@ const armazenar = multer.diskStorage({
 
 const enviar = multer({ storage: armazenar });
 
-// Endpoint para lidar com o cadastro de funcionários
+//--- Cadastro de funcionários ---------------------------------------------------------------------------------------------------------------------//
+
 app.post('/AddFuncionarios', enviar.single('file'), (req, res) => {
     const sql = "INSERT INTO funcionarios (`nome`,`email`,`telefone`,`funcao`,`foto`) VALUES (?,?,?,?,?)";
     const values = [req.body.nome, req.body.email, req.body.telefone, req.body.funcao, req.file.filename];
@@ -306,9 +301,9 @@ app.post('/AddFuncionarios', enviar.single('file'), (req, res) => {
         return res.json({ Status: "Sucesso!" });
     })
 });
-//------------------------------------------------------------------------------------------------------------------------//
 
-// Mostra as informações do funcionario na tela de funcionarios
+//--- Mostra as informações do funcionario na tela de funcionarios ---------------------------------------------------------------------------------------------------------------------//
+
 app.get('/funcionarios', async (req, res) => {
     const produtos = "SELECT * FROM funcionarios";
     db.query(produtos, (err, data) => {
@@ -320,7 +315,7 @@ app.get('/funcionarios', async (req, res) => {
     });
 });
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Deletar funcionários e foto do funcionário ---------------------------------------------------------------------------------------------------------------------//
 
 app.delete("/funcionarios/:id", (req, res) => {
     const funcionarioId = req.params.id;
@@ -363,9 +358,9 @@ app.delete("/funcionarios/:id", (req, res) => {
         });
     });
 });
-//------------------------------------------------------------------------------------------------------------------------//
 
-// Pega as informações dois produtos e mostra nos campos
+//--- Pega as informações dois produtos e mostra nos campos ---------------------------------------------------------------------------------------------------------------------//
+
 app.get('/EditFuncionarios/:id', (req, res) => {
     const sql = "SELECT * FROM  funcionarios WHERE id = ?";
     const id = req.params.id;
@@ -374,9 +369,9 @@ app.get('/EditFuncionarios/:id', (req, res) => {
         return res.json(result)
     })
 })
-//------------------------------------------------------------------------------------------------------------------------//
 
-//Realiza a edição de funcionarios
+//--- Realiza a edição de funcionarios ---------------------------------------------------------------------------------------------------------------------//
+
 app.put('/EditFuncionarios/:id', enviar.single('novaImagem'), (req, res) => {
     const sqlSelect = "SELECT foto FROM funcionarios WHERE id = ?";
     const id = req.params.id;
@@ -406,26 +401,70 @@ app.put('/EditFuncionarios/:id', enviar.single('novaImagem'), (req, res) => {
         });
     });
 });
-//------------------------------------------------------------------------------------------------------------------------//
-// pega as informações do cliente
-app.get('/perfil/:id', (req, res) => {
-    const sql = "SELECT * FROM  cliente WHERE id = ?";
-    const id = req.params.id;
-    db.query(sql, [id], (err, result) => {
-        if (err) return res.json({ Error: err })
-        return res.json(result)
-    })
-})
 
-// Endpoint para realizar o logout do usuário
+//--- Pega as info do cliente e mostra na tela de perfil ---------------------------------------------------------------------------------------------------------------------//
+app.get('/perfil', verifyUser, (req, res) => {
+    // Verificar se o usuário está autenticado e obter o userId
+    const userId = req.userId;
+  
+    const query = `SELECT nome, email, rua, casa FROM cliente WHERE id = ?`;
+  
+    db.query(query, [userId], (error, results, fields) => {
+      if (error) {
+        console.error('Erro ao consultar o banco de dados:', error);
+        return res.status(500).json({ error: 'Erro interno do servidor' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+      }
+      const userData = results[0];
+
+      return res.json({ 
+        Status: "Sucesso!",
+        userId: userId,
+        nome: userData.nome,
+        email: userData.email,
+        rua: userData.rua,
+        casa: userData.casa 
+      });
+    });
+  });
+app.put('/perfil', verifyUser, (req, res) => {
+    const userId = req.userId;
+    const { nome, email, rua, casa } = req.body;
+    const sql = "UPDATE cliente SET nome = ?, email = ?, rua = ?, casa = ? WHERE id = ?";
+    db.query(sql, [nome, email, rua, casa, userId], (err, result) => {
+        if (err) {
+            console.error("Erro ao atualizar informações do perfil:", err);
+            return res.status(500).json({ error: "Erro ao atualizar informações do perfil" });
+        }
+        return res.json({ message: "Informações do perfil atualizadas com sucesso" });
+    });
+});
+
+//--- Endpoint para realizar o logout do usuário ---------------------------------------------------------------------------------------------------------------------//
+
 app.get('/logout', (req, res) => {
     res.clearCookie('token');
     return res.json({ Status: "Sucesso!" })
 });
 
-//------------------------------------------------------------------------------------------------------------------------//
+//--- Pegar todos os clientes e mostrar no backend ---------------------------------------------------------------------------------------------------------------------//
 
-// Inicialização do servidor na porta 8081
+app.get('/cliente', (req, res) => {
+    const sql = "SELECT * FROM cliente";
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Erro ao buscar informações dos clientes:", err);
+            return res.json({ Error: "Erro ao buscar informações dos clientes", details: err.message });
+        }
+        return res.json(result);
+    });
+});
+
+//--- Inicialização do servidor ---------------------------------------------------------------------------------------------------------------------//
+
 app.listen(6969, () => {
     console.log("Rodando na porta 6969")
 });
