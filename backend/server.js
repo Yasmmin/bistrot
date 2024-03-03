@@ -40,7 +40,7 @@ const db = mysql.createConnection({
 const __filename = fileURLToPath(import.meta.url); //Obter o caminho absoluto do arquivo atual
 const __dirname = path.dirname(__filename);
 const imagePath = path.join(__dirname, 'image', 'produtos'); //Caminho para o diretório de imagens de produtos
-app.use('/files', express.static(imagePath)); //rota para arquivos estáticos (fotos de produtos)
+app.use('/files', express.static(imagePath));
 
 //--- Cadastro de usuários ---------------------------------------------------------------------------------------------------------------------//
 
@@ -197,12 +197,10 @@ const verifyUser = (req, res, next) => {
             if (err) {
                 return res.json({ Error: "Token está com falhas" });
             } else {
+                req.userId = decoded.id;
                 req.nome = decoded.nome;
-                req.role = decoded.role;
                 req.email = decoded.email;
-                req.rua = decoded.rua;
-                req.casa = decoded.casa;
-                req.userId = decoded.id; 
+                req.role = decoded.role;
                 next();
             }
         });
@@ -216,9 +214,6 @@ app.get('/', verifyUser, (req, res) => {
 });
 app.get('/sidebar', verifyUser, (req, res) => {
     return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role });
-});
-app.get('/Perfil-user', verifyUser, (req, res) => {
-    return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role, email: req.email, rua: req.rua, casa: req.casa });
 });
 
 //--- Login de usuários ---------------------------------------------------------------------------------------------------------------------//
@@ -251,9 +246,9 @@ app.post('/login', (req, res) => {
 
             if (response) {
 
-                const { nome, email, role, rua, casa,id } = cliente;
+                const { nome, email, role, rua, casa, id } = cliente;
 
-                const token = jwt.sign({ nome, email, role, rua, casa,id }, "jwt-secret-key", { expiresIn: '1d' });
+                const token = jwt.sign({ nome, email, role, rua, casa, id }, "jwt-secret-key", { expiresIn: '1d' });
                 res.cookie('token', token);
                 return res.json({ Status: "Sucesso!", role });
 
@@ -402,44 +397,90 @@ app.put('/EditFuncionarios/:id', enviar.single('novaImagem'), (req, res) => {
     });
 });
 
+const uploadForUsers = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, path.join(__dirname, 'image', 'users'));
+        },
+        filename: function (req, file, cb) {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, `${uniqueSuffix}_${file.originalname}`);
+        }
+    })
+});
+
+app.use('/users', express.static(path.join(__dirname, 'image', 'users')));
+
+
 //--- Pega as info do cliente e mostra na tela de perfil ---------------------------------------------------------------------------------------------------------------------//
 app.get('/perfil', verifyUser, (req, res) => {
-    // Verificar se o usuário está autenticado e obter o userId
     const userId = req.userId;
-  
-    const query = `SELECT nome, email, rua, casa FROM cliente WHERE id = ?`;
-  
-    db.query(query, [userId], (error, results, fields) => {
-      if (error) {
-        console.error('Erro ao consultar o banco de dados:', error);
-        return res.status(500).json({ error: 'Erro interno do servidor' });
-      }
-  
-      if (results.length === 0) {
-        return res.status(404).json({ error: 'Usuário não encontrado' });
-      }
-      const userData = results[0];
+    const query = `SELECT * FROM cliente WHERE id = ?`;
 
-      return res.json({ 
-        Status: "Sucesso!",
-        userId: userId,
-        nome: userData.nome,
-        email: userData.email,
-        rua: userData.rua,
-        casa: userData.casa 
-      });
-    });
-  });
-app.put('/perfil', verifyUser, (req, res) => {
-    const userId = req.userId;
-    const { nome, email, rua, casa } = req.body;
-    const sql = "UPDATE cliente SET nome = ?, email = ?, rua = ?, casa = ? WHERE id = ?";
-    db.query(sql, [nome, email, rua, casa, userId], (err, result) => {
-        if (err) {
-            console.error("Erro ao atualizar informações do perfil:", err);
-            return res.status(500).json({ error: "Erro ao atualizar informações do perfil" });
+    db.query(query, [userId], (error, results, fields) => {
+        if (error) {
+            console.error('Erro ao consultar o banco de dados:', error);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
         }
-        return res.json({ message: "Informações do perfil atualizadas com sucesso" });
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+        const userData = results[0];
+
+        return res.json({
+            Status: "Sucesso!",
+            userId: userId,
+            foto: userData.foto,
+            nome: userData.nome,
+            email: userData.email,
+            telefone: userData.telefone,
+            rua: userData.rua,
+            casa: userData.casa,
+            bairro: userData.bairro,
+            complemento: userData.complemento
+        });
+    });
+});
+
+app.put('/perfil', verifyUser, uploadForUsers.single('foto'), (req, res) => {
+    const userId = req.userId;
+    const { nome, email, telefone, rua, casa, bairro, complemento } = req.body;
+    let foto = req.file ? req.file.filename : null;
+
+    // Recupere os valores atuais do banco de dados
+    const query = 'SELECT * FROM cliente WHERE id = ?';
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            console.error('Erro ao consultar o banco de dados:', error);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        const userData = results[0];
+
+        // Preenche os campos não alterados com os valores atuais do banco de dados
+        const nomeAtualizado = nome || userData.nome;
+        const emailAtualizado = email || userData.email;
+        const telefoneAtualizado = telefone || userData.telefone;
+        const ruaAtualizada = rua || userData.rua;
+        const casaAtualizada = casa || userData.casa;
+        const bairroAtualizado = bairro || userData.bairro;
+        const complementoAtualizado = complemento || userData.complemento;
+        const fotoAtualizada = foto !== null ? foto : userData.foto;
+
+
+        const sql = "UPDATE cliente SET nome = ?, email = ?, telefone = ?, rua = ?, casa = ?, bairro = ?, complemento = ?, foto = ? WHERE id = ?";
+        db.query(sql, [nomeAtualizado, emailAtualizado, telefoneAtualizado, ruaAtualizada, casaAtualizada, bairroAtualizado, complementoAtualizado, fotoAtualizada, userId], (err, result) => {
+            if (err) {
+                console.error("Erro ao atualizar informações do perfil:", err);
+                return res.status(500).json({ error: "Erro ao atualizar informações do perfil" });
+            }
+            return res.json({ message: "Informações do perfil atualizadas com sucesso" });
+        });
     });
 });
 

@@ -1,10 +1,25 @@
-.botão{
+.botão {
     background-color: #F4F4F4;
     border: none;
     border-radius: 10px;
 
 }
 
-.icon-user{
+.icon-user {
     background-color: #F4F4F4;
+}
+
+.campo-editando {
+    border: 1px solid red;
+}
+
+.custom-file-container {
+    position: absolute;
+    left: 50%;
+    top: 85%;
+    transform: translate(-50%, -50%);
+}
+
+.custom-file-button {
+    margin-top: 2rem;
 }

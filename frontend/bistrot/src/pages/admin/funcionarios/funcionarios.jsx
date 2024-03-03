@@ -92,7 +92,7 @@ function Funcionarios() {
                                     width: '150px',
                                     height: '150px',
                                     objectFit: 'cover',
-                                    borderRadius: '50%', 
+                                    borderRadius: '50%',
                                     border: '3px solid #1BAC4B'
                                 }}
                             />

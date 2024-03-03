@@ -5,9 +5,10 @@ import Cadastro from './pages/auth/cadastro/cadastro';
 import Login from './pages/auth/login/login';
 import Senha from './pages/auth/senha/Senha';
 import Home from './pages/client/inicial/home'; // Rota definitiva da tela Inicial
+import Perfil from './../src/pages/client/perfil/perfil'
+import SemPermissao from './components/permissão/semPermissao';
 
-
-//Rotas que serão privadas
+//Rotas que serão privadas/admin
 import Sidebar from './components/sidebar/sidebar';
 import Produtos from './pages/admin/produtos/produtos';
 import CriarProduto from './pages/admin/produtos/criarProduto';
@@ -16,7 +17,7 @@ import Funcionarios from './pages/admin/funcionarios/funcionarios';
 import AddFuncionarios from './pages/admin/funcionarios/addFuncionarios';
 import EditFuncionarios from './pages/admin/funcionarios/editFuncionario';
 import Cliente from './pages/admin/clientes/cliente'
-import Perfil from './../src/pages/client/perfil/perfil'
+
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path='/senha' element={<Senha/>}></Route>
         <Route path='/home' element={<Home/>}></Route>
         <Route path='/perfil' element={<Perfil/>}></Route>
+        <Route path='/permissao' element={<SemPermissao/>}></Route>
         
         {/*Rotas que serão privadas - tem que fazer*/}
         <Route path='/sidebar' element={<Sidebar/>}></Route>
