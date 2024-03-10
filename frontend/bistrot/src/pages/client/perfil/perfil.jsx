@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom'; // Adicionado o Link
+import { Link, useParams } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { CiUser } from 'react-icons/ci';
 import { MdOutlineEmail } from 'react-icons/md';
 import Swal from 'sweetalert2';
-import userPadrao from '../../../../../../backend/image/users/userPadrao.svg'
+import userPadrao from '../../../../../../backend/image/users/userPadrao.svg';
 import SemPermissao from '../../../components/permissão/semPermissao';
+import Loading from '../../../components/loading/loading';
 
-import './style.css';
+import './perfil.css'
 
 function Perfil() {
   const [auth, setAuth] = useState(false);
@@ -23,6 +24,7 @@ function Perfil() {
   const [complemento, setComplemento] = useState('');
   const [editando, setEditando] = useState(false);
   const [imagemSelecionada, setImagemSelecionada] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   axios.defaults.withCredentials = true;
   useEffect(() => {
@@ -38,14 +40,17 @@ function Perfil() {
           setCasa(res.data.casa);
           setBairro(res.data.bairro);
           setComplemento(res.data.complemento);
-
-
+          setLoading(false);
         } else {
           console.error('Erro ao carregar perfil:', res.data.Error);
           setAuth(false);
+          setLoading(false);
         }
       })
-      .catch(err => console.log('Erro na requisição:', err));
+      .catch(err => {
+        console.log('Erro na requisição:', err);
+        setLoading(false);
+      });
   }, []);
 
   const handleSave = () => {
@@ -67,12 +72,11 @@ function Perfil() {
         console.log('Resposta do servidor:', response.data);
         setFoto(response.data.foto);
         setEditando(false);
-
       })
       .catch(error => {
         console.error('Erro ao salvar dados do perfil:', error);
       });
-  }
+  };
 
   const handleLogout = () => {
     if (editando) {
@@ -117,13 +121,19 @@ function Perfil() {
 
   return (
     <div>
-      {auth ? (
+      {loading ? (
+        <Loading />
+      ) : auth ? (
         <div className='container-fluid ' style={{ minWidth: '400px' }}>
           <div className='d-flex flex-column text-center '>
             <div className='d-flex align-items-center mt-4'>
-              <button className='btn border-0'>
-                <IoIosArrowBack size={32} />
-              </button>
+
+              <Link to='/'>
+                <button className='btn border-0'>
+                  <IoIosArrowBack size={32} />
+                </button>
+              </Link>
+
               <h2 className='ms-2 mb-2'>{editando ? 'Salvar perfil' : 'Editar perfil'}</h2>
             </div>
 
@@ -134,8 +144,8 @@ function Perfil() {
                   src={imagemSelecionada ? URL.createObjectURL(imagemSelecionada) : (foto ? `http://localhost:6969/users/${foto}` : userPadrao)}
                   alt="Foto de perfil"
                   style={{
-                    width: '40%',
-                    height: '20%',
+                    width: '12rem',
+                    height: '12rem',
                     objectFit: 'cover',
                     borderRadius: '50%',
                     cursor: editando ? 'pointer' : 'default',

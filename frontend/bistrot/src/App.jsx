@@ -1,12 +1,14 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Inicial from './pages/client/inicial/inicial' //Rota temporária da tela inicial
 import Cadastro from './pages/auth/cadastro/cadastro';
 import Login from './pages/auth/login/login';
 import Senha from './pages/auth/senha/Senha';
 import Home from './pages/client/inicial/home'; // Rota definitiva da tela Inicial
 import Perfil from './../src/pages/client/perfil/perfil'
 import SemPermissao from './components/permissão/semPermissao';
+import Carrinho from './pages/client/carrinho/carrinho';
+import Pedidos from './pages/client/pedidos/pedidos';
+import InfoProduto from './pages/client/infoProduto/infoProduto';
 
 //Rotas que serão privadas/admin
 import Sidebar from './components/sidebar/sidebar';
@@ -23,13 +25,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Inicial/>}></Route>
+        <Route path='/' element={<Home/>}></Route>
         <Route path='/cadastro' element={<Cadastro />}></Route>
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/senha' element={<Senha/>}></Route>
-        <Route path='/home' element={<Home/>}></Route>
         <Route path='/perfil' element={<Perfil/>}></Route>
         <Route path='/permissao' element={<SemPermissao/>}></Route>
+        <Route path='/carrinho' element={<Carrinho/>}></Route>
+        <Route path='/pedidos' element={<Pedidos/>}></Route>
+        <Route path='/infoproduto/:id' element={<InfoProduto/>}></Route>
         
         {/*Rotas que serão privadas - tem que fazer*/}
         <Route path='/sidebar' element={<Sidebar/>}></Route>

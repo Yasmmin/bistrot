@@ -5,13 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from 'sweetalert2';
 
-// icones 
 import { FaPen } from "react-icons/fa";
 import { IoTrash } from "react-icons/io5";
-
-
-//import de arquivos
-import './style.css'
+import './style.css';
 
 function Produtos() {
   const navigate = useNavigate();
@@ -29,7 +25,7 @@ function Produtos() {
       try {
         const res = await axios.get("http://localhost:6969/produtos");
         setProdutos(res.data);
-        setRecords([...res.data]); 
+        setRecords([...res.data]);
       } catch (err) {
         console.error(err);
       }
@@ -43,7 +39,6 @@ function Produtos() {
     console.log('Filtrando...', event.target.value);
   };
 
-  // deleta o prpduto e manda uma mensagem de confirmação
   const handleDelete = async (id) => {
     const confirmResult = await Swal.fire({
       title: 'Tem certeza?',
@@ -62,7 +57,6 @@ function Produtos() {
         setProdutos(produtos.filter(produto => produto.id !== id));
         Swal.fire('Excluído!', 'O produto foi excluído com sucesso.', 'success');
 
-        // Aguarda 1,5 segundos antes de recarregar a página
         setTimeout(() => {
           window.location.reload();
         }, 1500);
@@ -75,73 +69,51 @@ function Produtos() {
   };
 
   return (
-    <div className="container-fluid d-flex">
-      <Sidebar style={{height:'100vh'}}/>
-      <div className="d-flex flex-column w-100 ml-2">
+    <div className="d-flex">
+      <Sidebar />
+      <div className="content">
         <div className="d-flex justify-content-between align-items-center mt-3 mx-4">
           <form className="d-flex w-100 ">
-
-            {/*campo de pesquisa com icone dentro*/}
             <div className="input-group">
               <input
                 className="form-control flex-grow-1 mr-2 mb-3"
                 type="search"
                 placeholder="pesquisar"
                 onChange={Filter}
-                style={{height:'3rem' }}
-
+                style={{ height: '3rem' }}
               />
-
             </div>
-
-            {/*Botão de add*/}
-            <button onClick={handleAdicionarProdutoClick} className="btn mx-2" type="submit" style={{ whiteSpace: 'nowrap', background: '#1BAC4B', color: 'white',height:'3rem' }}>
+            <button onClick={handleAdicionarProdutoClick} className="btn mx-2" type="submit" style={{ whiteSpace: 'nowrap', background: '#1BAC4B', color: 'white', height: '3rem' }}>
               <IoIosAddCircleOutline size={20} /> Adicionar produto
             </button>
           </form>
         </div>
-
-        <div className="d-flex flex-wrap justify-content-start align-items-start mx-3">
+        <div className="d-flex justify-content-start align-items-start flex-wrap mx-3">
           {records.length === 0 ? (
             <div className="m-3">
               <p>Nenhum produto encontrado.</p>
             </div>
           ) : (
             records.map((produto) => (
-            <div key={produto.id} className=" produto-card m-3" style={{}}>
-              <img
-                className="mt-3 mb-3"
-                src={`http://localhost:6969/files/${produto.foto}`}
-                alt=""
-                style={{
-                  width: '100%',
-                  height: '160px',
-                  display: 'block',
-                  margin: '0 auto',
-                  objectFit: 'contain', 
-                  borderRadius: '23px'
-                }}
-              />
-              <div className="produto mx-3">
-
-                <h4>{produto.nome}</h4>
-                <p>{produto.descricao}</p>
-                <h5 className="preco">R${produto.preco}</h5>
-
-                {/*Botão para editar produtos*/}
-                <div className="d-flex flex-column mb-1">
-                  <Link to={`/EditarProdutos/${produto.id}`} className="btn btn-primary">
-                    <FaPen className="mx-1" />
-                    editar
-                  </Link>
+              <div key={produto.id} className=" produto-card-admin m-3">
+                <div className="produto-admin mx-3">
+                  <img className="img-produto-admin" src={`http://localhost:6969/files/${produto.foto}`} alt="imagem do produto"/>
+                  <div className="info-produtos-admin w-100">
+                    <h4 className="info-nome-admin">{produto.nome}</h4>
+                    <h5 className="info-preco-admin">R$ {produto.preco}</h5>
+                    <div className="d-flex flex-column mb-1">
+                      <Link to={`/EditarProdutos/${produto.id}`} className="btn btn-primary">
+                        <FaPen className="mx-1" />
+                        editar
+                      </Link>
+                    </div>
+                    <button className="btn btn-danger mt-2 mb-4 w-100" onClick={() => handleDelete(produto.id)} >
+                      <IoTrash className="mx-1" />
+                      excluir produto
+                    </button>
+                  </div>
                 </div>
-
-                {/*Botão para Excluir produtos*/}
-                <button className="btn btn-danger mt-2 mb-4 w-100" onClick={() => handleDelete(produto.id)} ><IoTrash className="mx-1" />
-                  excluir produto
-                </button>
               </div>
-            </div>
             ))
           )}
         </div>
@@ -149,4 +121,5 @@ function Produtos() {
     </div>
   );
 }
+
 export default Produtos;

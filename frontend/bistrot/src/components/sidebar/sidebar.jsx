@@ -36,8 +36,8 @@ function Sidebar() {
 
     return (
         <div className='body'>
-            <div className="d-flex flex-nowrap">
-                <div className="d-flex flex-column flex-shrink-0 p-3 sidebar" style={{ width: '280px' }}>
+            <div className="d-flex flex-nowrap m-0">
+                <div className="d-flex flex-column p-3 sidebar" style={{ width: '280px', height:'100vh' }}>
 
                     {/*div para logo*/}
                     <div className="d-flex align-items-center justify-content-center mb-4">
@@ -54,7 +54,7 @@ function Sidebar() {
                         <ul className="nav nav-pills flex-column mb-auto">
                             <li className="nav-item mb-2">
                                 <Link to="#" className="nav-link" aria-current="page">
-                                    <div className="icon">
+                                    <div className="icon-sidebar">
                                         <MdChecklist />
                                     </div>
                                     Pedidos
@@ -64,7 +64,7 @@ function Sidebar() {
                             {/*Opção Produtos*/}
                             <li className="nav-item mb-2">
                                 <Link to="/produtos" className="nav-link " aria-current="page">
-                                    <div className="icon">
+                                    <div className="icon-sidebar">
                                         <MdOutlineSpaceDashboard />
                                     </div>
                                     Produtos
@@ -74,7 +74,7 @@ function Sidebar() {
                             {/*Finalizados*/}
                             <li className="nav-item mb-2">
                                 <Link to="#" className="nav-link " aria-current="page">
-                                    <div className="icon">
+                                    <div className="icon-sidebar">
                                         <MdChecklist />
                                     </div>
                                     Finalizados
@@ -88,7 +88,7 @@ function Sidebar() {
                             {/*Promoções*/}
                             <li className="nav-item">
                                 <Link to="#" className="nav-link " aria-current="page">
-                                    <div className="icon">
+                                    <div className="icon-sidebar">
                                         <MdLocalOffer />
                                     </div>
                                     Promoções
@@ -98,7 +98,7 @@ function Sidebar() {
                             {/*Clientes*/}
                             <li className="nav-item">
                                 <Link to="/cliente" className="nav-link " aria-current="page">
-                                    <div className="icon">
+                                    <div className="icon-sidebar">
                                         <BsPersonLinesFill />
                                     </div>
                                     Clientes
@@ -108,7 +108,7 @@ function Sidebar() {
                             {/*Estatisticas*/}
                             <li className="nav-item">
                                 <Link to="#" className="nav-link " aria-current="page">
-                                    <div className="icon">
+                                    <div className="icon-sidebar">
                                         <GoGraph />
                                     </div>
                                     Estatísticas
@@ -118,7 +118,7 @@ function Sidebar() {
                             {/*Funcionários*/}
                             <li className="nav-item">
                                 <Link to="/funcionarios" className="nav-link " aria-current="page">
-                                    <div className="icon">
+                                    <div className="icon-sidebar">
                                         <FaUsersCog />
                                     </div>
                                     Funcionários
@@ -127,7 +127,7 @@ function Sidebar() {
 
                             <hr className="my-3" style={{ borderTop: '1px solid rgba(0,0,0,0.5)', width: '100%' }} />
 
-                            <button className="btn btn-danger mx-3 mb-4" onClick={handleSidebarLogout}>
+                            <button className="btn btn-danger mx-3 mb-4 mt-4" onClick={handleSidebarLogout}>
                                 <FaPowerOff style={{ marginRight: '5px' }} />
                                 Sair
                             </button>

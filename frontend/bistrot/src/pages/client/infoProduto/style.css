@@ -1,0 +1,143 @@
+.detalhe-foto {
+    width: 100%;
+    max-width: 414px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; 
+}
+
+.produto-detalhes {
+    position: relative;
+    max-height: calc(100vh - 100px); /* Ajuste a altura conforme necessário */
+    overflow-y: auto;
+}
+
+.btn-voltar {
+    position: fixed;
+    top: 20px;
+    left: 5px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.icon {
+    background-color: aliceblue;
+    min-width: 20px;
+    max-width: 50px;
+    margin-right: 40px;
+}
+
+.detalhe-categoria {
+    font-weight: bold;
+    color: #a3a2a2;
+    text-transform: capitalize;
+}
+
+.detalhe-nome {
+    font-weight: bold;
+}
+
+.detalhe-descricao {
+    font-size: 12pt;
+    color: #a3a2a2;
+    font-weight: bold;
+}
+
+.detalhe-restricao {
+    font-size: 12pt;
+    color: #a3a2a2;
+    font-weight: bold;
+}
+
+.detalhe-preco {
+    color: #1BAC4B;
+    font-weight: bold;
+}
+
+.obs {
+    border: 1px solid #c0c0c1;
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    outline: none;
+    
+}
+
+.observacao-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.produto-detalhes .detalhes-info {
+    padding-bottom: 80px; 
+}
+/***************************************************************************************************/
+.tab-preco {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0px -2px 5px 3px rgba(0, 0, 0, 0.056);
+    min-width: 300px;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    z-index: 2; 
+}
+.contador{
+    padding: 5px;
+    padding-inline: 35px;
+    border-radius: 5px;
+    border: 1px solid #c9c9c9;
+}
+.remove{
+    border: none;
+    background-color: transparent;
+    color: red;
+    font-size: 18pt;
+    font-weight: bold;
+}
+
+.add{
+    border: none;
+    background-color: transparent;
+    color: red;
+    font-size: 18pt;
+    font-weight: bold;
+}
+
+.quantidade{
+    font-size: 16pt;
+    margin-inline: 10px;
+}
+
+.adicionar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #1BAC4B;
+    color: white;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: 700;
+}
+
+.adicionar span:first-child {
+    flex: 1;
+}
+
+.adicionar span:last-child {
+    margin-left: 4rem;
+    font-weight: 700;
+}
+

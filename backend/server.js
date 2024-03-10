@@ -113,6 +113,25 @@ app.get('/Produtos', async (req, res) => {
     });
 });
 
+app.get('/produtos/:id', (req, res) => {
+    const productId = req.params.id;
+    const sql = 'SELECT * FROM produto WHERE id = ?';
+    
+    db.query(sql, [productId], (err, result) => {
+        if (err) {
+            console.error("Erro ao buscar produto:", err);
+            return res.status(500).json({ error: "Erro ao buscar produto" });
+        }
+
+        if (result.length === 0) {
+            return res.status(404).json({ error: "Produto não encontrado" });
+        }
+
+        const produto = result[0];
+        return res.json(produto);
+    });
+});
+
 //--- Exclusão do produto ---------------------------------------------------------------------------------------------------------------------//
 
 app.delete("/produtos/:id", (req, res) => {
