@@ -9,7 +9,7 @@ Este repositório contém o código-fonte e os recursos relacionados ao Trabalho
  > **Dependências backend:** bcrypt, cookie-parser, cors, express, jsonwebtoken, mysql, nodemon
 
 ## Como iniciar:
-> 1. git clone **https://github.com/Yasmmin/cafebistrot.git** <br>
+> 1. git clone **https://github.com/Yasmmin/bistrot.git** <br>
 > 2. cd cafebistrot/frontend/bistrot <br>
 > 3. npm i (instalar todas as dependências do frontend) <br>
 > 4. npm start (Inicia o frontend) <br>
