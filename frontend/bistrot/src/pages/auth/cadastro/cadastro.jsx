@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import logo from '../../../assets/logoCadastro.svg';
 import Swal from 'sweetalert2'
-import './cadastro.css'; // corrigido o nome do arquivo de estilo
+import './cadastro.css';
 import Loading from "../../../components/loading/loading";
 
 // import de icones
@@ -94,7 +94,7 @@ function Cadastro() {
         loading ? (
             <Loading />
         ) : (
-            <div className="container-fluid d-flex flex-column align-items-center justify-content-start bg-white">
+            <div className="body-cadastro container-fluid d-flex flex-column align-items-center justify-content-start">
                 <div className="d-flex flex-column align-items-center mb-4 mt-5">
                     <img src={logo} alt="Logo de cadastro" className="img-fluid no-select mb-2 mt-" />
                     <h2 className="text-center">Crie uma conta</h2>

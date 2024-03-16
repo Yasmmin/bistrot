@@ -98,7 +98,7 @@ function Login() {
     loading ? (
       <Loading />
     ) : (
-      <div className="container-fluid d-flex flex-column align-items-center vh-100">
+      <div className=" body container-fluid d-flex flex-column align-items-center vh-100">
         <div className="row d-flex flex-column align-items-center mb-4">
           <img src={logoLogin} alt="Logo verde login" className="img-fluid no-select mb-2" />
           <h2 className="text-center fw-bold">Vamos Fazer Login</h2>

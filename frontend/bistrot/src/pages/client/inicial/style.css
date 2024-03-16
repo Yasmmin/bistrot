@@ -64,7 +64,7 @@
     .produto-card {
         width: 300px;
         display: grid;
-        grid-template-columns: minmax(120px, auto) 1fr;
+        grid-template-columns: minmax(140px, auto) 1fr;
         gap: 2px;
     }
 

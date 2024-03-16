@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import './style.css'
 import { AiOutlineShoppingCart } from "react-icons/ai";
@@ -60,7 +60,7 @@ function Home() {
       {loading ? (
         <Loading />
       ) : (
-        <div className="d-flex flex-wrap justify-content-start align-items-center mx-1">
+        <div className="d-flex flex-wrap justify-content-start align-items-center mx-3">
           {records.length === 0 ? (
             <div className="m-3">
               <p>Nenhum produto encontrado.</p>

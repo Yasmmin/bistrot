@@ -1,6 +1,9 @@
-/*estilo temporário para os links de recupere aqui e cadastre-se*/
+
 .recCad{
     text-decoration: none;
     color: #FF0101;
 }
 
+.body{
+    background-color: #fbfbfb;
+}

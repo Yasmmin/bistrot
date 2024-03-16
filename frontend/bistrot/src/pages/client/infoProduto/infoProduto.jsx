@@ -1,30 +1,40 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { IoIosArrowBack } from 'react-icons/io';
 import Loading from "../../../components/loading/loading";
 import SemPermissao from "../../../components/permissão/semPermissao";
 import './style.css';
+import PropTypes from "prop-types";
 
-function InfoProduto() {
+function InfoProduto({ adicionarAoCarrinho }) {
     const [auth, setAuth] = useState(false);
     const { id } = useParams();
     const [produto, setProduto] = useState(null);
     const [loading, setLoading] = useState(true);
     const [observacao, setObservacao] = useState("");
     const [contadorCaracteres, setContadorCaracteres] = useState(0);
-    const [quantidade, setQuantidade] = useState(0);
-    const [precoTotal, setPrecoTotal] = useState(0);
+    const [quantidade, setQuantidade] = useState(1);
+    const [precoTotal, setPrecoTotal] = useState(1);
+    const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
+
+    // Função para armazenar os dados do produto no localStorage
+    const saveProdutoToLocalStorage = (produtoData) => {
+        localStorage.setItem('produto', JSON.stringify(produtoData));
+    }
 
     useEffect(() => {
         const fetchProduto = async () => {
             try {
-                const res = await axios.get(`http://localhost:6969/produtos/${id}`);
-                setAuth(true);
+                // Verificar a autenticação do usuário antes de fazer a solicitação
+                const res = await axios.get(`http://localhost:6969/produtos/${id}`, { withCredentials: true });
                 setProduto(res.data);
+                setAuth(true);
+                // Salvando os dados do produto no localStorage
+                saveProdutoToLocalStorage(res.data);
             } catch (err) {
                 console.error("Erro ao carregar produto:", err);
-                setAuth(false);
+                setAuth(false); 
             } finally {
                 setLoading(false);
             }
@@ -35,6 +45,13 @@ function InfoProduto() {
     useEffect(() => {
         setPrecoTotal(produto ? produto.preco * quantidade : 0);
     }, [quantidade, produto]);
+    useEffect(() => {
+        const storedCarrinhoProdutos = localStorage.getItem('carrinhoProdutos');
+        if (storedCarrinhoProdutos) {
+            setCarrinhoProdutos(JSON.parse(storedCarrinhoProdutos));
+        }
+    }, []);
+    
 
     const handleObservacaoChange = (event) => {
         const textoObservacao = event.target.value;
@@ -54,6 +71,17 @@ function InfoProduto() {
         }
     };
 
+    const adicionarProdutoAoCarrinho = () => {
+        if (produto) {
+            const precoTotalCalculado = produto.preco * quantidade;
+            const produtoAdicionado = { id: produto.id, produto, quantidade, precoTotal: precoTotalCalculado };
+            const novoCarrinho = [...carrinhoProdutos, produtoAdicionado];
+            setCarrinhoProdutos(novoCarrinho);
+            adicionarAoCarrinho(produtoAdicionado);
+            localStorage.setItem('carrinhoProdutos', JSON.stringify(novoCarrinho));
+        }
+    };
+    
     return (
         <div>
             {loading ? (
@@ -103,7 +131,7 @@ function InfoProduto() {
                             <button onClick={add} className="add">+</button>
                         </div>
                         <div className="add-carrinho">
-                            <button className="adicionar">
+                            <button onClick={adicionarProdutoAoCarrinho} className="adicionar">
                                 <span>Adicionar</span>
                                 <span>{precoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                             </button>
@@ -111,10 +139,14 @@ function InfoProduto() {
                     </div>
                 </div>
             ) : (
-                <SemPermissao />
+                <SemPermissao message="Você não tem permissão para visualizar este produto. Por favor, faça login." />
             )}
         </div>
     );
 }
+
+InfoProduto.propTypes = {
+    adicionarAoCarrinho: PropTypes.func.isRequired
+};
 
 export default InfoProduto;
