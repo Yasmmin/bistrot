@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Cadastro from './pages/auth/cadastro/cadastro';
 import Login from './pages/auth/login/login';
 import Senha from './pages/auth/senha/Senha';
-import Home from './pages/client/inicial/home'; // Rota definitiva da tela Inicial
+import Home from './pages/client/inicial'; // Rota definitiva da tela Inicial
 import Perfil from './../src/pages/client/perfil/perfil'
 import SemPermissao from './components/permissão/semPermissao';
 import Carrinho from './pages/client/carrinho/carrinho';
@@ -23,10 +23,13 @@ import Cliente from './pages/admin/clientes/cliente';
 
 function App() {
   const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
+  const [id, setId] = useState(localStorage.getItem('userId') || ""); 
 
   const adicionarAoCarrinho = (produto) => {
     setCarrinhoProdutos([...carrinhoProdutos, produto]);
+    setId(produto.userId);
   };
+
 
   return (
     <BrowserRouter>
@@ -37,9 +40,10 @@ function App() {
         <Route path='/senha' element={<Senha />}></Route>
         <Route path='/perfil' element={<Perfil />}></Route>
         <Route path='/permissao' element={<SemPermissao />}></Route>
-        <Route path='/carrinho' element={<Carrinho carrinhoProdutos={carrinhoProdutos} />}></Route>
+        <Route path='/carrinho' element={<Carrinho carrinhoProdutos={carrinhoProdutos} userId={id} />}></Route>
         <Route path='/pedidos' element={<Pedidos />}></Route>
-        <Route path='/infoproduto/:id' element={<InfoProduto adicionarAoCarrinho={adicionarAoCarrinho} />}></Route>
+        <Route path='/infoproduto/:id' element={<InfoProduto adicionarAoCarrinho={adicionarAoCarrinho} userId={id} />}></Route>
+
 
         {/*Rotas que serão privadas - tem que fazer*/}
         <Route path='/sidebar' element={<Sidebar />}></Route>

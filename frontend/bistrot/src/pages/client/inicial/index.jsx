@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import './style.css'
 import { AiOutlineShoppingCart } from "react-icons/ai";
-import { CiHeart } from "react-icons/ci";
+
 import TabBar from "../../../components/tabBar/tabBar";
 import Loading from "../../../components/loading/loading";
 import { Link } from "react-router-dom";
@@ -42,12 +42,6 @@ function Home() {
             placeholder="pesquisar"
             onChange={Filter}
           />
-          <Link to="/favoritos">
-            <button type="button" className="card-button mx-1 mx-sm-2 mx-md-2">
-              <CiHeart />
-              <span className="cart-status">1</span>
-            </button>
-          </Link>
           <Link to='/carrinho'>
             <button type="button" className="card-button mx-1 mx-sm-2 mx-md-2">
               <AiOutlineShoppingCart />

@@ -269,7 +269,7 @@ app.post('/login', (req, res) => {
 
                 const token = jwt.sign({ nome, email, role, rua, casa, id }, "jwt-secret-key", { expiresIn: '1d' });
                 res.cookie('token', token);
-                return res.json({ Status: "Sucesso!", role });
+                return res.json({ Status: "Sucesso!", role, token,id });
 
             } else {
                 return res.json({ Error: "Senha incorreta" });

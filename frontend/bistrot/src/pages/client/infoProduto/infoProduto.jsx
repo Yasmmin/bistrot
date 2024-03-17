@@ -1,40 +1,38 @@
+//dependencias do projeto
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import Swal from 'sweetalert2';
+
+//icones
 import { IoIosArrowBack } from 'react-icons/io';
+
+//arquivos
 import Loading from "../../../components/loading/loading";
 import SemPermissao from "../../../components/permissão/semPermissao";
 import './style.css';
-import PropTypes from "prop-types";
 
-function InfoProduto({ adicionarAoCarrinho }) {
-    const [auth, setAuth] = useState(false);
+function InfoProduto({ userId }) {
     const { id } = useParams();
+    const [auth, setAuth] = useState(false);
     const [produto, setProduto] = useState(null);
     const [loading, setLoading] = useState(true);
     const [observacao, setObservacao] = useState("");
     const [contadorCaracteres, setContadorCaracteres] = useState(0);
     const [quantidade, setQuantidade] = useState(1);
-    const [precoTotal, setPrecoTotal] = useState(1);
+    const [precoTotal, setPrecoTotal] = useState(0);
     const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
-
-    // Função para armazenar os dados do produto no localStorage
-    const saveProdutoToLocalStorage = (produtoData) => {
-        localStorage.setItem('produto', JSON.stringify(produtoData));
-    }
 
     useEffect(() => {
         const fetchProduto = async () => {
             try {
-                // Verificar a autenticação do usuário antes de fazer a solicitação
                 const res = await axios.get(`http://localhost:6969/produtos/${id}`, { withCredentials: true });
                 setProduto(res.data);
                 setAuth(true);
-                // Salvando os dados do produto no localStorage
-                saveProdutoToLocalStorage(res.data);
             } catch (err) {
                 console.error("Erro ao carregar produto:", err);
-                setAuth(false); 
+                setAuth(false);
             } finally {
                 setLoading(false);
             }
@@ -43,15 +41,9 @@ function InfoProduto({ adicionarAoCarrinho }) {
     }, [id]);
 
     useEffect(() => {
-        setPrecoTotal(produto ? produto.preco * quantidade : 0);
-    }, [quantidade, produto]);
-    useEffect(() => {
-        const storedCarrinhoProdutos = localStorage.getItem('carrinhoProdutos');
-        if (storedCarrinhoProdutos) {
-            setCarrinhoProdutos(JSON.parse(storedCarrinhoProdutos));
-        }
-    }, []);
-    
+        const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
+        setCarrinhoProdutos(storedCarrinhoProdutos);
+    }, [userId]);
 
     const handleObservacaoChange = (event) => {
         const textoObservacao = event.target.value;
@@ -66,7 +58,7 @@ function InfoProduto({ adicionarAoCarrinho }) {
     };
 
     const remove = () => {
-        if (quantidade > 0) {
+        if (quantidade > 1) {
             setQuantidade(quantidade - 1);
         }
     };
@@ -74,14 +66,36 @@ function InfoProduto({ adicionarAoCarrinho }) {
     const adicionarProdutoAoCarrinho = () => {
         if (produto) {
             const precoTotalCalculado = produto.preco * quantidade;
-            const produtoAdicionado = { id: produto.id, produto, quantidade, precoTotal: precoTotalCalculado };
-            const novoCarrinho = [...carrinhoProdutos, produtoAdicionado];
-            setCarrinhoProdutos(novoCarrinho);
-            adicionarAoCarrinho(produtoAdicionado);
-            localStorage.setItem('carrinhoProdutos', JSON.stringify(novoCarrinho));
+            const produtoExistenteIndex = carrinhoProdutos.findIndex(item => item.produto.id === produto.id);
+
+            if (produtoExistenteIndex !== -1) {
+                const novoCarrinho = [...carrinhoProdutos];
+                novoCarrinho[produtoExistenteIndex].quantidade += quantidade;
+                novoCarrinho[produtoExistenteIndex].precoTotal += precoTotalCalculado;
+                setCarrinhoProdutos(novoCarrinho);
+                localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novoCarrinho));
+            } else {
+                const produtoAdicionado = { produto: produto, quantidade: quantidade, precoTotal: precoTotalCalculado };
+                const novoCarrinho = [...carrinhoProdutos, produtoAdicionado];
+                setCarrinhoProdutos(novoCarrinho);
+                localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novoCarrinho));
+            }
+            // Exibir animação de sucesso
+            Swal.fire({
+                icon: 'success',
+                text:'Produto adicionado ao carrinho!',
+                showConfirmButton: false,
+                timer: 1500,
+            });
         }
     };
-    
+
+
+
+    useEffect(() => {
+        setPrecoTotal(produto ? produto.preco * quantidade : 0);
+    }, [quantidade, produto]);
+
     return (
         <div>
             {loading ? (
@@ -107,7 +121,6 @@ function InfoProduto({ adicionarAoCarrinho }) {
                         </ul>
                         <hr />
                         <h2 className="detalhe-preco mb-4">R$ {produto.preco}</h2>
-
                         <div className="observacao-container mx-1">
                             <h4 style={{ fontWeight: 'bold', marginRight: '10px' }}>Alguma observação?</h4>
                             <span className="contar-caracteres">{contadorCaracteres}/100</span>
@@ -120,13 +133,11 @@ function InfoProduto({ adicionarAoCarrinho }) {
                             onChange={handleObservacaoChange}
                         />
                     </div>
-
                     <div className="tab-preco mb-3">
                         <div className="contador">
                             {quantidade > 1 && (
                                 <button onClick={remove} className="remove">-</button>
                             )}
-
                             <span className="quantidade">{quantidade}</span>
                             <button onClick={add} className="add">+</button>
                         </div>
@@ -146,7 +157,7 @@ function InfoProduto({ adicionarAoCarrinho }) {
 }
 
 InfoProduto.propTypes = {
-    adicionarAoCarrinho: PropTypes.func.isRequired
+    userId: PropTypes.string.isRequired
 };
 
 export default InfoProduto;

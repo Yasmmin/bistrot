@@ -35,6 +35,12 @@
     color: #a3a2a2;
     text-transform: capitalize;
 }
+.detalhe-tamanho{
+    font-weight: bold;
+    color: #a3a2a2;
+    text-transform: capitalize;
+    text-align: end;
+}
 
 .detalhe-nome {
     font-weight: bold;
@@ -51,6 +57,7 @@
     color: #a3a2a2;
     font-weight: bold;
 }
+
 
 .detalhe-preco {
     color: #1BAC4B;
@@ -140,4 +147,5 @@
     margin-left: 4rem;
     font-weight: 700;
 }
+
 

@@ -1,14 +1,17 @@
+//dependencias
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
+
+//icones
 import { IoIosArrowBack } from 'react-icons/io';
 import { CiUser } from 'react-icons/ci';
 import { MdOutlineEmail } from 'react-icons/md';
-import Swal from 'sweetalert2';
+//arquivos
 import userPadrao from '../../../../../../backend/image/users/userPadrao.svg';
 import SemPermissao from '../../../components/permissão/semPermissao';
 import Loading from '../../../components/loading/loading';
-
 import './perfil.css'
 
 function Perfil() {
@@ -96,6 +99,7 @@ function Perfil() {
         if (result.isConfirmed) {
           axios.get('http://localhost:6969/logout', { withCredentials: true })
             .then(() => {
+           
               Swal.fire(
                 'Desconectado!',
                 'Indo para página de Login',

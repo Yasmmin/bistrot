@@ -1,3 +1,4 @@
+//dependencias
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -5,15 +6,16 @@ import { useState, useEffect } from "react";
 import logoLogin from '../../../assets/LogoLogin.svg'
 import Swal from 'sweetalert2'
 
-import Loading from './../../../components/loading/loading'
-
-import './login.css'
 // Import de icones do react-icons
 import { MdAttachEmail } from "react-icons/md";
 import { IoIosLock } from 'react-icons/io';
 import { IoEyeSharp } from "react-icons/io5";
 import { FaEyeSlash } from "react-icons/fa";
 
+//arquivos
+import Loading from './../../../components/loading/loading'
+
+import './login.css'
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -61,7 +63,9 @@ function Login() {
     axios.post('http://localhost:6969/login', values)
       .then(res => {
         if (res.data.Status === "Sucesso!") {
-          // Verifica o papel (role) do usuário e redireciona com base nele
+       
+          localStorage.setItem('userId', res.data.id);
+
           if (res.data.role === 'admin') {
             navigate('/produtos');
           } else {
