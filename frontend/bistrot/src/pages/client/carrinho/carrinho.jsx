@@ -1,22 +1,32 @@
 //dependencias do arquivo
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 
 //icones
 import { IoIosArrowBack, IoIosTrash } from 'react-icons/io';
 
 //arquivos
 import './Carrinho.css';
-import TabBar from '../../../components/tabBar/tabBar';
-
+import img from './../../../assets/SemProdutosNoCarrinho.svg'
+import Loading from '../../../components/loading/loading';
 function Carrinho({ userId }) {
   const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
+  const [precoTotal, setPrecoTotal] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
     setCarrinhoProdutos(storedCarrinhoProdutos);
+    setLoading(true);
   }, [userId]);
+
+  useEffect(() => {
+    const total = carrinhoProdutos.reduce((acc, produto) => {
+      return acc + (produto.precoTotal * produto.quantidade);
+    }, 0);
+    setPrecoTotal(total);
+  }, [carrinhoProdutos]);
 
   const incrementarQuantidade = (index) => {
     const novosProdutos = [...carrinhoProdutos];
@@ -35,6 +45,43 @@ function Carrinho({ userId }) {
     localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novosProdutos));
     setCarrinhoProdutos(novosProdutos);
   };
+
+  const quantidadeTotalProdutos = carrinhoProdutos.reduce((acc, produto) => acc + produto.quantidade, 0);
+
+  const finalizarPedido = () => {
+    // Armazenar no localStorage
+    localStorage.setItem(`pedidoFinalizado_${userId}`, JSON.stringify({
+      carrinhoProdutos,
+      precoTotal
+    }));
+    localStorage.removeItem(`carrinhoProdutos_${userId}`);
+    redirect ("/endereco")
+  };
+
+  if (!loading) {
+    return <Loading />; // Renderizar o componente de carregamento enquanto os dados estão sendo carregados
+  }
+
+  if (carrinhoProdutos.length === 0) {
+    return (
+      <div className="carrinho-container text-center">
+        <div className='header d-flex align-items-center  mt-4 mb-4'>
+          <Link to='/'>
+            <button className='btn border-0'>
+              <IoIosArrowBack size={30} />
+            </button>
+          </Link>
+          <h1 className='ms-1 mb-2'>Carrinho</h1>
+        </div>
+        <div className='mt-5 mx-4'>
+          <img src={img} className='img-vazio' alt='carrinho vazio' />
+          <h3>ops..!</h3>
+          <p>Parece que você ainda não tem nada em seu carrinho :(</p>
+        </div>
+      </div>
+
+    );
+  }
 
   return (
     <div className="carrinho-container">
@@ -75,10 +122,17 @@ function Carrinho({ userId }) {
                 </div>
               </div>
             </div>
+            <div className='tab-pedido'>
+              <div className='finalizar container d-flex justify-content-between'>
+                <span className='precoTotal'> {precoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                <Link to='/endereco' className='finalizar-pedido' onClick={finalizarPedido}>FINALIZAR({quantidadeTotalProdutos})</Link>
+              </div>
+            </div>
+
           </div>
         ))}
       </div>
-      <TabBar />
+
     </div>
   );
 }

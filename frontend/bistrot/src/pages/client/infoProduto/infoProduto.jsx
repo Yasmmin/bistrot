@@ -64,30 +64,50 @@ function InfoProduto({ userId }) {
     };
 
     const adicionarProdutoAoCarrinho = () => {
-        if (produto) {
-            const precoTotalCalculado = produto.preco * quantidade;
-            const produtoExistenteIndex = carrinhoProdutos.findIndex(item => item.produto.id === produto.id);
+        const userIdLocalStorage = localStorage.getItem('userId');
 
-            if (produtoExistenteIndex !== -1) {
-                const novoCarrinho = [...carrinhoProdutos];
-                novoCarrinho[produtoExistenteIndex].quantidade += quantidade;
-                novoCarrinho[produtoExistenteIndex].precoTotal += precoTotalCalculado;
-                setCarrinhoProdutos(novoCarrinho);
-                localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novoCarrinho));
-            } else {
-                const produtoAdicionado = { produto: produto, quantidade: quantidade, precoTotal: precoTotalCalculado };
-                const novoCarrinho = [...carrinhoProdutos, produtoAdicionado];
-                setCarrinhoProdutos(novoCarrinho);
-                localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novoCarrinho));
-            }
-            // Exibir animação de sucesso
+        if (!userIdLocalStorage) {
             Swal.fire({
-                icon: 'success',
-                text:'Produto adicionado ao carrinho!',
-                showConfirmButton: false,
-                timer: 1500,
+                icon: 'error',
+                text: 'Faça login para adicionar produtos ao carrinho!',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
             });
+            return; // Retorna para evitar a execução do restante do código
         }
+
+        if (!produto) {
+            console.error('Erro: Produto não selecionado.');
+            return;
+        }
+
+        const precoTotalCalculado = produto.preco * quantidade;
+        const produtoExistenteIndex = carrinhoProdutos.findIndex(item => item.produto.id === produto.id);
+
+        if (produtoExistenteIndex !== -1) {
+            const novoCarrinho = [...carrinhoProdutos];
+            novoCarrinho[produtoExistenteIndex].quantidade += quantidade;
+            novoCarrinho[produtoExistenteIndex].precoTotal += precoTotalCalculado;
+            setCarrinhoProdutos(novoCarrinho);
+            localStorage.setItem(`carrinhoProdutos_${userIdLocalStorage}`, JSON.stringify(novoCarrinho));
+        } else {
+            const produtoAdicionado = { produto: produto, quantidade: quantidade, precoTotal: precoTotalCalculado };
+            const novoCarrinho = [...carrinhoProdutos, produtoAdicionado];
+            setCarrinhoProdutos(novoCarrinho);
+            localStorage.setItem(`carrinhoProdutos_${userIdLocalStorage}`, JSON.stringify(novoCarrinho));
+        }
+        // Exibir animação de sucesso
+        Swal.fire({
+            icon: 'success',
+            text: 'Produto adicionado ao carrinho!',
+            showConfirmButton: false,
+            timer: 1500,
+        });
     };
 
 
