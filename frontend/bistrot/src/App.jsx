@@ -10,7 +10,7 @@ import SemPermissao from './components/permissão/semPermissao';
 import Carrinho from './pages/client/carrinho/carrinho';
 import Pedidos from './pages/client/pedidos/pedidos';
 import InfoProduto from './pages/client/infoProduto/infoProduto';
-import Endereco from "./pages/client/endereco/endereco";
+import Finalizar from "./pages/client/finalizar/finalizar";
 
 //Rotas que serão privadas/admin
 import Sidebar from './components/sidebar/sidebar';
@@ -44,7 +44,7 @@ function App() {
         <Route path='/carrinho' element={<Carrinho carrinhoProdutos={carrinhoProdutos} userId={id} />}></Route>
         <Route path='/pedidos' element={<Pedidos />}></Route>
         <Route path='/infoproduto/:id' element={<InfoProduto adicionarAoCarrinho={adicionarAoCarrinho} userId={id} />}></Route>
-        <Route path='/endereco' element={<Endereco />}></Route>
+        <Route path='/finalizar' element={<Finalizar />}></Route>
 
 
         {/*Rotas que serão privadas - tem que fazer*/}

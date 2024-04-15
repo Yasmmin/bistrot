@@ -55,7 +55,7 @@ function Carrinho({ userId }) {
       precoTotal
     }));
     localStorage.removeItem(`carrinhoProdutos_${userId}`);
-    redirect ("/endereco")
+    redirect ("/finalizar")
   };
 
   if (!loading) {
@@ -125,7 +125,7 @@ function Carrinho({ userId }) {
             <div className='tab-pedido'>
               <div className='finalizar container d-flex justify-content-between'>
                 <span className='precoTotal'> {precoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                <Link to='/endereco' className='finalizar-pedido' onClick={finalizarPedido}>FINALIZAR({quantidadeTotalProdutos})</Link>
+                <Link to='/finalizar' className='finalizar-pedido' onClick={finalizarPedido}>FINALIZAR({quantidadeTotalProdutos})</Link>
               </div>
             </div>
 

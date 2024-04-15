@@ -1,0 +1,136 @@
+.botao-edit {
+    padding-inline: 15%;
+    padding-block: 10%;
+    background-color: rgba(240, 248, 255, 0);
+    border-color: #1BAC4B;
+    color: #1BAC4B;
+    font-weight: 700;
+    border: 2px solid #1BAC4B;
+    border-radius: 5%;
+}
+
+.endereco {
+    background-color: #1BAC4B;
+    padding-inline: 1%;
+    padding-top: 4%;
+    padding-bottom: 1%;
+    border-radius: 5px;
+    margin-top: 20px;
+    min-width: 400px;
+    max-width: 1200px;
+}
+
+.endereco-info {
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+
+.endereco-info button {
+    padding-block: 3%;
+    padding-inline: 4%;
+    border: 1px solid #fff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.entrega-casa {
+    border-top: 1px solid #ccc;
+    padding-block: 10px;
+}
+
+
+.outras-informacoes {
+    margin-top: 10px;
+    background-color: #fff;
+    padding-inline: 5%;
+    padding-bottom: 1%;
+    padding-top: 3%;
+    display: flex;
+    flex-direction: column;
+}
+
+.outras-informacoes h5 {
+    margin-bottom: 0;
+}
+
+
+.add-endereco {
+    font-size: 10pt;
+    background-color: #ffffff00;
+    padding-block: 3%;
+}
+
+.info-estabelecimento {
+    font-size: 11pt;
+    margin: 0;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox {
+    margin-left: auto;
+    margin-bottom: 3%;
+    padding: 2%;
+    border-radius: 100%;
+    border: 2px solid #2b2b2b;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    max-width: 760px;
+    transform: scale(0.85);
+}
+
+.checkbox:checked {
+    padding: 2%;
+    border: 2px solid #1BAC4B;
+    background-color: #1BAC4B;
+}
+
+.forma-pagamento {
+    background-color: #1BAC4B;
+    padding-inline: 1%;
+    padding-top: 4%;
+    padding-bottom: 1%;
+    border-radius: 5px;
+    margin-top: 20px;
+    min-width: 400px;
+    max-width: 1200px;
+}
+
+.outras-informacoes-pagamento {
+    border-top: 1px solid #ccc;
+    margin-top: 10px;
+    background-color: #fff;
+    padding-inline: 5%;
+    padding-bottom: 1%;
+    padding-top: 3%;
+    display: flex;
+    flex-direction: column;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+}
+
+.info-pagamento {
+    margin-left: 10px;
+    margin-top: 5%;
+}
+
+
+.linha-separadora {
+    width: 100%;
+    border-top: 1px solid #ccc;
+}
+
+.preco {
+    border-bottom: 1px solid #ced4da;
+    padding-block: 5%;
+}
