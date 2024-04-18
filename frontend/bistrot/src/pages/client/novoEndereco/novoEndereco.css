@@ -1,0 +1,43 @@
+.formulario-endereco {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 95%;
+}
+
+.formulario-endereco div {
+    margin-bottom: 5%;
+}
+
+.formulario-endereco label {
+    display: block;
+    margin-bottom: 3%;
+    font-weight: bold;
+}
+
+.formulario-endereco input[type='text'] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.salvar-endereco{
+    margin: 0 auto;
+    display: block;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+
+}
+
+.formulario-endereco input[type='text']:focus {
+    outline: none;
+    border-color: #000000; /* Define a cor da borda quando o campo está focado */
+}

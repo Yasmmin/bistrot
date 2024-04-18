@@ -56,6 +56,8 @@ function Perfil() {
       });
   }, []);
 
+
+
   const handleSave = () => {
     const formData = new FormData();
     if (imagemSelecionada) {
@@ -75,6 +77,7 @@ function Perfil() {
         console.log('Resposta do servidor:', response.data);
         setFoto(response.data.foto);
         setEditando(false);
+        //window.location.reload();
       })
       .catch(error => {
         console.error('Erro ao salvar dados do perfil:', error);
@@ -99,7 +102,9 @@ function Perfil() {
         if (result.isConfirmed) {
           axios.get('http://localhost:6969/logout', { withCredentials: true })
             .then(() => {
-           
+              // Limpar localStorage
+              localStorage.removeItem('pedidoFinalizado');
+
               Swal.fire(
                 'Desconectado!',
                 'Indo para página de Login',
@@ -122,6 +127,7 @@ function Perfil() {
       });
     }
   };
+
 
   return (
     <div>

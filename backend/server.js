@@ -116,7 +116,7 @@ app.get('/Produtos', async (req, res) => {
 app.get('/produtos/:id', (req, res) => {
     const productId = req.params.id;
     const sql = 'SELECT * FROM produto WHERE id = ?';
-    
+
     db.query(sql, [productId], (err, result) => {
         if (err) {
             console.error("Erro ao buscar produto:", err);
@@ -269,7 +269,7 @@ app.post('/login', (req, res) => {
 
                 const token = jwt.sign({ nome, email, role, rua, casa, id }, "jwt-secret-key", { expiresIn: '1d' });
                 res.cookie('token', token);
-                return res.json({ Status: "Sucesso!", role, token,id });
+                return res.json({ Status: "Sucesso!", role, token, id });
 
             } else {
                 return res.json({ Error: "Senha incorreta" });
@@ -522,6 +522,68 @@ app.get('/cliente', (req, res) => {
         return res.json(result);
     });
 });
+
+
+//--- enviar o endereço do cliente pro banco ---------------------------------------------------------------------------------------------------------------------//
+app.post('/endereco', verifyUser, (req, res) => {
+    const userId = req.userId; // Obtém o ID do usuário autenticado
+    const { bairro, rua, casa, complemento } = req.body;
+
+    // Verifica se o usuário existe
+    const checkUserQuery = "SELECT * FROM cliente WHERE id = ?";
+    db.query(checkUserQuery, [userId], (err, userData) => {
+        if (err) {
+            console.error("Erro ao verificar usuário:", err);
+            return res.status(500).json({ error: "Erro interno do servidor" });
+        }
+        if (userData.length === 0) {
+            return res.status(404).json({ error: "Usuário não encontrado" });
+        }
+
+        // Atualiza os dados do cliente com o novo endereço
+        const updateQuery = "UPDATE cliente SET bairro = ?, rua = ?, casa = ?, complemento = ? WHERE id = ?";
+        const updateValues = [bairro, rua, casa, complemento, userId];
+
+        db.query(updateQuery, updateValues, (err, result) => {
+            if (err) {
+                console.error("Erro ao atualizar endereço no banco de dados:", err);
+                return res.status(500).json({ error: "Erro ao atualizar endereço no banco de dados" });
+            }
+            console.log("Endereço atualizado com sucesso para o usuário ID:", userId);
+            return res.status(200).json({ message: "Endereço atualizado com sucesso" });
+        });
+    });
+});
+
+//--- Pegar endereco ---------------------------------------------------------------------------------------------------------------------//
+app.get('/endereco', verifyUser, (req, res) => {
+    const userId = req.userId;
+    const query = "SELECT * FROM cliente WHERE id = ?";
+
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            console.error('Erro ao consultar o banco de dados:', error);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+        const userData = results[0];
+        return res.json({
+            Status: "Sucesso!",
+            userId: userId,
+            rua: userData.rua,
+            casa: userData.casa,
+            bairro: userData.bairro,
+            complemento: userData.complemento
+        });
+    });
+});
+
+
+
+
 
 //--- Inicialização do servidor ---------------------------------------------------------------------------------------------------------------------//
 

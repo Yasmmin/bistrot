@@ -65,8 +65,9 @@ function InfoProduto({ userId }) {
 
     const adicionarProdutoAoCarrinho = () => {
         const userIdLocalStorage = localStorage.getItem('userId');
-
+    
         if (!userIdLocalStorage) {
+            // Tratar o caso em que o usuário não está autenticado
             Swal.fire({
                 icon: 'error',
                 text: 'Faça login para adicionar produtos ao carrinho!',
@@ -78,17 +79,17 @@ function InfoProduto({ userId }) {
                     window.location.href = '/login';
                 }
             });
-            return; // Retorna para evitar a execução do restante do código
+            return;
         }
-
+    
         if (!produto) {
             console.error('Erro: Produto não selecionado.');
             return;
         }
-
+    
         const precoTotalCalculado = produto.preco * quantidade;
         const produtoExistenteIndex = carrinhoProdutos.findIndex(item => item.produto.id === produto.id);
-
+    
         if (produtoExistenteIndex !== -1) {
             const novoCarrinho = [...carrinhoProdutos];
             novoCarrinho[produtoExistenteIndex].quantidade += quantidade;
@@ -109,9 +110,7 @@ function InfoProduto({ userId }) {
             timer: 1500,
         });
     };
-
-
-
+    
     useEffect(() => {
         setPrecoTotal(produto ? produto.preco * quantidade : 0);
     }, [quantidade, produto]);

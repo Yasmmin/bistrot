@@ -1,7 +1,7 @@
 //dependencias do arquivo
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Link, redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 //icones
 import { IoIosArrowBack, IoIosTrash } from 'react-icons/io';
@@ -17,10 +17,12 @@ function Carrinho({ userId }) {
 
   useEffect(() => {
     const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
-    setCarrinhoProdutos(storedCarrinhoProdutos);
+    if (storedCarrinhoProdutos.length > 0) {
+      setCarrinhoProdutos(storedCarrinhoProdutos);
+    }
     setLoading(true);
   }, [userId]);
-
+  
   useEffect(() => {
     const total = carrinhoProdutos.reduce((acc, produto) => {
       return acc + (produto.precoTotal * produto.quantidade);
@@ -49,13 +51,18 @@ function Carrinho({ userId }) {
   const quantidadeTotalProdutos = carrinhoProdutos.reduce((acc, produto) => acc + produto.quantidade, 0);
 
   const finalizarPedido = () => {
+    const userIdLocalStorage = localStorage.getItem('userId');
     // Armazenar no localStorage
     localStorage.setItem(`pedidoFinalizado_${userId}`, JSON.stringify({
       carrinhoProdutos,
       precoTotal
     }));
-    localStorage.removeItem(`carrinhoProdutos_${userId}`);
-    redirect ("/finalizar")
+    localStorage.setItem(`pedidoFinalizado_${userIdLocalStorage}`, JSON.stringify({
+      carrinhoProdutos,
+      precoTotal
+  }));
+  localStorage.removeItem(`carrinhoProdutos_${userIdLocalStorage}`);
+  window.location.href = "/finalizar";
   };
 
   if (!loading) {

@@ -12,6 +12,8 @@ import Pedidos from './pages/client/pedidos/pedidos';
 import InfoProduto from './pages/client/infoProduto/infoProduto';
 import Finalizar from "./pages/client/finalizar/finalizar";
 
+import NovoEndereco from "./pages/client/novoEndereco/novoEndereco";
+
 //Rotas que serão privadas/admin
 import Sidebar from './components/sidebar/sidebar';
 import Produtos from './pages/admin/produtos/produtos';
@@ -45,6 +47,7 @@ function App() {
         <Route path='/pedidos' element={<Pedidos />}></Route>
         <Route path='/infoproduto/:id' element={<InfoProduto adicionarAoCarrinho={adicionarAoCarrinho} userId={id} />}></Route>
         <Route path='/finalizar' element={<Finalizar />}></Route>
+        <Route path='/novoendereco' element={<NovoEndereco />}></Route>
 
 
         {/*Rotas que serão privadas - tem que fazer*/}

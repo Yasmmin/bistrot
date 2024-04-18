@@ -11,6 +11,7 @@ function Home() {
   const [produtos, setProdutos] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cartLoaded, setCartLoaded] = useState(false);
 
   useEffect(() => {
     const fetchProdutos = async () => {
@@ -24,8 +25,11 @@ function Home() {
         setLoading(false);
       }
     };
-    fetchProdutos();
-  }, []);
+    if (!cartLoaded) {
+      fetchProdutos();
+      setCartLoaded(true);
+    }
+  }, [cartLoaded]);
 
   const Filter = (event) => {
     const searchTerm = event.target.value.toLowerCase();

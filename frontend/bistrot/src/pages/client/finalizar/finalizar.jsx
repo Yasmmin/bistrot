@@ -2,14 +2,13 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import { FaMoneyBill } from "react-icons/fa";
 import { FaRegCreditCard } from "react-icons/fa";
-
 import './finalizar.css';
 
 function Finalizar() {
   return (
-    <div className="finalizar d-flex flex-column">
+    <div className="finalizar container-flex d-flex flex-column mx-3">
       {/* Cabeçalho */}
-      <div className='header d-flex align-items-center mt-4 mb-4'>
+      <div className='header d-flex align-items-center mt-4 mb-2'>
         <Link to='/'>
           <button className='btn border-0'>
             <IoIosArrowBack size={30} />
@@ -18,11 +17,11 @@ function Finalizar() {
         <h1 className='ms-1 mb-2'>Finalizar</h1>
       </div>
 
-      <div className='container '>
+
         <div className='endereco '>
           <div className='endereco-info'>
             <p className='mx-2'>Selecione a forma de entrega</p>
-            <button className='add-endereco mx-1'>Novo endereço</button>
+            <button className='add-endereco mx-1'><Link to='/novoendereco' style={{textDecoration:'none', color:'white'}}>Novo endereço</Link></button>
           </div>
           <div>
             <div className="outras-informacoes">
@@ -77,19 +76,19 @@ function Finalizar() {
             </div>
 
             <div className="col text-end">
-              <p>35,50</p>
-              <p>35,50</p>
+              <p></p>
+              <p></p>
               <h3>35,50</h3>
             </div>
           </div>
         </div>
 
         <div className='finalizar-enviar mt-4'>
-          <button className='btn btn-danger w-100'>Finalizar</button>
+          <button className='btn btn-danger w-100 mb-4'>Finalizar</button>
         </div>
 
       </div>
-    </div>
+
   );
 }
 

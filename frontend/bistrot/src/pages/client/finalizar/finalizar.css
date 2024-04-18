@@ -1,3 +1,4 @@
+
 .botao-edit {
     padding-inline: 15%;
     padding-block: 10%;
@@ -16,7 +17,6 @@
     padding-bottom: 1%;
     border-radius: 5px;
     margin-top: 20px;
-    min-width: 400px;
     max-width: 1200px;
 }
 
@@ -99,7 +99,6 @@
     padding-bottom: 1%;
     border-radius: 5px;
     margin-top: 20px;
-    min-width: 400px;
     max-width: 1200px;
 }
 
