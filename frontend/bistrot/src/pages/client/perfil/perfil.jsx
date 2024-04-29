@@ -30,30 +30,34 @@ function Perfil() {
   const [loading, setLoading] = useState(true);
 
   axios.defaults.withCredentials = true;
+  
   useEffect(() => {
-    axios.get('http://localhost:6969/perfil', { withCredentials: true })
-      .then(res => {
-        if (res.data.Status === 'Sucesso!') {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:6969/perfil', { withCredentials: true });
+        if (response.data.Status === 'Sucesso!') {
           setAuth(true);
-          setFoto(res.data.foto);
-          setNome(res.data.nome);
-          setEmail(res.data.email);
-          setTelefone(res.data.telefone);
-          setRua(res.data.rua);
-          setCasa(res.data.casa);
-          setBairro(res.data.bairro);
-          setComplemento(res.data.complemento);
+          const userData = response.data;
+          setFoto(userData.foto);
+          setNome(userData.nome);
+          setEmail(userData.email);
+          setTelefone(userData.telefone);
+          setRua(userData.rua);
+          setCasa(userData.casa);
+          setBairro(userData.bairro);
+          setComplemento(userData.complemento);
+          localStorage.setItem('perfil_cliente', JSON.stringify(response.data));
           setLoading(false);
         } else {
-          console.error('Erro ao carregar perfil:', res.data.Error);
+          console.error('Erro ao carregar perfil:', response.data.Error);
           setAuth(false);
-          setLoading(false);
         }
-      })
-      .catch(err => {
-        console.log('Erro na requisição:', err);
-        setLoading(false);
-      });
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
 
@@ -103,14 +107,14 @@ function Perfil() {
           axios.get('http://localhost:6969/logout', { withCredentials: true })
             .then(() => {
               // Limpar localStorage
-              localStorage.removeItem('pedidoFinalizado');
-
+              localStorage.clear();
+  
               Swal.fire(
                 'Desconectado!',
                 'Indo para página de Login',
                 'success'
               );
-
+  
               setTimeout(() => {
                 window.location.href = '/login';
               }, 1000);
@@ -127,7 +131,6 @@ function Perfil() {
       });
     }
   };
-
 
   return (
     <div>

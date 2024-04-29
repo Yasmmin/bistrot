@@ -124,6 +124,7 @@ app.get('/produtos/:id', (req, res) => {
         }
 
         if (result.length === 0) {
+
             return res.status(404).json({ error: "Produto não encontrado" });
         }
 
@@ -235,6 +236,7 @@ app.get('/sidebar', verifyUser, (req, res) => {
     return res.json({ Status: "Sucesso!", nome: req.nome, role: req.role });
 });
 
+
 //--- Login de usuários ---------------------------------------------------------------------------------------------------------------------//
 
 app.post('/login', (req, res) => {
@@ -269,7 +271,7 @@ app.post('/login', (req, res) => {
 
                 const token = jwt.sign({ nome, email, role, rua, casa, id }, "jwt-secret-key", { expiresIn: '1d' });
                 res.cookie('token', token);
-                return res.json({ Status: "Sucesso!", role, token, id });
+                return res.json({ Status: "Sucesso!", role, token, id, nome });
 
             } else {
                 return res.json({ Error: "Senha incorreta" });
@@ -523,7 +525,6 @@ app.get('/cliente', (req, res) => {
     });
 });
 
-
 //--- enviar o endereço do cliente pro banco ---------------------------------------------------------------------------------------------------------------------//
 app.post('/endereco', verifyUser, (req, res) => {
     const userId = req.userId; // Obtém o ID do usuário autenticado
@@ -581,8 +582,35 @@ app.get('/endereco', verifyUser, (req, res) => {
     });
 });
 
+app.post('/finalizar', verifyUser, (req, res) => {
 
+    const { entregaCasa, formaPagamento, horaPedido, obs, total, dataAtual, userName, produtos } = req.body;
 
+    // Verificar se os dados foram recebidos corretamente
+    console.log("Dados recebidos no backend:", { userId: req.userId, entregaCasa, formaPagamento, horaPedido, dataAtual, userName, produtos });
+
+    // Montar os valores para a query SQL
+    const values = [req.userId, formaPagamento, entregaCasa, horaPedido, obs, total, dataAtual, userName];
+
+    // Convertendo o objeto JSON de produtos em um array de objetos para inserção no banco de dados
+    const produtosArray = [];
+    for (const produto in produtos) {
+        produtosArray.push({ nome: produto, quantidade: produtos[produto] });
+    }
+    values.push(JSON.stringify(produtosArray));
+
+    const sqlQuery = "INSERT INTO pedido (id_cliente, forma_pagamento, forma_entrega, hora_pedido,obs, valor_total, data, nome_cliente, produtos) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+
+    // Executar a query SQL
+    db.query(sqlQuery, values, (err, result) => {
+        if (err) {
+            console.error("Erro ao inserir dados no banco de dados:", err);
+            return res.status(500).json({ error: "Erro interno do servidor" });
+        }
+        console.log("Dados inseridos no banco de dados com sucesso:", result);
+        return res.status(200).json({ message: "Pedido finalizado com sucesso" });
+    });
+});
 
 
 //--- Inicialização do servidor ---------------------------------------------------------------------------------------------------------------------//

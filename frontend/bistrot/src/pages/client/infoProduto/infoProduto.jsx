@@ -12,46 +12,42 @@ import { IoIosArrowBack } from 'react-icons/io';
 import Loading from "../../../components/loading/loading";
 import SemPermissao from "../../../components/permissão/semPermissao";
 import './style.css';
-
 function InfoProduto({ userId }) {
-    const { id } = useParams();
-    const [auth, setAuth] = useState(false);
-    const [produto, setProduto] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [observacao, setObservacao] = useState("");
-    const [contadorCaracteres, setContadorCaracteres] = useState(0);
-    const [quantidade, setQuantidade] = useState(1);
-    const [precoTotal, setPrecoTotal] = useState(0);
-    const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
+const { id } = useParams();
+const [auth, setAuth] = useState(false);
+const [produto, setProduto] = useState(null);
+const [loading, setLoading] = useState(true);
+const [quantidade, setQuantidade] = useState(1);
+const [precoTotal, setPrecoTotal] = useState(0);
+const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
 
-    useEffect(() => {
-        const fetchProduto = async () => {
-            try {
+useEffect(() => {
+    const fetchProduto = async () => {
+        try {
+            // Verifica se o produto está armazenado no localStorage
+            const cachedProduto = localStorage.getItem(`produto_${id}`);
+            if (cachedProduto) {
+                setProduto(JSON.parse(cachedProduto));
+                setAuth(true);
+            } else {
                 const res = await axios.get(`http://localhost:6969/produtos/${id}`, { withCredentials: true });
                 setProduto(res.data);
                 setAuth(true);
-            } catch (err) {
-                console.error("Erro ao carregar produto:", err);
-                setAuth(false);
-            } finally {
-                setLoading(false);
             }
-        };
-        fetchProduto();
-    }, [id]);
-
+        } catch (err) {
+            console.error("Erro ao carregar produto:", err);
+            setAuth(false);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchProduto();
+}, [id]);
     useEffect(() => {
         const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
         setCarrinhoProdutos(storedCarrinhoProdutos);
     }, [userId]);
 
-    const handleObservacaoChange = (event) => {
-        const textoObservacao = event.target.value;
-        if (textoObservacao.length <= 100) {
-            setObservacao(textoObservacao);
-            setContadorCaracteres(textoObservacao.length);
-        }
-    };
 
     const add = () => {
         setQuantidade(quantidade + 1);
@@ -65,7 +61,7 @@ function InfoProduto({ userId }) {
 
     const adicionarProdutoAoCarrinho = () => {
         const userIdLocalStorage = localStorage.getItem('userId');
-    
+
         if (!userIdLocalStorage) {
             // Tratar o caso em que o usuário não está autenticado
             Swal.fire({
@@ -81,15 +77,15 @@ function InfoProduto({ userId }) {
             });
             return;
         }
-    
+
         if (!produto) {
             console.error('Erro: Produto não selecionado.');
             return;
         }
-    
+
         const precoTotalCalculado = produto.preco * quantidade;
         const produtoExistenteIndex = carrinhoProdutos.findIndex(item => item.produto.id === produto.id);
-    
+
         if (produtoExistenteIndex !== -1) {
             const novoCarrinho = [...carrinhoProdutos];
             novoCarrinho[produtoExistenteIndex].quantidade += quantidade;
@@ -110,7 +106,7 @@ function InfoProduto({ userId }) {
             timer: 1500,
         });
     };
-    
+
     useEffect(() => {
         setPrecoTotal(produto ? produto.preco * quantidade : 0);
     }, [quantidade, produto]);
@@ -140,17 +136,6 @@ function InfoProduto({ userId }) {
                         </ul>
                         <hr />
                         <h2 className="detalhe-preco mb-4">R$ {produto.preco}</h2>
-                        <div className="observacao-container mx-1">
-                            <h4 style={{ fontWeight: 'bold', marginRight: '10px' }}>Alguma observação?</h4>
-                            <span className="contar-caracteres">{contadorCaracteres}/100</span>
-                        </div>
-                        <textarea
-                            type="text"
-                            placeholder="Ex: Tire a cebola, adicione maionese..."
-                            className="obs"
-                            value={observacao}
-                            onChange={handleObservacaoChange}
-                        />
                     </div>
                     <div className="tab-preco mb-3">
                         <div className="contador">

@@ -63,9 +63,12 @@ function Login() {
     axios.post('http://localhost:6969/login', values)
       .then(res => {
         if (res.data.Status === "Sucesso!") {
-       
-          localStorage.setItem('userId', res.data.id);
 
+          localStorage.setItem('userId', res.data.id);
+          const nomeUsuario = res.data.nome;
+
+          // Armazenar o nome do usuário no localStorage
+          localStorage.setItem('userName', nomeUsuario);
           if (res.data.role === 'admin') {
             navigate('/produtos');
           } else {

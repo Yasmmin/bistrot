@@ -11,25 +11,32 @@ function Home() {
   const [produtos, setProdutos] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cartLoaded, setCartLoaded] = useState(false);
 
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
-        const res = await axios.get("http://localhost:6969/produtos");
-        setProdutos(res.data);
-        setRecords([...res.data]);
-        setLoading(false);
+        // Verifica se os produtos estão armazenados no localStorage
+        const cachedProdutos = localStorage.getItem("produtos");
+        if (cachedProdutos) {
+          setProdutos(JSON.parse(cachedProdutos));
+          setRecords(JSON.parse(cachedProdutos));
+          setLoading(false);
+        } else {
+          const res = await axios.get("http://localhost:6969/produtos");
+          setProdutos(res.data);
+          setRecords([...res.data]);
+          setLoading(false);
+          // Armazena os produtos no localStorage
+          localStorage.setItem("produtos", JSON.stringify(res.data));
+        }
       } catch (err) {
         console.error(err);
         setLoading(false);
       }
     };
-    if (!cartLoaded) {
-      fetchProdutos();
-      setCartLoaded(true);
-    }
-  }, [cartLoaded]);
+
+    fetchProdutos();
+  }, []);
 
   const Filter = (event) => {
     const searchTerm = event.target.value.toLowerCase();

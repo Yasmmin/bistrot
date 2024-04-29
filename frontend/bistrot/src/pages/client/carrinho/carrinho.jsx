@@ -16,13 +16,11 @@ function Carrinho({ userId }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
-    if (storedCarrinhoProdutos.length > 0) {
-      setCarrinhoProdutos(storedCarrinhoProdutos);
-    }
     setLoading(true);
+    const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
+    setCarrinhoProdutos(storedCarrinhoProdutos);
   }, [userId]);
-  
+
   useEffect(() => {
     const total = carrinhoProdutos.reduce((acc, produto) => {
       return acc + (produto.precoTotal * produto.quantidade);
@@ -47,23 +45,8 @@ function Carrinho({ userId }) {
     localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novosProdutos));
     setCarrinhoProdutos(novosProdutos);
   };
-
   const quantidadeTotalProdutos = carrinhoProdutos.reduce((acc, produto) => acc + produto.quantidade, 0);
 
-  const finalizarPedido = () => {
-    const userIdLocalStorage = localStorage.getItem('userId');
-    // Armazenar no localStorage
-    localStorage.setItem(`pedidoFinalizado_${userId}`, JSON.stringify({
-      carrinhoProdutos,
-      precoTotal
-    }));
-    localStorage.setItem(`pedidoFinalizado_${userIdLocalStorage}`, JSON.stringify({
-      carrinhoProdutos,
-      precoTotal
-  }));
-  localStorage.removeItem(`carrinhoProdutos_${userIdLocalStorage}`);
-  window.location.href = "/finalizar";
-  };
 
   if (!loading) {
     return <Loading />; // Renderizar o componente de carregamento enquanto os dados estão sendo carregados
@@ -132,7 +115,7 @@ function Carrinho({ userId }) {
             <div className='tab-pedido'>
               <div className='finalizar container d-flex justify-content-between'>
                 <span className='precoTotal'> {precoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                <Link to='/finalizar' className='finalizar-pedido' onClick={finalizarPedido}>FINALIZAR({quantidadeTotalProdutos})</Link>
+                <Link to='/finalizar' className='finalizar-pedido'>FINALIZAR({quantidadeTotalProdutos})</Link>
               </div>
             </div>
 
