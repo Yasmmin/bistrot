@@ -11,6 +11,7 @@ function Home() {
   const [produtos, setProdutos] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cartItems, setCartItems] = useState(0);
 
   useEffect(() => {
     const fetchProdutos = async () => {
@@ -36,7 +37,14 @@ function Home() {
     };
 
     fetchProdutos();
+    const userId = localStorage.getItem("userId");
+    const cartKey = `carrinhoProdutos_${userId}`;
+    const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+    setCartItems(cartItems.length);
   }, []);
+
+
+  
 
   const Filter = (event) => {
     const searchTerm = event.target.value.toLowerCase();
@@ -56,7 +64,7 @@ function Home() {
           <Link to='/carrinho'>
             <button type="button" className="card-button mx-1 mx-sm-2 mx-md-2">
               <AiOutlineShoppingCart />
-              <span className="cart-status">1</span>
+              <span className="cart-status">{cartItems}</span>
             </button>
           </Link>
         </form>

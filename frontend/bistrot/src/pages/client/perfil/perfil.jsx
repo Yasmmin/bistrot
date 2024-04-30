@@ -51,6 +51,7 @@ function Perfil() {
         } else {
           console.error('Erro ao carregar perfil:', response.data.Error);
           setAuth(false);
+          setLoading(false);
         }
       } catch (error) {
         console.error('Erro na requisição:', error);

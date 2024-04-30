@@ -101,7 +101,7 @@ function Finalizar() {
 
   return (
     <div className="finalizar container-flex d-flex flex-column mx-3">
-      <div className='header d-flex align-items-center mt-4 mb-2'>
+      <div className='header d-flex mt-4 mb-2'>
         <Link to='/'>
           <button className='btn border-0'>
             <IoIosArrowBack size={30} />

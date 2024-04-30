@@ -16,12 +16,12 @@ function Carrinho({ userId }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
     const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
     setCarrinhoProdutos(storedCarrinhoProdutos);
+    setLoading(true);
   }, [userId]);
 
-  useEffect(() => {
+ useEffect(() => {
     const total = carrinhoProdutos.reduce((acc, produto) => {
       return acc + (produto.precoTotal * produto.quantidade);
     }, 0);
@@ -49,7 +49,7 @@ function Carrinho({ userId }) {
 
 
   if (!loading) {
-    return <Loading />; // Renderizar o componente de carregamento enquanto os dados estão sendo carregados
+    return <Loading />; 
   }
 
   if (carrinhoProdutos.length === 0) {
