@@ -24,6 +24,7 @@ import AddFuncionarios from './pages/admin/funcionarios/addFuncionarios';
 import EditFuncionarios from './pages/admin/funcionarios/editFuncionario';
 import Cliente from './pages/admin/clientes/cliente';
 import Pedidos from "./pages/admin/pedidos/pedidos";
+import TodosOsPedidos from "./pages/admin/todosOsPedidos/TodosOsPedidos";
 
 function App() {
   const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
@@ -62,6 +63,7 @@ function App() {
         <Route path='/EditFuncionarios/:id' element={<EditFuncionarios />}></Route>
         <Route path='/cliente' element={<Cliente />}></Route>
         <Route path='/pedidos' element={<Pedidos/>}></Route>
+        <Route path='/todosOsPedidos' element={<TodosOsPedidos/>}></Route>
       </Routes>
     </BrowserRouter>
   )

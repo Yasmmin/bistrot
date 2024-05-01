@@ -15,6 +15,7 @@ function Carrinho({ userId }) {
   const [precoTotal, setPrecoTotal] = useState();
   const [loading, setLoading] = useState(false);
 
+  
   useEffect(() => {
     const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
     setCarrinhoProdutos(storedCarrinhoProdutos);

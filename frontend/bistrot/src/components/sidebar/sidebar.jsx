@@ -73,11 +73,11 @@ function Sidebar() {
 
                             {/*Finalizados*/}
                             <li className="nav-item mb-2">
-                                <Link to="#" className="nav-link " aria-current="page">
+                                <Link to="/todosOsPedidos" className="nav-link " aria-current="page">
                                     <div className="icon-sidebar">
                                         <MdChecklist />
                                     </div>
-                                    Finalizados
+                                    Todos os Pedidos
                                 </Link>
                             </li>
 

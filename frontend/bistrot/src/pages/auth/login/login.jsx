@@ -66,9 +66,11 @@ function Login() {
 
           localStorage.setItem('userId', res.data.id);
           const nomeUsuario = res.data.nome;
+          const token = res.data.token;
 
           // Armazenar o nome do usuário no localStorage
           localStorage.setItem('userName', nomeUsuario);
+          localStorage.setItem('token', token);
           if (res.data.role === 'admin') {
             navigate('/produtos');
           } else {

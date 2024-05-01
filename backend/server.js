@@ -209,13 +209,14 @@ app.put('/edit/:id', upload.single('novaImagem'), (req, res) => {
 //--- Verificar a autenticação do usuário e seu papel (role) ---------------------------------------------------------------------------------------------------------------------//
 
 const verifyUser = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.headers.authorization; // Alterar para pegar o token do cabeçalho Authorization
     if (!token) {
-        return res.json({ Error: "Você não está autenticado" });
+        return res.status(401).json({ Error: "Você não está autenticado" }); // Retornar status 401 se não houver token
     } else {
-        jwt.verify(token, "jwt-secret-key", (err, decoded) => {
+        const tokenString = token.split(' ')[1]; // Extrair apenas o token da string 'Bearer token'
+        jwt.verify(tokenString, "jwt-secret-key", (err, decoded) => {
             if (err) {
-                return res.json({ Error: "Token está com falhas" });
+                return res.status(401).json({ Error: "Token está com falhas" }); // Retornar status 401 se houver erro na verificação do token
             } else {
                 req.userId = decoded.id;
                 req.nome = decoded.nome;

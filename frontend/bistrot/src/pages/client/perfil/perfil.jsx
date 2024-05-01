@@ -34,7 +34,15 @@ function Perfil() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:6969/perfil', { withCredentials: true });
+        const token = localStorage.getItem('token');
+        if (!token) {
+          // Se não houver token, redirecione para a página de login
+          window.location.href = '/login';
+          return;
+        }
+        
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        const response = await axios.get('http://localhost:6969/perfil');
         if (response.data.Status === 'Sucesso!') {
           setAuth(true);
           const userData = response.data;

@@ -20,8 +20,10 @@
     padding-bottom: 1%;
     border-radius: 5px;
     margin-top: 20px;
-    max-width: 1200px;
+    transform: scale(1);
 }
+
+
 
 .endereco-info {
     justify-content: space-between;
@@ -102,7 +104,6 @@
     padding-bottom: 1%;
     border-radius: 5px;
     margin-top: 20px;
-    max-width: 1200px;
 }
 
 .outras-informacoes-pagamento {
