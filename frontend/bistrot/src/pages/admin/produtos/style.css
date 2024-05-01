@@ -18,8 +18,8 @@
 }
 
 .produto-card-admin:hover {
-    transform: translateY(-2px) scale(1.0); /* Levanta um pouco e aumenta a escala */
-    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2); /* Sombra mais nítida */
+    transform: translateY(-2px) scale(1.0); 
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2); 
 }
 
 .icone-filtro {

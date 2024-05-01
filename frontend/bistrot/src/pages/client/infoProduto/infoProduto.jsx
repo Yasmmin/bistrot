@@ -98,7 +98,7 @@ useEffect(() => {
             setCarrinhoProdutos(novoCarrinho);
             localStorage.setItem(`carrinhoProdutos_${userIdLocalStorage}`, JSON.stringify(novoCarrinho));
         }
-        // Exibir animação de sucesso
+
         Swal.fire({
             icon: 'success',
             text: 'Produto adicionado ao carrinho!',

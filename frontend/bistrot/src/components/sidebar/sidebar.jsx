@@ -36,7 +36,7 @@ function Sidebar() {
 
     return (
         <div className='body'>
-            <div className="d-flex flex-nowrap m-0">
+            <div className="d-flex m-0">
                 <div className="d-flex flex-column p-3 sidebar" style={{ width: '280px', height:'100vh' }}>
 
                     {/*div para logo*/}
@@ -53,7 +53,7 @@ function Sidebar() {
                         {/*Opção Pedidos*/}
                         <ul className="nav nav-pills flex-column mb-auto">
                             <li className="nav-item mb-2">
-                                <Link to="#" className="nav-link" aria-current="page">
+                                <Link to="/Pedidos" className="nav-link" aria-current="page">
                                     <div className="icon-sidebar">
                                         <MdChecklist />
                                     </div>

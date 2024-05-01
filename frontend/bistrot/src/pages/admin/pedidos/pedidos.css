@@ -1,0 +1,67 @@
+.pedidos-body{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    background-color:#d7d7d730;
+}
+.content {
+    padding-left: 280px; 
+}
+
+.analise{
+    background-color:#fdd821d5 ;
+    z-index: 0;
+    height: 100vw;
+}
+
+.producao{
+    height: 100vw;
+background-color:#feac5fd1 ;
+}
+
+.finalizado{
+    height: 100vw;
+background-color: #1bac4bc9;
+}
+
+.titulo{
+    color: #ffffff;
+    text-align: start;
+    margin-top: 5%;
+}
+
+.conteudo{
+    width: 95%;
+    margin-top: 3%;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+.info-button{
+    background-color: transparent;
+    border: none;
+}
+
+.info-cliente-pedido p{
+    font-size: 10pt;
+    margin-bottom: 0;
+
+} 
+
+.info-btn-aceitar{
+    border: none;
+    width: 90%;
+    height: 40px;
+    color: white;
+    background-color:#5FC381 ;
+    border-radius: 8px;
+}
+
+.info-btn-recusar{
+    border: none;
+    width: 90%;
+    height: 40px;
+    color: white;
+    background-color:#F36363 ;
+    border-radius: 8px;
+}

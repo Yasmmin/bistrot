@@ -30,7 +30,7 @@ function Cliente() {
     return (
         <div className="d-flex">
             <Sidebar />
-            <div className="d-flex flex-column flex-grow-1 ml-2 column">
+            <div className="content d-flex flex-column flex-grow-1 ml-2 column">
                 <div className="d-flex flex-column flex-grow-1 ml-2 column">
                     <div className="d-flex justify-content-between align-items-center mt-3 mx-4">
                         <form className="d-flex w-100 ">

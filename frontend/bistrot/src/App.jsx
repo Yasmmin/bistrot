@@ -8,7 +8,6 @@ import Home from './pages/client/inicial'; // Rota definitiva da tela Inicial
 import Perfil from './../src/pages/client/perfil/perfil'
 import SemPermissao from './components/permissão/semPermissao';
 import Carrinho from './pages/client/carrinho/carrinho';
-import Pedidos from './pages/client/pedidos/pedidos';
 import InfoProduto from './pages/client/infoProduto/infoProduto';
 import Finalizar from "./pages/client/finalizar/finalizar";
 
@@ -24,6 +23,7 @@ import Funcionarios from './pages/admin/funcionarios/funcionarios';
 import AddFuncionarios from './pages/admin/funcionarios/addFuncionarios';
 import EditFuncionarios from './pages/admin/funcionarios/editFuncionario';
 import Cliente from './pages/admin/clientes/cliente';
+import Pedidos from "./pages/admin/pedidos/pedidos";
 
 function App() {
   const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
@@ -61,6 +61,7 @@ function App() {
         <Route path='/Addfuncionarios' element={<AddFuncionarios />}></Route>
         <Route path='/EditFuncionarios/:id' element={<EditFuncionarios />}></Route>
         <Route path='/cliente' element={<Cliente />}></Route>
+        <Route path='/pedidos' element={<Pedidos/>}></Route>
       </Routes>
     </BrowserRouter>
   )

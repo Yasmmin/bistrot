@@ -193,7 +193,7 @@ function CriarProduto() {
   return (
     <div className="container-fluid d-flex">
       <Sidebar />
-      <div className="d-flex flex-column justify-content-start">
+      <div className="content d-flex flex-column justify-content-start">
         <div className="d-flex align-items-center mt-4 mx-5">
           <button className="btn border-0" onClick={handleBack}>
             <IoIosArrowBack size={32} />

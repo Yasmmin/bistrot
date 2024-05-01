@@ -574,16 +574,17 @@ app.get('/endereco', verifyUser, (req, res) => {
         return res.json({
             Status: "Sucesso!",
             userId: userId,
+            email: userData.email,
             rua: userData.rua,
             casa: userData.casa,
             bairro: userData.bairro,
             complemento: userData.complemento
+            
         });
     });
 });
 
 app.post('/finalizar', verifyUser, (req, res) => {
-
     const { entregaCasa, formaPagamento, horaPedido, obs, total, dataAtual, userName, produtos } = req.body;
 
     // Verificar se os dados foram recebidos corretamente
@@ -591,15 +592,20 @@ app.post('/finalizar', verifyUser, (req, res) => {
 
     // Montar os valores para a query SQL
     const values = [req.userId, formaPagamento, entregaCasa, horaPedido, obs, total, dataAtual, userName];
+    const produtosArray = []; // Inicializar o array para os produtos
 
     // Convertendo o objeto JSON de produtos em um array de objetos para inserção no banco de dados
-    const produtosArray = [];
-    for (const produto in produtos) {
-        produtosArray.push({ nome: produto, quantidade: produtos[produto] });
-    }
-    values.push(JSON.stringify(produtosArray));
+    produtos.forEach(produto => {
+        console.log("Produto:", produto.nome);
+        console.log("Quantidade:", produto.quantidade);
+        produtosArray.push({ nome: produto.nome, quantidade: produto.quantidade });
+    });
+    values.push(JSON.stringify(produtosArray)); // Adicionar o array de produtos à lista de valores
 
-    const sqlQuery = "INSERT INTO pedido (id_cliente, forma_pagamento, forma_entrega, hora_pedido,obs, valor_total, data, nome_cliente, produtos) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+    // Adicionando "Em análise" como o status padrão
+    values.push("Em análise");
+
+    const sqlQuery = "INSERT INTO pedido (id_cliente, forma_pagamento, forma_entrega, hora_pedido, obs, valor_total, data, nome_cliente, produtos, status_pedido) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Executar a query SQL
     db.query(sqlQuery, values, (err, result) => {
@@ -611,6 +617,53 @@ app.post('/finalizar', verifyUser, (req, res) => {
         return res.status(200).json({ message: "Pedido finalizado com sucesso" });
     });
 });
+
+
+//--- Recuperar Pedidos do Banco de Dados -----------------------------------------------//
+app.get('/pedidos', (req, res) => {
+    const sql = "SELECT p.*, c.rua, c.casa, c.bairro, c.complemento,c.email FROM pedido p JOIN cliente c ON p.id_cliente = c.id";
+    db.query(sql, (err, data) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Erro ao buscar pedidos", details: err.message });
+        }
+        return res.json(data);
+    });
+});
+
+// Endpoint para atualizar o status do pedido
+app.put('/pedidos/:numero_pedido/status', (req, res) => {
+    const pedidoNumero = req.params.numero_pedido; 
+    const novoStatus = req.body.novoStatus;
+
+    // Verifique se o pedido com o número fornecido existe no banco de dados
+    const checkPedidoQuery = "SELECT * FROM pedido WHERE numero_pedido = ?";
+    db.query(checkPedidoQuery, [pedidoNumero], (err, result) => {
+        if (err) {
+            console.error("Erro ao buscar pedido:", err);
+            return res.status(500).json({ error: "Erro interno do servidor" });
+        }
+
+        // Se o pedido não for encontrado, retorne um erro
+        if (result.length === 0) {
+            return res.status(404).json({ error: "Pedido não encontrado" });
+        }
+
+        // Atualize o status do pedido para o novo status fornecido
+        const updateStatusQuery = "UPDATE pedido SET status_pedido = ? WHERE numero_pedido = ?";
+        db.query(updateStatusQuery, [novoStatus, pedidoNumero], (err, result) => {
+            if (err) {
+                console.error("Erro ao atualizar status do pedido:", err);
+                return res.status(500).json({ error: "Erro interno do servidor" });
+            }
+
+            // Retorna uma mensagem de sucesso
+            return res.json({ message: `Status do pedido atualizado para '${novoStatus}'` });
+        });
+    });
+});
+
+
 
 
 //--- Inicialização do servidor ---------------------------------------------------------------------------------------------------------------------//

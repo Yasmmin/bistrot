@@ -48,7 +48,7 @@ function Finalizar() {
   const handleFinalizarPedido = () => {
     const data = new Date();
     const dataAtual = data.toISOString().slice(0, 10);
-    const horaAtual = `${data.getHours()}:${data.getMinutes()}`;
+    const horaAtual = `${data.getHours().toString().padStart(2, '0')}:${data.getMinutes().toString().padStart(2, '0')}`;
     setHoraPedido(horaAtual);
     
     const produtosParaEnviar = produtos.map(({ produto, quantidade }) => ({
@@ -89,8 +89,7 @@ function Finalizar() {
 
   const handleEntregaCasaChange = (value) => {
     setEntregaCasa(value);
-    // Reset forma de entrega oposta quando uma é selecionada
-    if (value === 'retirar') {
+    if (value === 'Retirar') {
       setFormaPagamento('');
     }
   };
@@ -121,7 +120,7 @@ function Finalizar() {
               <h5>Retirar no estabelecimento:</h5>
               <div className="checkbox-container">
                 <p className="info-estabelecimento">Avenida Prefeito Francisco Lummertz Júnior, 612, Sombrio - SC </p>
-                <input type="radio" className="checkbox" checked={entregaCasa === 'retirar'} onChange={() => handleEntregaCasaChange('retirar')} />
+                <input type="radio" className="checkbox" checked={entregaCasa === 'Retirar'} onChange={() => handleEntregaCasaChange('Retirar')} />
               </div>
             </div>
             {endereco?.rua && endereco?.casa && endereco?.bairro && (
@@ -131,7 +130,7 @@ function Finalizar() {
                   <p className="info-estabelecimento">
                     {endereco.rua}, {endereco.casa}, {endereco.bairro} {endereco.complemento}
                   </p>
-                  <input type="radio" className="checkbox" checked={entregaCasa === 'entregar'} onChange={() => handleEntregaCasaChange('entregar')} />
+                  <input type="radio" className="checkbox" checked={entregaCasa === 'Entregar'} onChange={() => handleEntregaCasaChange('Entregar')} />
                 </div>
               </div>
             )}

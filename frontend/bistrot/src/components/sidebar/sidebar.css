@@ -2,13 +2,17 @@
     background-color: #F5F6FA;
     height: 100vh;
     margin: 0;
+   
 }
 
 .sidebar {
     background-color: #ffff;
-    height: 100%;
-    max-width: 250px;
+    height: 100vh;
     width: 100%;
+    position: fixed; 
+    left: 0;
+    z-index: 1;
+    box-shadow: 2px 0px 10px 1px  rgba(0, 0, 0, 0.127); 
 }
 
 .servicos ul li.nav-item:hover a.nav-link {
