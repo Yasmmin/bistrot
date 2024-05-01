@@ -1,4 +1,3 @@
-import { useState } from "react";
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Cadastro from './pages/auth/cadastro/cadastro';
@@ -24,18 +23,8 @@ import AddFuncionarios from './pages/admin/funcionarios/addFuncionarios';
 import EditFuncionarios from './pages/admin/funcionarios/editFuncionario';
 import Cliente from './pages/admin/clientes/cliente';
 import Pedidos from "./pages/admin/pedidos/pedidos";
-import TodosOsPedidos from "./pages/admin/todosOsPedidos/TodosOsPedidos";
 
 function App() {
-  const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
-  const [id, setId] = useState(localStorage.getItem('userId') || ""); 
-
-  const adicionarAoCarrinho = (produto) => {
-    setCarrinhoProdutos([...carrinhoProdutos, produto]);
-    setId(produto.userId);
-  };
-
-
   return (
     <BrowserRouter>
       <Routes>
@@ -45,9 +34,10 @@ function App() {
         <Route path='/senha' element={<Senha />}></Route>
         <Route path='/perfil' element={<Perfil />}></Route>
         <Route path='/permissao' element={<SemPermissao />}></Route>
-        <Route path='/carrinho' element={<Carrinho carrinhoProdutos={carrinhoProdutos} userId={id} />}></Route>
+        <Route path='/carrinho' element={<Carrinho/>}></Route>
+
         <Route path='/pedidos' element={<Pedidos />}></Route>
-        <Route path='/infoproduto/:id' element={<InfoProduto adicionarAoCarrinho={adicionarAoCarrinho} userId={id} />}></Route>
+        <Route path='/infoproduto/:id' element={<InfoProduto />}></Route>
         <Route path='/finalizar' element={<Finalizar />}></Route>
         <Route path='/novoendereco' element={<NovoEndereco />}></Route>
         <Route path='/acompanhar' element={<Acompanhar/>}></Route>
@@ -63,7 +53,6 @@ function App() {
         <Route path='/EditFuncionarios/:id' element={<EditFuncionarios />}></Route>
         <Route path='/cliente' element={<Cliente />}></Route>
         <Route path='/pedidos' element={<Pedidos/>}></Route>
-        <Route path='/todosOsPedidos' element={<TodosOsPedidos/>}></Route>
       </Routes>
     </BrowserRouter>
   )

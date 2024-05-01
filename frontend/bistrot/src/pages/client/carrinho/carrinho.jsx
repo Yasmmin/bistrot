@@ -1,28 +1,30 @@
-//dependencias do arquivo
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
-
-//icones
 import { IoIosArrowBack, IoIosTrash } from 'react-icons/io';
-
-//arquivos
 import './Carrinho.css';
-import img from './../../../assets/SemProdutosNoCarrinho.svg'
+import img from './../../../assets/SemProdutosNoCarrinho.svg';
 import Loading from '../../../components/loading/loading';
-function Carrinho({ userId }) {
+
+function Carrinho() {
   const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
   const [precoTotal, setPrecoTotal] = useState();
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(true); // Iniciar com loading true
+  const [userId, setUserId] = useState('')
   
   useEffect(() => {
-    const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
-    setCarrinhoProdutos(storedCarrinhoProdutos);
-    setLoading(true);
-  }, [userId]);
+    const storedUserId = localStorage.getItem("userId");
+    setUserId(storedUserId);
+    const carrinho = JSON.parse(localStorage.getItem(`carrinhoProdutos_${storedUserId}`));
+    if (carrinho) {
+      setCarrinhoProdutos(carrinho);
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
- useEffect(() => {
+  useEffect(() => {
     const total = carrinhoProdutos.reduce((acc, produto) => {
       return acc + (produto.precoTotal * produto.quantidade);
     }, 0);
@@ -32,10 +34,9 @@ function Carrinho({ userId }) {
   const incrementarQuantidade = (index) => {
     const novosProdutos = [...carrinhoProdutos];
     novosProdutos[index].quantidade++;
-    localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novosProdutos));
     setCarrinhoProdutos(novosProdutos);
+    localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novosProdutos));
   };
-
   const decrementarQuantidade = (index) => {
     const novosProdutos = [...carrinhoProdutos];
     if (novosProdutos[index].quantidade > 1) {
@@ -43,15 +44,17 @@ function Carrinho({ userId }) {
     } else {
       novosProdutos.splice(index, 1);
     }
-    localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novosProdutos));
     setCarrinhoProdutos(novosProdutos);
+    localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novosProdutos));
   };
+
   const quantidadeTotalProdutos = carrinhoProdutos.reduce((acc, produto) => acc + produto.quantidade, 0);
 
-
-  if (!loading) {
-    return <Loading />; 
+  if (loading) {
+    return <Loading />;
   }
+
+
 
   if (carrinhoProdutos.length === 0) {
     return (
@@ -70,7 +73,6 @@ function Carrinho({ userId }) {
           <p>Parece que você ainda não tem nada em seu carrinho :(</p>
         </div>
       </div>
-
     );
   }
 
@@ -119,11 +121,9 @@ function Carrinho({ userId }) {
                 <Link to='/finalizar' className='finalizar-pedido'>FINALIZAR({quantidadeTotalProdutos})</Link>
               </div>
             </div>
-
           </div>
         ))}
       </div>
-
     </div>
   );
 }

@@ -6,6 +6,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import './finalizar.css';
 
+
 function Finalizar() {
   const [endereco, setEndereco] = useState({});
   const [entregaCasa, setEntregaCasa] = useState('');
@@ -90,7 +91,7 @@ function Finalizar() {
           Authorization: `Bearer ${token}` // Enviar o token no cabeçalho da requisição
         }
       });
-      
+      localStorage.removeItem(`carrinhoProdutos_${usuarioId}`);
 
       console.log(res.data);
       Swal.fire({

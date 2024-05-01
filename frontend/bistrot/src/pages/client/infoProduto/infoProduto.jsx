@@ -12,37 +12,38 @@ import { IoIosArrowBack } from 'react-icons/io';
 import Loading from "../../../components/loading/loading";
 import SemPermissao from "../../../components/permissão/semPermissao";
 import './style.css';
-function InfoProduto({ userId }) {
-const { id } = useParams();
-const [auth, setAuth] = useState(false);
-const [produto, setProduto] = useState(null);
-const [loading, setLoading] = useState(true);
-const [quantidade, setQuantidade] = useState(1);
-const [precoTotal, setPrecoTotal] = useState(0);
-const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
+function InfoProduto() {
+    const { id } = useParams();
+    const [auth, setAuth] = useState(false);
+    const [produto, setProduto] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [quantidade, setQuantidade] = useState(1);
+    const [precoTotal, setPrecoTotal] = useState(0);
+    const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
+    const userId = localStorage.getItem('userId');
 
-useEffect(() => {
-    const fetchProduto = async () => {
-        try {
-            // Verifica se o produto está armazenado no localStorage
-            const cachedProduto = localStorage.getItem(`produto_${id}`);
-            if (cachedProduto) {
-                setProduto(JSON.parse(cachedProduto));
-                setAuth(true);
-            } else {
-                const res = await axios.get(`http://localhost:6969/produtos/${id}`, { withCredentials: true });
-                setProduto(res.data);
-                setAuth(true);
+    useEffect(() => {
+        const fetchProduto = async () => {
+            try {
+                const cachedProduto = localStorage.getItem(`produto_${id}`);
+                if (cachedProduto) {
+                    setProduto(JSON.parse(cachedProduto));
+                    setAuth(true);
+                } else {
+                    const res = await axios.get(`http://localhost:6969/produtos/${id}`, { withCredentials: true });
+                    setProduto(res.data);
+                    setAuth(true);
+                }
+            } catch (err) {
+                console.error("Erro ao carregar produto:", err);
+                setAuth(false);
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            console.error("Erro ao carregar produto:", err);
-            setAuth(false);
-        } finally {
-            setLoading(false);
-        }
-    };
-    fetchProduto();
-}, [id]);
+        };
+        fetchProduto();
+    }, [id]);
+
     useEffect(() => {
         const storedCarrinhoProdutos = JSON.parse(localStorage.getItem(`carrinhoProdutos_${userId}`)) || [];
         setCarrinhoProdutos(storedCarrinhoProdutos);
