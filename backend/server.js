@@ -614,8 +614,12 @@ app.post('/finalizar', verifyUser, (req, res) => {
             console.error("Erro ao inserir dados no banco de dados:", err);
             return res.status(500).json({ error: "Erro interno do servidor" });
         }
+        const numeroPedido = result.insertId; 
         console.log("Dados inseridos no banco de dados com sucesso:", result);
-        return res.status(200).json({ message: "Pedido finalizado com sucesso" });
+        return res.status(200).json({ 
+            message: "Pedido finalizado com sucesso", 
+            numero_pedido: numeroPedido 
+        });
     });
 });
 
@@ -664,6 +668,27 @@ app.put('/pedidos/:numero_pedido/status', (req, res) => {
     });
 });
 
+app.get('/pedidos/:numero_pedido/status', (req, res) => {
+    const pedidoNumero = req.params.numero_pedido;
+
+    // Consultar o banco de dados para obter o status do pedido com base no número do pedido
+    const checkPedidoQuery = "SELECT status_pedido FROM pedido WHERE numero_pedido = ?";
+    db.query(checkPedidoQuery, [pedidoNumero], (err, result) => {
+        if (err) {
+            console.error("Erro ao buscar status do pedido:", err);
+            return res.status(500).json({ error: "Erro interno do servidor" });
+        }
+
+        // Se o pedido não for encontrado, retorne um erro
+        if (result.length === 0) {
+            return res.status(404).json({ error: "Pedido não encontrado" });
+        }
+
+        // Retorne o status do pedido
+        const statusPedido = result[0].status_pedido;
+        return res.status(200).json({ status: statusPedido });
+    });
+});
 
 
 

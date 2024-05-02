@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 import { IoIosArrowBack, IoIosTrash } from 'react-icons/io';
-import './Carrinho.css';
+import './carrinho.css';
 import img from './../../../assets/SemProdutosNoCarrinho.svg';
 import Loading from '../../../components/loading/loading';
 

@@ -91,12 +91,12 @@ function Pedidos() {
                     </form>
                 </div>
 
-                <div className="container text-center ">
+                <div className="container-flex text-center ">
                     <div className="row">
-                        <div className="analise col">
+                        <div className="analise col ">
                             <div className="titulo d-flex justify-content-between">
                                 <h4>Em análise</h4>
-                                <h4>{records.filter(pedido => pedido.status_pedido === 'Em análise').length}</h4>
+                                <h4 className="me-4">{records.filter(pedido => pedido.status_pedido === 'Em análise').length}</h4>
                             </div>
                             {records.filter(pedido => pedido.status_pedido === 'Em análise').map((pedido, index) => (
                                 <div className="conteudo" key={index}>
@@ -148,7 +148,7 @@ function Pedidos() {
                         <div className="producao col">
                             <div className="titulo d-flex justify-content-between">
                                 <h4>Em produção</h4>
-                                <h4>{records.filter(pedido => pedido.status_pedido === 'Em produção').length}</h4>
+                                <h4 className="me-4">{records.filter(pedido => pedido.status_pedido === 'Em produção').length}</h4>
                             </div>
                             {records.filter(pedido => pedido.status_pedido === 'Em produção').map((pedido, index) => (
                                 <div className="conteudo" key={index}>
@@ -195,7 +195,7 @@ function Pedidos() {
                         <div className="finalizado col">
                             <div className="titulo d-flex justify-content-between">
                                 <h4>Finalizados</h4>
-                                <h4>{records.filter(pedido => pedido.status_pedido === 'Finalizado').length}</h4>
+                                <h4 className="me-4">{records.filter(pedido => pedido.status_pedido === 'Finalizado').length}</h4>
                             </div>
                             {records.filter(pedido => pedido.status_pedido === 'Finalizado').map((pedido, index) => (
                                 <div className="conteudo" key={index}>

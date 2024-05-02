@@ -1,67 +1,81 @@
-.pedidos-body{
+.pedidos-body {
     width: 100%;
     height: 100vh;
     display: flex;
-    background-color:#d7d7d730;
+    background-color: #d7d7d730;
+    overflow-x: hidden;
 }
+
 .content {
-    padding-left: 280px; 
+    padding-left: 290px;
 }
 
-.analise{
-    background-color:#fdd821d5 ;
+.analise {
+    min-height: 100vw;
+    background-color: #fdd821d5;
     z-index: 0;
-    height: 100vw;
 }
 
-.producao{
-    height: 100vw;
-background-color:#feac5fd1 ;
+.producao {
+    min-height: 100vw;
+    background-color: #feac5fd1;
 }
 
-.finalizado{
-    height: 100vw;
-background-color: #1bac4bc9;
+.finalizado {
+    min-height: 100vw;
+    background-color: #1bac4bc9;
 }
 
-.titulo{
+.analise,
+.producao,
+.finalizado {
+    width: calc(33.33% - 30px);
+
+}
+.info-produtos-pedido p,
+.info-cliente-pedido p,
+.info-endereco-pedido p {
+    word-wrap: break-word;
+}
+
+.titulo {
     color: #ffffff;
     text-align: start;
     margin-top: 5%;
 }
 
-.conteudo{
+.conteudo {
     width: 95%;
     margin-top: 3%;
     border-radius: 10px;
     background-color: #ffffff;
 }
 
-.info-button{
+.info-button {
     background-color: transparent;
     border: none;
 }
 
-.info-cliente-pedido p{
+.info-cliente-pedido p {
     font-size: 10pt;
     margin-bottom: 0;
 
-} 
+}
 
-.info-btn-aceitar{
+.info-btn-aceitar {
     border: none;
     width: 90%;
     height: 40px;
     color: white;
-    background-color:#5FC381 ;
+    background-color: #5FC381;
     border-radius: 8px;
 }
 
-.info-btn-recusar{
+.info-btn-recusar {
     border: none;
     width: 90%;
     height: 40px;
     color: white;
-    background-color:#F36363 ;
+    background-color: #F36363;
     border-radius: 8px;
 }
