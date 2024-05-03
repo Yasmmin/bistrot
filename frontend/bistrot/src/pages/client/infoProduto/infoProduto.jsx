@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
-import PropTypes from "prop-types";
 import Swal from 'sweetalert2';
 
 //icones
@@ -161,8 +160,5 @@ function InfoProduto() {
     );
 }
 
-InfoProduto.propTypes = {
-    userId: PropTypes.string.isRequired
-};
 
 export default InfoProduto;
