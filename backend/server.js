@@ -551,7 +551,6 @@ app.post('/endereco', verifyUser, (req, res) => {
                 console.error("Erro ao atualizar endereço no banco de dados:", err);
                 return res.status(500).json({ error: "Erro ao atualizar endereço no banco de dados" });
             }
-            console.log("Endereço atualizado com sucesso para o usuário ID:", userId);
             return res.status(200).json({ message: "Endereço atualizado com sucesso" });
         });
     });

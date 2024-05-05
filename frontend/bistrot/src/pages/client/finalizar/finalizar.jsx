@@ -6,7 +6,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import './finalizar.css';
 
-
 function Finalizar() {
   const [endereco, setEndereco] = useState({});
   const [entregaCasa, setEntregaCasa] = useState('');
@@ -16,9 +15,10 @@ function Finalizar() {
   const [produtos, setProdutos] = useState([]);
   const usuarioId = localStorage.getItem('userId');
   const userName = localStorage.getItem('userName');
-
-  const taxaFrete = entregaCasa === 'Entregar' ? 5 : 0;
-  const total = subtotal + taxaFrete;
+  const [opcoesSelecionadas, setOpcoesSelecionadas] = useState({
+    enderecoSelecionado: false,
+    formaPagamentoSelecionada: false
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -27,7 +27,7 @@ function Finalizar() {
       window.location.href = '/login';
       return;
     }
-  })
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -56,12 +56,46 @@ function Finalizar() {
     fetchCartData();
   }, [usuarioId]);
 
+  const handleEntregaCasaChange = (value) => {
+    setEntregaCasa(value);
+    setOpcoesSelecionadas({
+      ...opcoesSelecionadas,
+      enderecoSelecionado: value !== '',
+      formaPagamentoSelecionada: formaPagamento !== ''
+    });
+    if (value === 'Retirar') {
+      setFormaPagamento('');
+    }
+  };
+
+  const handleFormaPagamentoChange = (value) => {
+    setFormaPagamento(value);
+    setOpcoesSelecionadas({
+      ...opcoesSelecionadas,
+      enderecoSelecionado: entregaCasa !== '',
+      formaPagamentoSelecionada: value !== ''
+    });
+  };
+
+  const taxaFrete = entregaCasa === 'Entregar' ? 5 : 0;
+  const total = subtotal + taxaFrete;
+
   const handleFinalizarPedido = async () => {
     const token = localStorage.getItem('token');
     const usuarioId = localStorage.getItem('userId');
 
     if (!token || !usuarioId) {
       window.location.href = '/login';
+      return;
+    }
+
+    if (entregaCasa === '' || formaPagamento === '') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Oops...',
+        text: 'Por favor, selecione uma forma de entrega e uma forma de pagamento.',
+        confirmButtonText: 'OK',
+      });
       return;
     }
 
@@ -87,7 +121,7 @@ function Finalizar() {
         userName,
       }, {
         headers: {
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         }
       });
 
@@ -112,17 +146,6 @@ function Finalizar() {
         confirmButtonText: 'OK',
       });
     }
-  };
-
-  const handleEntregaCasaChange = (value) => {
-    setEntregaCasa(value);
-    if (value === 'Retirar') {
-      setFormaPagamento('');
-    }
-  };
-
-  const handleFormaPagamentoChange = (value) => {
-    setFormaPagamento(value);
   };
 
   return (
@@ -156,15 +179,17 @@ function Finalizar() {
               </div>
             </div>
 
-            <div className="entrega-casa mt-3">
-              <h5>Entregar no endereço:</h5>
-              <div className="checkbox-container">
-                <p className="info-estabelecimento">
-                  {endereco.rua}, {endereco.casa}, {endereco.bairro} {endereco.complemento}
-                </p>
-                <input type="radio" className="checkbox" checked={entregaCasa === 'Entregar'} onChange={() => handleEntregaCasaChange('Entregar')} />
+            {endereco.rua && (
+              <div className="entrega-casa mt-3">
+                <h5>Entregar no endereço:</h5>
+                <div className="checkbox-container">
+                  <p className="info-estabelecimento">
+                    {endereco.rua}, {endereco.casa}, {endereco.bairro} {endereco.complemento}
+                  </p>
+                  <input type="radio" className="checkbox" checked={entregaCasa === 'Entregar'} onChange={() => handleEntregaCasaChange('Entregar')} />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -207,11 +232,10 @@ function Finalizar() {
         </div>
 
         <div className="finalizar-enviar mt-4">
-          <button className="btn btn-danger w-100 mb-4" onClick={handleFinalizarPedido}>Finalizar</button>
+          <button className="btn btn-danger w-100 mb-4" onClick={handleFinalizarPedido} disabled={!opcoesSelecionadas.enderecoSelecionado || !opcoesSelecionadas.formaPagamentoSelecionada}>Finalizar</button>
         </div>
       </div>
     </div>
-
   );
 }
 
