@@ -47,12 +47,23 @@ function Pedidos() {
             console.error(err);
         }
     }
-
     async function handleFinalizarPedido(numeroPedido) {
         try {
-            await axios.put(`http://localhost:6969/pedidos/${numeroPedido}/status`, { novoStatus: "Finalizado" });
-            const novoRecords = records.filter(pedido => pedido.numero_pedido !== numeroPedido || pedido.forma_entrega !== "Retirar");
-            setRecords(novoRecords);
+            const pedido = records.find(pedido => pedido.numero_pedido === numeroPedido);
+            if (pedido.forma_entrega === "Retirar") {
+                await axios.put(`http://localhost:6969/pedidos/${numeroPedido}/status`, { novoStatus: "Finalizado" });
+                const novoRecords = records.filter(pedido => pedido.numero_pedido !== numeroPedido);
+                setRecords(novoRecords);
+            } else {
+                await axios.put(`http://localhost:6969/pedidos/${numeroPedido}/status`, { novoStatus: "Finalizado" });
+                const novoRecords = records.map(pedido => {
+                    if (pedido.numero_pedido === numeroPedido) {
+                        return { ...pedido, status_pedido: "Finalizado" };
+                    }
+                    return pedido;
+                });
+                setRecords(novoRecords);
+            }
         } catch (err) {
             console.error(err);
         }

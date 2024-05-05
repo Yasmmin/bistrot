@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { IoIosArrowBack, IoIosTrash } from 'react-icons/io';
 import './carrinho.css';
@@ -23,25 +23,34 @@ function Carrinho() {
 
   useEffect(() => {
     const total = carrinhoProdutos.reduce((acc, produto) => {
-      return acc + produto.precoTotal * produto.quantidade;
+      return acc + produto.produto.preco * produto.quantidade;
     }, 0);
     setPrecoTotal(total);
   }, [carrinhoProdutos]);
 
   const incrementarQuantidade = (index) => {
+    const novoProduto = { ...carrinhoProdutos[index] };
+    novoProduto.quantidade++;
+    novoProduto.precoTotal = novoProduto.produto.preco * novoProduto.quantidade; 
     const novosProdutos = [...carrinhoProdutos];
-    novosProdutos[index].quantidade++;
+    novosProdutos[index] = novoProduto;
     setCarrinhoProdutos(novosProdutos);
     localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novosProdutos));
   };
 
   const decrementarQuantidade = (index) => {
     const novosProdutos = [...carrinhoProdutos];
-    if (novosProdutos[index].quantidade > 1) {
-      novosProdutos[index].quantidade--;
+    const produto = novosProdutos[index];
+    
+    if (produto.quantidade > 1) {
+      produto.quantidade--;
+      produto.precoTotal = produto.produto.preco * produto.quantidade;
     } else {
       novosProdutos.splice(index, 1);
     }
+    const novoPrecoTotal = novosProdutos.reduce((acc, prod) => acc + prod.precoTotal, 0);
+    
+    setPrecoTotal(Math.max(novoPrecoTotal, 0));
     setCarrinhoProdutos(novosProdutos);
     localStorage.setItem(`carrinhoProdutos_${userId}`, JSON.stringify(novosProdutos));
   };

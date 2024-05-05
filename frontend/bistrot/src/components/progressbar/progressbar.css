@@ -21,7 +21,7 @@
 }
 
 .progress {
-    margin-top: 10%;
+    margin-top: 15%;
     position: absolute;
     left: 6%;
     transform: translateX(-50%);
@@ -33,7 +33,7 @@
 }
 
 .progressBar::before {
-    margin-top: 13%;
+    margin-top: 15%;
     content: "";
     position: absolute;
     background-color: #ccc;
@@ -68,6 +68,7 @@
     margin-block: 12%; 
     cursor: pointer;
     transition: border-color 0.4s ease;
+    pointer-events: auto;
 }
 
 .circle.active {
@@ -89,6 +90,7 @@
     color: white;
     background-color:#29a744 ;
     border-radius: 8px;
+    pointer-events: auto;
 }
 
 .circleWithText {
