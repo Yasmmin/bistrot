@@ -1,82 +1,128 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useRef } from "react";
 import axios from 'axios';
-import logo from '../../../assets/logoCadastro.svg';
-import Swal from 'sweetalert2'
-import './senha.css'; // corrigido o nome do arquivo de estilo
-
-// import de icones
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook, FaApple } from 'react-icons/fa';
-import { FaUser } from 'react-icons/fa6';
-import { IoIosLock } from 'react-icons/io';
-import { IoEyeSharp } from "react-icons/io5";
-import { FaEyeSlash } from "react-icons/fa";
 import { MdAttachEmail } from "react-icons/md";
-
+import logo from '../../../assets/logoCadastro.svg';
+import './senha.css';
+import CryptoJS from 'crypto-js';
+import Loading from "../../../components/loading/loading";
 function Senha() {
-    const [values, setValues] = useState({
-        email: ''
-    });
+    const [email, setEmail] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [emailSent, setEmailSent] = useState(false);
+    const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [loading, setLoading] = useState(false);
+    const otpInputs = useRef([]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setValues({ ...values, [name]: value });
+    const generateRandomCode = () => {
+        return Math.floor(100000 + Math.random() * 900000);
     }
 
-    axios.post('http://localhost:6969/senha', { ...values, role: 'cliente' })
-    .then(res => {
-        console.log(res.data); // Log the response data
-        if (res.data.Status === "Sucesso!") {
-            navigate('/login');
-        } else {
-            alert("Erro");
-        }
-    })
-    .catch(err => {
-        console.log(err);
-        alert("Erro ao cadastrar. Verifique o console para mais detalhes.");
-    });
+    const encryptCode = (code) => {
+        const secretKey = 'secretkey';
+        return CryptoJS.AES.encrypt(code.toString(), secretKey).toString();
+    }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Aqui você pode adicionar a lógica para enviar os dados do formulário para a API de recuperação de senha
-        console.log('Dados do formulário:', values);
+        try {
+            setLoading(true); // Ativa o indicador de carregamento
+            if (emailSent) {
+                const enteredOtp = otp.join('');
+                const storedEncryptedCode = localStorage.getItem('otp');
+                const decryptedCode = CryptoJS.AES.decrypt(storedEncryptedCode, 'secretkey').toString(CryptoJS.enc.Utf8);
+
+                if (enteredOtp === decryptedCode) {
+                    window.location.href = "/redefinir";
+                } else {
+                    setErrorMessage("Código incorreto. Por favor, tente novamente.");
+                }
+            } else {
+                const code = generateRandomCode();
+                const encryptedCode = encryptCode(code);
+                localStorage.setItem('otp', encryptedCode);
+                const response = await axios.post('http://localhost:6969/redefinir-senha', { email, code, encryptedCode });
+                console.log(response.data);
+                if (response.status === 200) {
+                    setEmailSent(true);
+                } else {
+                    setErrorMessage(response.data.error || "Erro ao solicitar redefinição de senha.");
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            setErrorMessage("Email não encontrado! Tente outro email");
+        } finally {
+            setLoading(false);
+        }
     }
 
+    const handleOtpChange = (index, value) => {
 
+        const newOtp = [...otp];
+        newOtp[index] = value;
+        setOtp(newOtp);
+
+        if (value.length === 1 && index < otpInputs.current.length - 1) {
+            otpInputs.current[index + 1].focus();
+        }
+        if (value === '' && index > 0) {
+            otpInputs.current[index - 1].focus();
+        }
+    }
 
     return (
         <div className="container-fluid d-flex flex-column align-items-center justify-content-start bg-white mx-0">
-          <div className="d-flex flex-column align-items-center mb-3 mt-5">
+
+            <div className="d-flex flex-column align-items-center mb-3 mt-5">
                 <img src={logo} alt="Logo de cadastro" className="img-fluid no-select mb-3 mt-5" />
                 <h3 className="text-center">Recuperação de Senha</h3>
-                <p>Para recuperar suas credenciais coloque seu email no cap</p>
-          </div>
-            <form onSubmit={handleSubmit} className="w-100 ">
-                <div className="mb-3 input-group">
-                    <span className="input-group-text input-addon icon-container">
-                        <MdAttachEmail />
-                    </span>
-                    <input
-                        placeholder="Email"
-                        name="email"
-                        className="form-control rounded-start-0 rounded-3"
-                        style={{ backgroundColor: '#F5F5F5', borderLeft: 'none' }}
-                        onChange={e => setValues({ ...values, email: e.target.value })}
-                    />
-                </div>
+                {emailSent ? (
+                    <p>Insira o código de verificação enviado para o seu email</p>
+                ) : (
+                    <p>Insira o email para recuperar sua conta</p>
+                )}
+            </div>
+            <form onSubmit={handleSubmit} className="w-100">
+                {loading && <Loading />}
+                {emailSent ? (
+                    <div className="mb-3 otp-container">
+                        {otp.map((digit, index) => (
+                            <input
+                                type="number"
+                                key={index}
+                                value={digit}
+                                onChange={(e) => handleOtpChange(index, e.target.value)}
+                                className="otp-input"
+                                maxLength={1}
+                                ref={(input) => (otpInputs.current[index] = input)}
+                            />
+                        ))}
+                    </div>
+                ) : (
 
+                    <div className="input-group">
+                        <MdAttachEmail className="email-icon" />
+                        <input
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="input-email"
+                            style={{ backgroundColor: '#F5F5F5' }}
+                        />
+                    </div>
+                )}
+                {errorMessage && (
+                    <div className="text-center mt-3">
+                        <p className="text-danger">{errorMessage}</p>
+                    </div>
+                )}
                 <div className="text-center mt-3">
-                    <button type="submit" className="btn btn-primary">Enviar</button>
-                </div>
-
-                <div className="text-center mt-3">
-                <p>Voltar para tela de Login ? <Link to="/login" className="recCad">Clique aqui!</Link></p>
+                    <button type="submit" className="btn btn-primary mt-3">
+                        {emailSent ? "Verificar Código" : "Enviar Email"}
+                    </button>
                 </div>
             </form>
         </div>
     );
 }
-
 export default Senha;

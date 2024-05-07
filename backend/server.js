@@ -10,6 +10,7 @@ import path from 'path'
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import fs from 'fs';
+import nodemailer from 'nodemailer';
 
 //------------------------------------------------------------------------------------------------------------------------//
 const salt = 10;
@@ -689,7 +690,46 @@ app.get('/pedidos/:numero_pedido/status', (req, res) => {
     });
 });
 
+app.post('/redefinir-senha', async (req, res) => {
+    const { email, code, encryptedCode } = req.body; 
+    
+    // Verificar se o email existe na tabela cliente
+    const sql = "SELECT * FROM cliente WHERE email = ?";
+    db.query(sql, [email], async (err, result) => {
+        if (err) {
+            console.error("Erro ao verificar email no banco de dados:", err);
+            return res.status(500).json({ error: "Erro interno do servidor" });
+        }
 
+        if (result.length === 0) {
+            return res.status(404).json({ error: "Email não encontrado" });
+        }
+
+        // Enviar o código de redefinição de senha por email
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'restaurantecafebistrot@gmail.com',
+                pass: 'cmfy nqyw lswp ittj'
+            }
+        });
+
+        const mailOptions = {
+            from: 'restaurantecafebistrot@gmail.com',
+            to: email,
+            subject: 'Redefinição de senha',
+            text: `Seu código de redefinição de senha é: ${code}`
+        };
+
+        try {
+            await transporter.sendMail(mailOptions);
+            return res.status(200).json({ message: "Código de redefinição de senha enviado com sucesso" });
+        } catch (error) {
+            console.error("Erro ao enviar email de redefinição de senha:", error);
+            return res.status(500).json({ error: "Erro ao enviar email de redefinição de senha" });
+        }
+    });
+});
 
 //--- Inicialização do servidor ---------------------------------------------------------------------------------------------------------------------//
 

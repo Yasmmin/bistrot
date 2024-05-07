@@ -9,7 +9,7 @@ import SemPermissao from './components/permissão/semPermissao';
 import Carrinho from './pages/client/carrinho/carrinho';
 import InfoProduto from './pages/client/infoProduto/infoProduto';
 import Finalizar from "./pages/client/finalizar/finalizar";
-
+import Senha from './pages/auth/senha/senha';
 
 import NovoEndereco from "./pages/client/novoEndereco/novoEndereco";
 
@@ -25,6 +25,7 @@ import Cliente from './pages/admin/clientes/cliente';
 import Pedidos from "./pages/admin/pedidos/pedidos";
 import Progressbar from './components/progressbar/Progressbar';
 import Acompanhar from './pages/client/acompanhar/acompanhar';
+import Redefinir from './pages/auth/senha/redefinir';
 
 function App() {
   return (
@@ -44,7 +45,7 @@ function App() {
         <Route path='/novoendereco' element={<NovoEndereco />}></Route>
         <Route path='/progress' element={<Progressbar />}></Route>
         <Route path='/acompanhar' element={<Acompanhar />}></Route>
-
+        <Route path='/redefinir' element={<Redefinir />}></Route>
 
         {/*Rotas que serão privadas - tem que fazer*/}
         <Route path='/sidebar' element={<Sidebar />}></Route>
@@ -56,7 +57,7 @@ function App() {
         <Route path='/EditFuncionarios/:id' element={<EditFuncionarios />}></Route>
         <Route path='/cliente' element={<Cliente />}></Route>
         <Route path='/pedidos' element={<Pedidos />}></Route>
-
+        <Route path='/senha' element={<Senha />}></Route>
       </Routes>
     </BrowserRouter>
   )
