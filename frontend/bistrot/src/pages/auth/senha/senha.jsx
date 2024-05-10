@@ -5,7 +5,9 @@ import logo from '../../../assets/logoCadastro.svg';
 import './senha.css';
 import CryptoJS from 'crypto-js';
 import Loading from "../../../components/loading/loading";
+import { useNavigate } from 'react-router-dom';
 function Senha() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [emailSent, setEmailSent] = useState(false);
@@ -25,14 +27,15 @@ function Senha() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            setLoading(true); // Ativa o indicador de carregamento
+            setLoading(true); 
+            localStorage.setItem('userEmail', email);
             if (emailSent) {
                 const enteredOtp = otp.join('');
                 const storedEncryptedCode = localStorage.getItem('otp');
                 const decryptedCode = CryptoJS.AES.decrypt(storedEncryptedCode, 'secretkey').toString(CryptoJS.enc.Utf8);
 
                 if (enteredOtp === decryptedCode) {
-                    window.location.href = "/redefinir";
+                    navigate('/redefinir');
                 } else {
                     setErrorMessage("Código incorreto. Por favor, tente novamente.");
                 }

@@ -245,38 +245,34 @@ app.post('/login', (req, res) => {
     const { email, senha } = req.body;
 
     if (!email || !senha) {
-        return res.json({ Error: "Por favor, forneça um email e uma senha" });
+        return res.status(400).json({ Error: "Por favor, forneça um email e uma senha" });
     }
 
     const sql = "SELECT * FROM cliente WHERE email = ?";
     db.query(sql, [email], (err, data) => {
         if (err) {
             console.error("Erro no servidor ao fazer login:", err);
-            return res.json({ Error: "Erro no servidor ao fazer login" });
+            return res.status(500).json({ Error: "Erro no servidor ao fazer login" });
         }
 
         if (data.length === 0) {
-            return res.json({ Error: "Email não encontrado" });
+            return res.status(404).json({ Error: "Email não encontrado" });
         }
 
         const cliente = data[0];
 
-        bcrypt.compare(senha.toString(), cliente.senha, (err, response) => {
+        bcrypt.compare(senha, cliente.senha, (err, response) => {
             if (err) {
                 console.error("Erro ao comparar senhas:", err);
-                return res.json({ Error: "Erro ao comparar senhas" });
+                return res.status(500).json({ Error: "Erro ao comparar senhas" });
             }
 
             if (response) {
-
                 const { nome, email, role, rua, casa, id } = cliente;
-
                 const token = jwt.sign({ nome, email, role, rua, casa, id }, "jwt-secret-key", { expiresIn: '1d' });
-                res.cookie('token', token);
-                return res.json({ Status: "Sucesso!", role, token, id, nome });
-
+                return res.status(200).json({ Status: "Sucesso!", role, token, id, nome });
             } else {
-                return res.json({ Error: "Senha incorreta" });
+                return res.status(401).json({ Error: "Senha incorreta" });
             }
         });
     });
@@ -691,7 +687,8 @@ app.get('/pedidos/:numero_pedido/status', (req, res) => {
 });
 
 app.post('/redefinir-senha', async (req, res) => {
-    const { email, code, encryptedCode } = req.body; 
+    const { email, code, novaSenha } = req.body; 
+    
     
     // Verificar se o email existe na tabela cliente
     const sql = "SELECT * FROM cliente WHERE email = ?";
@@ -730,6 +727,33 @@ app.post('/redefinir-senha', async (req, res) => {
         }
     });
 });
+
+app.put('/nova-senha', async (req, res) => {
+    const { email, novaSenha } = req.body;
+
+    try {
+        // Gerar o salt de forma assíncrona
+        const salt = await bcrypt.genSalt(10);
+
+        // Criptografar a nova senha
+        const hash = await bcrypt.hash(novaSenha, salt);
+
+        // Atualizar a senha no banco de dados
+        const updateSql = "UPDATE cliente SET senha = ? WHERE email = ?";
+        db.query(updateSql, [hash, email], (err, result) => {
+            if (err) {
+                console.error("Erro ao atualizar a senha no banco de dados:", err);
+                return res.status(500).json({ error: "Erro interno do servidor" });
+            }
+            return res.status(200).json({ message: "Senha atualizada com sucesso" });
+        });
+    } catch (error) {
+        console.error("Erro ao criptografar a nova senha:", error);
+        return res.status(500).json({ error: "Erro ao criptografar a nova senha" });
+    }
+});
+
+
 
 //--- Inicialização do servidor ---------------------------------------------------------------------------------------------------------------------//
 

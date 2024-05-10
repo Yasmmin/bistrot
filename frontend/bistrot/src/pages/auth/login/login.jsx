@@ -51,11 +51,11 @@ function Login() {
     }
 
     // Validação da senha
-    if (values.senha.length < 8) {
+    if (values.senha.length < 6) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "A senha deve ter pelo menos 8 caracteres!",
+        text: "A senha deve ter pelo menos 6 caracteres!",
       });
       return;
     }
@@ -90,8 +90,8 @@ function Login() {
         // Em caso de erro, exibe uma mensagem genérica
         Swal.fire({
           icon: "error",
-          title: "Oops...",
-          text: "Erro ao fazer login. Verifique o console para mais detalhes.",
+          title: "Erro ao realizar o Login",
+          text: "Usuário ou senha incorretos",
         });
       });
   }
