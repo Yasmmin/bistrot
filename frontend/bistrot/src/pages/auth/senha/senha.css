@@ -17,7 +17,9 @@
     background-color: #F5F5F5;
     border: none;
 }
-.input-group {
+
+
+.input-group-senha {
     display: flex;
     align-items: center;
     margin-bottom: 15px;

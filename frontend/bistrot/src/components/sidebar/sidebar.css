@@ -2,7 +2,6 @@
     background-color: #F5F6FA;
     height: 100vh;
     margin: 0;
-   
 }
 
 .sidebar {
@@ -15,7 +14,8 @@
     box-shadow: 2px 0px 10px 1px  rgba(0, 0, 0, 0.127); 
 }
 
-.servicos ul li.nav-item:hover a.nav-link {
+.servicos ul li.nav-item:hover a.nav-link,
+.servicos ul li.nav-item a.nav-link.active {
     background-color: #1BAC4B;
     color: #ffffff;
 }
@@ -30,4 +30,3 @@
     border-radius: 5px;
     margin-right: 10px;
 }
-

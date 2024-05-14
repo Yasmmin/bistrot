@@ -103,7 +103,7 @@ function Senha() {
                     </div>
                 ) : (
 
-                    <div className="input-group">
+                    <div className="input-group-senha">
                         <MdAttachEmail className="email-icon" />
                         <input
                             placeholder="Email"

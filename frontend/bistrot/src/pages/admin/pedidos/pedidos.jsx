@@ -93,7 +93,7 @@ function Pedidos() {
                     <form className="d-flex mx-auto mt-3 mb-0" style={{ width: '99%' }}>
                         <div className="input-group">
                             <input
-                                className="form-control flex-grow-1"
+                                className="form-control "
                                 type="search"
                                 placeholder="Pesquisar por produto, nº pedido, cliente.."
                                 style={{ height: "3rem" }}

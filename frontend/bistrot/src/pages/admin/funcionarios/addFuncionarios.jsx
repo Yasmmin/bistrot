@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { FaPen } from 'react-icons/fa';
@@ -9,8 +8,8 @@ import { MdWork } from "react-icons/md";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useState } from "react";
+import Sidebar from "../../../components/sidebar/sidebar";
 
-//----------------------------MONITORAR ESTADO DOS CAMPOS-------------------------------------------------------------------//
 function AddFuncionarios() {
   const [file, setFile] = useState();
   const [values, setValues] = useState({
@@ -19,8 +18,6 @@ function AddFuncionarios() {
     telefone: '',
     funcao: '',
   });
-
-  //-------------------------ENVIO PARA O BANCO DE DADOS E CONEXÃO COM O BACKEND----------------------------------------------//
 
   const handleFuncionarios = (event) => {
     event.preventDefault();
@@ -56,7 +53,6 @@ function AddFuncionarios() {
       })
   };
 
-  //--------------------------------------UPLOAD DE FOTOS-------------------------------------------------------------------//
   const handleFile = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
@@ -95,31 +91,29 @@ function AddFuncionarios() {
     const formattedValue = formatPhoneNumber(event.target.value);
     setValues({ ...values, telefone: formattedValue });
   };
-  //--------------------------------------ESTRUTURA VISUAL DA PÁGINA--------------------------------------------------------//
+
   return (
-    <div className="container-fluid d-flex">
-      <div className="d-flex flex-column w-100 ml-2">
-        <div className="d-flex vh-100 justify-content-center mt-5">
-          <div className="w-100 bg-white rounded p-3">
-            {/* Botão para voltar pra tela de produtos */}
-            <div className="d-flex align-items-center mt-2 mx-5 mb-4">
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-lg-2">
+          <Sidebar />
+        </div>
+        <div className="col-lg-10">
+          <div className="bg-white rounded p-3">
+            <div className="d-flex align-items-center mt-2  mb-4">
               <Link to="/funcionarios" className="btn border-0">
                 <IoIosArrowBack size={32} />
               </Link>
               <h2 className="ms-2">Adicionar Funcionário</h2>
             </div>
 
-            <div className="container">
+            <div className="conteudo-add-funcionario mx-3">
               <form onSubmit={handleFuncionarios}>
-                <div className="row mx">
-                  <div className="mb-2 col-sm coluna-esquerda">
+                <div className="row">
+                  <div className="col-md-6">
 
-                    {/* Campo nome do funcionario */}
-                    <div className="input-group mb-4 ">
-                      <span
-                        className="input-group-text linha-lateral-icon"
-                        style={{ backgroundColor: "#ffff" }}
-                      >
+                    <div className="input-group mb-4">
+                      <span className="input-group-text linha-lateral-icon">
                         <FaPen className="icon-pen" />
                       </span>
                       <input
@@ -130,12 +124,8 @@ function AddFuncionarios() {
                       />
                     </div>
 
-                    {/* Campo email do funcionario */}
-                    <div className="input-group mb-4 ">
-                      <span
-                        className="input-group-text linha-lateral-icon"
-                        style={{ backgroundColor: "#ffff" }}
-                      >
+                    <div className="input-group mb-4">
+                      <span className="input-group-text linha-lateral-icon">
                         <MdEmail />
                       </span>
                       <input
@@ -143,15 +133,11 @@ function AddFuncionarios() {
                         placeholder="Email"
                         className="form-control linha-lateral-form"
                         onChange={e => setValues({ ...values, email: e.target.value })}
-               
                       />
                     </div>
 
-                    {/*Campo numero de telefone do funcionario*/}
-                    <div className="input-group mb-4 ">
-                      <span
-                        className="input-group-text linha-lateral-icon"
-                        style={{ backgroundColor: "#ffff" }}>
+                    <div className="input-group mb-4">
+                      <span className="input-group-text linha-lateral-icon">
                         <FaPhoneAlt />
                       </span>
                       <input
@@ -163,9 +149,8 @@ function AddFuncionarios() {
                       />
                     </div>
 
-                    {/*Campo de função desempenhada*/}
                     <div className="input-group mb-4">
-                      <span className="input-group-text" style={{ backgroundColor: '#ffff' }}>
+                      <span className="input-group-text">
                         <MdWork />
                       </span>
                       <select
@@ -187,21 +172,20 @@ function AddFuncionarios() {
                     </div>
 
                   </div>
+                  <div className="col-md-6">
 
-                  {/*Coluna direita*/}
-                  <div className="mb-2 col-sm coluna-direita">
-                    <div className="input-group mb-4 w-100">
-                      <div className="col-md-6 mb-3 w-100">
-                        <div className="input-group mb-4">
-                          <label className="input-group-text" htmlFor="inputGroupFile01">
-                            <SlPicture />
-                          </label>
-                          <input type="file" className="form-control"
-                            onChange={handleFile} required
-                          />
-                        </div>
-                      </div>
+                    <div className="input-group mb-4">
+                      <label className="input-group-text" htmlFor="inputGroupFile01">
+                        <SlPicture />
+                      </label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        onChange={handleFile}
+                        required
+                      />
                     </div>
+
                   </div>
                 </div>
 

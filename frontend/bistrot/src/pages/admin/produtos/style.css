@@ -57,3 +57,9 @@
     object-fit: contain;
     border-radius: 25px;
 }
+
+.form-control:focus,
+.form-control:active {
+  box-shadow: none !important;
+  border-color: #ced4da !important;
+}

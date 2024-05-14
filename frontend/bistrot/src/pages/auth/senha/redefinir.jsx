@@ -37,7 +37,7 @@ function Redefinir() {
       </div>
       
       <form onSubmit={handleSubmit} className="w-100">
-        <div className="input-group">
+        <div className="input-group-senha">
           <MdAttachEmail className="email-icon" />
           <input
             type="password"

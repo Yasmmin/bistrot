@@ -753,6 +753,17 @@ app.put('/nova-senha', async (req, res) => {
     }
 });
 
+app.get('/pedidos/:id_usuario', (req, res) => {
+    const idUsuario = req.params.id_usuario;
+    const sql = "SELECT p.*, c.rua, c.casa, c.bairro, c.complemento, c.email FROM pedido p JOIN cliente c ON p.id_cliente = c.id WHERE p.id_cliente = ?";
+    db.query(sql, [idUsuario], (err, data) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Erro ao buscar pedidos", details: err.message });
+        }
+        return res.json(data);
+    });
+});
 
 
 //--- Inicialização do servidor ---------------------------------------------------------------------------------------------------------------------//

@@ -12,7 +12,7 @@ import Finalizar from "./pages/client/finalizar/finalizar";
 import Senha from './pages/auth/senha/senha';
 
 import NovoEndereco from "./pages/client/novoEndereco/novoEndereco";
-
+import PedidoAnteriores from './pages/client/pedidosAnteriores/pedidoAnteriores';
 //Rotas que serão privadas/admin
 import Sidebar from './components/sidebar/sidebar';
 import Produtos from './pages/admin/produtos/produtos';
@@ -26,6 +26,7 @@ import Pedidos from "./pages/admin/pedidos/pedidos";
 import Progressbar from './components/progressbar/Progressbar';
 import Acompanhar from './pages/client/acompanhar/acompanhar';
 import Redefinir from './pages/auth/senha/redefinir';
+import TodosOsPedidos from './pages/admin/todosOsPedidos/todosOsPedidos';
 
 function App() {
   return (
@@ -58,6 +59,8 @@ function App() {
         <Route path='/cliente' element={<Cliente />}></Route>
         <Route path='/pedidos' element={<Pedidos />}></Route>
         <Route path='/senha' element={<Senha />}></Route>
+        <Route path='/pedidosAnteriores' element={<PedidoAnteriores />}></Route>
+        <Route path='/todosOsPedidos' element={<TodosOsPedidos />}></Route>
       </Routes>
     </BrowserRouter>
   )

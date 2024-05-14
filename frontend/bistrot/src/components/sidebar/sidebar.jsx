@@ -1,6 +1,6 @@
 // importação das dependencias do projeto
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 //importação do css
 import './sidebar.css';
@@ -9,7 +9,6 @@ import './sidebar.css';
 import logoAdm from '../../assets/logoAdmin.svg'
 import { MdChecklist } from "react-icons/md";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
-import { MdLocalOffer } from "react-icons/md";
 import { BsPersonLinesFill } from "react-icons/bs";
 import { GoGraph } from "react-icons/go";
 import { FaUsersCog } from "react-icons/fa";
@@ -17,14 +16,18 @@ import { FaPowerOff } from "react-icons/fa6";
 
 
 function Sidebar() {
-    useEffect(() => {
-        const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.forEach((tooltipTriggerEl) => {
-            new window.bootstrap.Tooltip(tooltipTriggerEl);
-        });
-    }, []);
+    const [activeTab, setActiveTab] = useState(null);
+    const location = useLocation();
 
-    // Função de logout específica para a Sidebar
+    useEffect(() => {
+        const pathname = location.pathname;
+        setActiveTab(pathname);
+    }, [location]);
+
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+    };
+
     const handleSidebarLogout = () => {
         axios.get("http://localhost:6969/logout")
             .then(() => {
@@ -37,9 +40,8 @@ function Sidebar() {
     return (
         <div className='body'>
             <div className="d-flex m-0">
-                <div className="d-flex flex-column p-3 sidebar" style={{ width: '280px', height:'100vh' }}>
+                <div className="d-flex flex-column p-3 sidebar" style={{ width: '280px', height: '100vh' }}>
 
-                    {/*div para logo*/}
                     <div className="d-flex align-items-center justify-content-center mb-4">
                         <img
                             src={logoAdm}
@@ -50,10 +52,13 @@ function Sidebar() {
                     </div>
 
                     <div className='servicos'>
-                        {/*Opção Pedidos*/}
                         <ul className="nav nav-pills flex-column mb-auto">
                             <li className="nav-item mb-2">
-                                <Link to="/Pedidos" className="nav-link" aria-current="page">
+                                <Link
+                                    to="/Pedidos"
+                                    className={`nav-link ${activeTab === '/Pedidos' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('/Pedidos')}
+                                >
                                     <div className="icon-sidebar">
                                         <MdChecklist />
                                     </div>
@@ -61,9 +66,12 @@ function Sidebar() {
                                 </Link>
                             </li>
 
-                            {/*Opção Produtos*/}
                             <li className="nav-item mb-2">
-                                <Link to="/produtos" className="nav-link " aria-current="page">
+                                <Link
+                                    to="/produtos"
+                                    className={`nav-link ${activeTab === '/produtos' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('/produtos')}
+                                >
                                     <div className="icon-sidebar">
                                         <MdOutlineSpaceDashboard />
                                     </div>
@@ -71,9 +79,12 @@ function Sidebar() {
                                 </Link>
                             </li>
 
-                            {/*Finalizados*/}
                             <li className="nav-item mb-2">
-                                <Link to="/todosOsPedidos" className="nav-link " aria-current="page">
+                                <Link
+                                    to="/todosOsPedidos"
+                                    className={`nav-link ${activeTab === '/todosOsPedidos' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('/todosOsPedidos')}
+                                >
                                     <div className="icon-sidebar">
                                         <MdChecklist />
                                     </div>
@@ -85,19 +96,14 @@ function Sidebar() {
 
                             <p style={{ fontWeight: 'bold', color: '#202224', opacity: 0.7 }}>PÁGINAS</p>
 
-                            {/*Promoções*/}
-                            <li className="nav-item">
-                                <Link to="#" className="nav-link " aria-current="page">
-                                    <div className="icon-sidebar">
-                                        <MdLocalOffer />
-                                    </div>
-                                    Promoções
-                                </Link>
-                            </li>
 
-                            {/*Clientes*/}
+
                             <li className="nav-item">
-                                <Link to="/cliente" className="nav-link " aria-current="page">
+                                <Link
+                                    to="/cliente"
+                                    className={`nav-link ${activeTab === '/cliente' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('/cliente')}
+                                >
                                     <div className="icon-sidebar">
                                         <BsPersonLinesFill />
                                     </div>
@@ -105,9 +111,12 @@ function Sidebar() {
                                 </Link>
                             </li>
 
-                            {/*Estatisticas*/}
                             <li className="nav-item">
-                                <Link to="#" className="nav-link " aria-current="page">
+                                <Link
+                                    to="#"
+                                    className={`nav-link ${activeTab === '/Estatisticas' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('/Estatisticas')}
+                                >
                                     <div className="icon-sidebar">
                                         <GoGraph />
                                     </div>
@@ -115,9 +124,12 @@ function Sidebar() {
                                 </Link>
                             </li>
 
-                            {/*Funcionários*/}
                             <li className="nav-item">
-                                <Link to="/funcionarios" className="nav-link " aria-current="page">
+                                <Link
+                                    to="/funcionarios"
+                                    className={`nav-link ${activeTab === '/funcionarios' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('/funcionarios')}
+                                >
                                     <div className="icon-sidebar">
                                         <FaUsersCog />
                                     </div>
@@ -127,7 +139,7 @@ function Sidebar() {
 
                             <hr className="my-3" style={{ borderTop: '1px solid rgba(0,0,0,0.5)', width: '100%' }} />
 
-                            <button className="btn btn-danger mx-3 mb-4 mt-4" onClick={handleSidebarLogout}>
+                            <button className="btn btn-danger mx-3 mt-5" onClick={handleSidebarLogout}>
                                 <FaPowerOff style={{ marginRight: '5px' }} />
                                 Sair
                             </button>

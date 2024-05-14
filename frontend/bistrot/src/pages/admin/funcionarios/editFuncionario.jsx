@@ -7,6 +7,7 @@ import { MdEmail, MdWork } from "react-icons/md";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Sidebar from "../../../components/sidebar/sidebar";
 
 function EditFuncionarios() {
     const { id } = useParams();
@@ -35,18 +36,18 @@ function EditFuncionarios() {
 
     const handleEditFuncionarios = (e) => {
         e.preventDefault();
-    
+
         const formData = new FormData();
         formData.append('nome', nome);
         formData.append('funcao', funcao);
         formData.append('email', email);
         formData.append('telefone', telefone);
         if (novaImagem) {
-            formData.append('novaImagem', novaImagem); 
+            formData.append('novaImagem', novaImagem);
         } else {
-            formData.append('foto', file); 
+            formData.append('foto', file);
         }
-    
+
         axios
             .put(`http://localhost:6969/EditFuncionarios/${id}`, formData, {
                 headers: {
@@ -88,18 +89,19 @@ function EditFuncionarios() {
     };
 
     return (
-        <div className="container-fluid d-flex">
-            <div className="d-flex flex-column w-100 ml-2">
-                <div className="d-flex vh-100 justify-content-center mt-5">
+        <div className="d-flex" >
+            <Sidebar />
+            <div className="content d-flex flex-column bg-white ">
+                <div className="d-flex  vh-100 justify-content-center">
                     <div className="w-100 bg-white rounded p-3">
-                        <div className="d-flex align-items-center mt-2 mx-5 mb-4">
+                        <div className="d-flex align-items-center mt-2  mb-4">
                             <Link to="/funcionarios" className="btn border-0">
                                 <IoIosArrowBack size={32} />
                             </Link>
                             <h2 className="ms-2">Adicionar Funcionário</h2>
                         </div>
 
-                        <div className="container">
+                        <div className="container-edit mx-4 me-3">
                             <form onSubmit={handleEditFuncionarios}>
                                 <div className="row mx">
                                     <div className="mb-2 col-sm coluna-esquerda">

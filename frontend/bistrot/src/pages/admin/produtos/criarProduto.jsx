@@ -207,15 +207,15 @@ function CriarProduto() {
             {/* Campo nome produto */}
             <div className="col-md-6 mb-4 mr-2">
               <div className="input-group mb-4">
-                <span className="input-group-text fundo">
-                  <FaPen className='icon-pen' />
+                <span className="input-group-text fundo  " style={{backgroundColor:'#ffff'}}>
+                  <FaPen className='icon-pen'  />
                 </span>
                 <input
                   type="text"
                   className="form-control icons-input"
                   placeholder="Nome do Produto"
                   aria-label="Nome do Produto"
-                  style={{ backgroundColor: '#f8f9fa', borderLeft: 'none' }}
+                  style={{ backgroundColor: '#ffff', borderLeft: 'none' }}
                   onChange={e => setValues({ ...values, nome: e.target.value })}
                   required
                 />
@@ -223,7 +223,7 @@ function CriarProduto() {
 
               {/* Campo preço de venda */}
               <div className="input-group mb-4">
-                <span className="input-group-text" id="basic-addon1">
+                <span className="input-group-text" style={{backgroundColor:'#ffff'}}>
                   <IoMdPricetags className='icons' />
                 </span>
                 <input
@@ -232,7 +232,7 @@ function CriarProduto() {
                   placeholder="Preço de Venda"
                   aria-label="Preço de Venda"
                   aria-describedby="basic-addon1"
-                  style={{ backgroundColor: '#f8f9fa', borderLeft: 'none' }}
+                  style={{ backgroundColor: '#ffff', borderLeft: 'none' }}
                   onChange={handlePrecoChange}
                   value={precoFormatado} // Usar o valor formatado
                   required
@@ -270,12 +270,12 @@ function CriarProduto() {
 
               {/* Campo Categoria */}
               <div className="input-group mb-4">
-                <span className="input-group-text" style={{ borderRight: 'none' }}>
+                <span className="input-group-text" style={{ borderRight: 'none', backgroundColor:'#ffff' }}>
                   <MdOutlineChecklist size={23} />
                 </span>
                 <select
                   className="form-select"
-                  style={{ borderLeft: 'none', backgroundColor: '#f8f9fa' }}
+                  style={{ borderLeft: 'none', backgroundColor: '#ffff' }}
                   onChange={handleChangeCategoria}
                   value={categoria}
                   required
@@ -291,12 +291,12 @@ function CriarProduto() {
 
               {/* Campo Tamanho */}
               <div className="input-group mb-4">
-                <span className="input-group-text" style={{ borderRight: 'none' }}>
+                <span className="input-group-text" style={{ borderRight: 'none',backgroundColor:'#ffff' }}>
                   <FaRuler size={23} />
                 </span>
                 <select
                   className="form-select"
-                  style={{ borderLeft: 'none', backgroundColor: '#f8f9fa' }}
+                  style={{ borderLeft: 'none', backgroundColor: '#ffff' }}
                   onChange={handleChangeTamanho}
                   value={values.tamanho}
                   required
@@ -314,12 +314,12 @@ function CriarProduto() {
 
               {/* Campo Restrição alérgica */}
               <div className="input-group mb-4">
-                <span className="input-group-text" style={{ borderRight: 'none' }}>
+                <span className="input-group-text" style={{ borderRight: 'none',backgroundColor:'#ffff'}}>
                   <GoAlert size={23} />
                 </span>
                 <select
                   className="form-select"
-                  style={{ borderLeft: 'none', backgroundColor: '#f8f9fa' }}
+                  style={{ borderLeft: 'none', backgroundColor: '#ffff' }}
                   onChange={e => setValues({ ...values, restricaoalergica: e.target.value })}
                   required
                 >

@@ -43,9 +43,6 @@ function Home() {
     setCartItems(cartItems.length);
   }, []);
 
-
-  
-
   const Filter = (event) => {
     const searchTerm = event.target.value.toLowerCase();
     setRecords(produtos.filter((produto) => produto.nome.toLowerCase().includes(searchTerm)));

@@ -5,6 +5,7 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { IoMdPricetags } from 'react-icons/io';
 import { FaPen } from 'react-icons/fa';
 
+
 import { MdOutlineChecklist } from 'react-icons/md';
 import { FaRuler } from 'react-icons/fa';
 import { GoAlert } from 'react-icons/go';
@@ -112,16 +113,16 @@ function EditarProdutos() {
         <div className="d-flex vh-100 justify-content-center mt-5">
             <div className="w-100 bg-white rounded p-3">
                 {/* Botão para voltar pra tela de produtos */}
-                <div className="d-flex align-items-center mt-2 mx-5 mb-4">
+                <div className="d-flex align-items-center mt-2  mb-4">
                     <Link to="/produtos">
                         <button className="btn border-0">
                             <IoIosArrowBack size={32} />
                         </button>
                     </Link>
-                    <h2 className="ms-2">Editar produto</h2>
+                    <h2 className="">Editar produto</h2>
                 </div>
 
-                <div className="container">
+                <div className="container-flex ">
                     <form onSubmit={handleSubmit}>
                         <div className="row mx">
                             <div className="mb-2 col-sm coluna-esquerda">
@@ -156,7 +157,7 @@ function EditarProdutos() {
 
                                 {/* Campo descrição do produto */}
                                 <div className="input-group mb-4">
-                                    <div style={{ position: 'relative', width: '36rem' }}>
+                                    <div style={{ position: 'relative', width: '100%' }}>
                                         <textarea
                                             type="text-area"
                                             placeholder="Descricao"
@@ -241,8 +242,8 @@ function EditarProdutos() {
                                 </div>
 
                                 {/* Campo foto */}
-                                <div className="input-group mb-4 w-100">
-                                    <div className="col-md-6 mb-3 w-100">
+                                <div className="input-group w-100">
+                                    <div className="w-100">
                                         <div className="input-group mb-4">
                                             <label className="input-group-text" htmlFor="inputGroupFile01">
                                                 <SlPicture />

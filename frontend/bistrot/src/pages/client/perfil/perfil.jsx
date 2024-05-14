@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { useNavigate } from "react-router-dom"; 
 
 //icones
 import { IoIosArrowBack } from 'react-icons/io';
@@ -28,6 +29,8 @@ function Perfil() {
   const [editando, setEditando] = useState(false);
   const [imagemSelecionada, setImagemSelecionada] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); 
+
 
   axios.defaults.withCredentials = true;
   
@@ -36,8 +39,7 @@ function Perfil() {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          // Se não houver token, redirecione para a página de login
-          window.location.href = '/login';
+          navigate("/login");
           return;
         }
         
@@ -67,7 +69,7 @@ function Perfil() {
     };
 
     fetchData();
-  }, []);
+  }, );
 
 
 
@@ -90,7 +92,7 @@ function Perfil() {
         console.log('Resposta do servidor:', response.data);
         setFoto(response.data.foto);
         setEditando(false);
-        //window.location.reload();
+
       })
       .catch(error => {
         console.error('Erro ao salvar dados do perfil:', error);

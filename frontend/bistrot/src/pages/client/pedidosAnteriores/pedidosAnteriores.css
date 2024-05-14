@@ -1,0 +1,23 @@
+.pedidos-anteriores-container {
+    height: 100vh; 
+    overflow-x: hidden; 
+}
+
+.status-pedidos-anteriores p {
+    font-weight: bold;
+}
+.linha-pedidos-anteriores{
+    width: 95%;
+    color: rgb(159, 159, 159);
+}
+
+.icone-sucesso{
+    color:#3CDB7F;
+}
+
+.icone-alerta{
+    color: #FFC048;
+}
+.data-pedidos-anteriores{
+    font-size: 10pt;
+}

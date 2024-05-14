@@ -4,6 +4,7 @@ import { IoIosArrowBack, IoIosTrash } from 'react-icons/io';
 import './carrinho.css';
 import img from './../../../assets/SemProdutosNoCarrinho.svg';
 import Loading from '../../../components/loading/loading';
+import TabBar from '../../../components/tabBar/tabBar';
 
 function Carrinho() {
   const [carrinhoProdutos, setCarrinhoProdutos] = useState([]);
@@ -63,6 +64,7 @@ function Carrinho() {
 
   return (
     <div className="carrinho-container">
+    <TabBar/>
       <div className="d-flex align-items-center mt-4 mb-4">
         <Link to="/">
           <button className="btn border-0">
@@ -73,7 +75,7 @@ function Carrinho() {
       </div>
 
       {carrinhoProdutos.length === 0 ? (
-        <div className="mt-5 mx-4">
+        <div className="mt-5 mx-4 text-center">
           <img src={img} className="img-vazio" alt="carrinho vazio" />
           <h3>ops..!</h3>
           <p>Parece que você ainda não tem nada em seu carrinho :(</p>
@@ -81,6 +83,7 @@ function Carrinho() {
       ) : (
         <>
           <div className="produtos-carrinho">
+          
             {carrinhoProdutos.map((produto, index) => (
               <div key={index} className="produto-item separador mb-3 d-flex">
                 <img
@@ -114,6 +117,7 @@ function Carrinho() {
             ))}
           </div>
           <div className="tab-pedido">
+          
             <div className="finalizar d-flex justify-content-between ">
               <span className="precoTotal me-5">
                 {precoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}

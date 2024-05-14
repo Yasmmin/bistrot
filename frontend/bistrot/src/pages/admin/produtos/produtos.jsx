@@ -74,14 +74,15 @@ function Produtos() {
       <div className="content">
         <div className="d-flex justify-content-between align-items-center mt-3 mx-4">
           <form className="d-flex w-100 ">
-            <div className="input-group">
+            <div className="w-100">
               <input
                 className="form-control flex-grow-1 mr-2 mb-3"
                 type="search"
                 placeholder="pesquisar"
                 onChange={Filter}
-                style={{ height: '3rem' }}
+                style={{ height: '3rem', width: '100%' }}
               />
+
             </div>
             <button onClick={handleAdicionarProdutoClick} className="btn mx-2" type="submit" style={{ whiteSpace: 'nowrap', background: '#1BAC4B', color: 'white', height: '3rem' }}>
               <IoIosAddCircleOutline size={20} /> Adicionar produto
@@ -97,7 +98,7 @@ function Produtos() {
             records.map((produto) => (
               <div key={produto.id} className=" produto-card-admin m-3">
                 <div className="produto-admin mx-3">
-                  <img className="img-produto-admin" src={`http://localhost:6969/files/${produto.foto}`} alt="imagem do produto"/>
+                  <img className="img-produto-admin" src={`http://localhost:6969/files/${produto.foto}`} alt="imagem do produto" />
                   <div className="info-produtos-admin w-100">
                     <h4 className="info-nome-admin">{produto.nome}</h4>
                     <h5 className="info-preco-admin">R$ {produto.preco}</h5>
