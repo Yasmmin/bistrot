@@ -98,7 +98,7 @@ function Sidebar() {
 
 
 
-                            <li className="nav-item">
+                            <li className="nav-item mb-2">
                                 <Link
                                     to="/cliente"
                                     className={`nav-link ${activeTab === '/cliente' ? 'active' : ''}`}
@@ -111,7 +111,7 @@ function Sidebar() {
                                 </Link>
                             </li>
 
-                            <li className="nav-item">
+                            <li className="nav-item mb-2">
                                 <Link
                                     to="#"
                                     className={`nav-link ${activeTab === '/Estatisticas' ? 'active' : ''}`}

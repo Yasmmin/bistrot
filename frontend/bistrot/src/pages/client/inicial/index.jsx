@@ -36,6 +36,8 @@ function Home() {
       }
     };
 
+
+
     fetchProdutos();
     const userId = localStorage.getItem("userId");
     const cartKey = `carrinhoProdutos_${userId}`;
@@ -47,6 +49,10 @@ function Home() {
     const searchTerm = event.target.value.toLowerCase();
     setRecords(produtos.filter((produto) => produto.nome.toLowerCase().includes(searchTerm)));
   };
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+};
 
   return (
     <div className="d-flex flex-column w-100 home-geral">
@@ -85,7 +91,7 @@ function Home() {
                 />
                 <div className="info-produtos mx-3 mt-2">
                   <h4 className="produto-nome">{produto.nome}</h4>
-                  <h3 className="produto-preco">R$ {produto.preco}</h3>
+                  <h3 className="produto-preco">{formatCurrency(produto.preco)}</h3>
                 </div>
               </Link>
             ))
