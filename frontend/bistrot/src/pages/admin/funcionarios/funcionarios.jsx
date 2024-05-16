@@ -114,7 +114,7 @@ function Funcionarios() {
                             </div>
                             {/* Botão para Editar produtos */}
                             <div className="d-flex flex-column mb-1 mx-3">
-                                <Link to={`/EditFuncionarios/${funcionario.id}`} className="btn" style={{ backgroundColor: '#1bab4b', color: 'white', fontWeight: '450' }}>
+                                <Link to={`/EditFuncionarios/${funcionario.id}`} className="btn btn-primary" style={{ color: 'white', fontWeight: '450' }}>
                                     <FaPen className='mx-2 ' />
                                     Editar
                                 </Link>
@@ -122,7 +122,7 @@ function Funcionarios() {
 
                             {/* Botão para Excluir produtos */}
                             <div className='d-flex flex-column mb-1 mx-3'>
-                                <button className="btn mt-2 mb-4 w-100" onClick={() => handleDelete(funcionario.id)} style={{ backgroundColor: '#ff4d4d', color: "white", fontWeight: '450' }}>
+                                <button className="btn btn-danger mt-2 mb-4 w-100" onClick={() => handleDelete(funcionario.id)} style={{ color: "white", fontWeight: '450' }}>
                                     <FaTrashAlt className='mx-2' />
                                     Remover
                                 </button>

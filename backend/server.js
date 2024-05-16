@@ -582,13 +582,13 @@ app.get('/endereco', verifyUser, (req, res) => {
 });
 
 app.post('/finalizar', verifyUser, (req, res) => {
-    const { entregaCasa, formaPagamento, horaPedido, obs, total, dataAtual, userName, produtos } = req.body;
+    const { entregaCasa, formaPagamento, horaPedido, observacao, total, dataAtual, userName, produtos } = req.body;
 
     // Verificar se os dados foram recebidos corretamente
-    console.log("Dados recebidos no backend:", { userId: req.userId, entregaCasa, formaPagamento, horaPedido, dataAtual, userName, produtos });
+    console.log("Dados recebidos no backend:", { userId: req.userId, entregaCasa, formaPagamento, observacao, horaPedido, dataAtual, userName, produtos });
 
     // Montar os valores para a query SQL
-    const values = [req.userId, formaPagamento, entregaCasa, horaPedido, obs, total, dataAtual, userName];
+    const values = [req.userId, formaPagamento, entregaCasa, horaPedido, observacao, total, dataAtual, userName];
     const produtosArray = []; // Inicializar o array para os produtos
 
     // Convertendo o objeto JSON de produtos em um array de objetos para inserção no banco de dados

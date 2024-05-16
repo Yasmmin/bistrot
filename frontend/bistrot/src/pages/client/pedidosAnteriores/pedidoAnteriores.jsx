@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { format } from 'date-fns';
 import './pedidosAnteriores.css';
+import { CiShare1 } from "react-icons/ci";
 
 function PedidoAnteriores() {
     const [pedidosAnteriores, setPedidosAnteriores] = useState([]);
@@ -50,7 +51,16 @@ function PedidoAnteriores() {
                                 ) : (
                                     <BsCheckCircleFill className="icone-sucesso ms-3 me-2" />
                                 )}
-                                <p className="mb-0">{pedido.status_pedido} - Nº {pedido.numero_pedido}</p>
+                                <div className="col">
+                                    <p className="mb-0 me-4">{pedido.status_pedido} - Nº {pedido.numero_pedido}</p>
+                                </div>
+
+                                {(pedido.status_pedido.toLowerCase() === "em processo" || pedido.status_pedido.toLowerCase() === "em análise") && (
+                                    <div className="col acompanhar-redirect">
+                                        <Link to="/acompanhar" className="acompanhar-redirect ms-5"><CiShare1 /> Acompanhar</Link>
+                                    </div>
+                                )}
+
                             </div>
                             <div className="row ms-2">
                                 <div className="col mb-2">

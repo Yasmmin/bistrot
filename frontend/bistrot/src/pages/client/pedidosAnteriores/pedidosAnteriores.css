@@ -1,23 +1,40 @@
 .pedidos-anteriores-container {
-    height: 100vh; 
-    overflow-x: hidden; 
+    height: 100vh;
+    overflow-x: hidden;
 }
 
 .status-pedidos-anteriores p {
     font-weight: bold;
 }
-.linha-pedidos-anteriores{
+
+.linha-pedidos-anteriores {
     width: 95%;
     color: rgb(159, 159, 159);
 }
 
-.icone-sucesso{
-    color:#3CDB7F;
+.icone-sucesso {
+    color: #3CDB7F;
 }
 
-.icone-alerta{
+.icone-alerta {
     color: #FFC048;
 }
-.data-pedidos-anteriores{
+
+.data-pedidos-anteriores {
     font-size: 10pt;
+}
+
+.acompanhar-pedido-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.acompanhar-pedido-titulo p {
+    margin: 0;
+}
+
+.acompanhar-redirect {
+    text-decoration: none;
+    color: #1ab45a;
 }

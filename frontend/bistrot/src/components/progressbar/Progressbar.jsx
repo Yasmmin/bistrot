@@ -82,52 +82,52 @@ function Progressbar() {
     const formaEntrega = localStorage.getItem('formaEntrega');
     const isRetirada = formaEntrega === 'Retirar';
 
-        return (
-            <div className="container w-100 ms-3">
-                <div className="content-bar">
-                    <div className="progressBar">
-                        <div className="progress" style={{ height: `${height}%`, background: '#1BAC4B' }}></div>
-                        <div className="circleContainer">
-                            {[...Array(circle).keys()].map((index) => (
-                                <div key={index} className="circleWithText">
-                                    <Circle
-                                        className={index + 1 <= active ? "circle active" : "circle"}
-                                        onClick={() => setActive(index + 1)}
-                                    >
-                                        {index + 1}
-                                    </Circle>
-                                    <div className="text">
-                                        {isRetirada && index === 3 ? "Pedido retirado" : stepsText[index]}
-                                    </div>
+    return (
+        <div className="container">
+            <div className="content-bar">
+                <div className="progressBar">
+                    <div className="progress" style={{ height: `${height}%`, background: '#1BAC4B' }}></div>
+                    <div className="circleContainer">
+                        {[...Array(circle).keys()].map((index) => (
+                            <div key={index} className="circleWithText">
+                                <Circle
+                                    className={index + 1 <= active ? "circle active" : "circle"}
+                                    onClick={() => setActive(index + 1)}
+                                >
+                                    {index + 1}
+                                </Circle>
+                                <div className="text">
+                                    {isRetirada && index === 3 ? "Pedido retirado" : stepsText[index]}
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
                     </div>
-                    <div >
-                        <p className="mb-0 mt-3" style={{ fontWeight: 'bolder', fontSize: '13pt' }}>Tudo certo com o seu pedido?</p>
-                        <p style={{ fontSize: '11pt' }}>Confirme assim que receber ou retirar o pedidos e nos ajude a saber se deu tudo certo</p>
-                    </div>
-                    <div className="button-confirmar-variavel">
-                        {active >= 3 ? (
-                            <button
-                                className="button-confirmar confirm-button-green"
-                                onClick={handleConfirmarClick}
-                            >
-                                Confirmar
-                            </button>
-                        ) : (
-                            <button
-                                className="button-confirmar confirm-button-gray"
-                                disabled
-                            >
-                                Confirmar
-                            </button>
-                        )}
-                    </div>
-        
                 </div>
+                <div >
+                    <p className="mb-0 mt-3" style={{ fontWeight: 'bolder', fontSize: '13pt' }}>Tudo certo com o seu pedido?</p>
+                    <p style={{ fontSize: '11pt' }}>Confirme assim que receber ou retirar o pedidos e nos ajude a saber se deu tudo certo</p>
+                </div>
+                <div className="button-confirmar-variavel">
+                    {active >= 3 ? (
+                        <button
+                            className="button-confirmar confirm-button-green"
+                            onClick={handleConfirmarClick}
+                        >
+                            Confirmar
+                        </button>
+                    ) : (
+                        <button
+                            className="button-confirmar confirm-button-gray"
+                            disabled
+                        >
+                            Confirmar
+                        </button>
+                    )}
+                </div>
+    
             </div>
-        );
-    }        
+        </div>
+    );
+}        
 
 export default Progressbar;

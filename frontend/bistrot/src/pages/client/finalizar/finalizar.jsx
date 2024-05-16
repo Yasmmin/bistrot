@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { IoIosArrowBack } from 'react-icons/io';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { FaMoneyBill, FaRegCreditCard } from 'react-icons/fa';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './finalizar.css';
+import { format } from 'date-fns-tz';
 
 function Finalizar() {
   const [endereco, setEndereco] = useState({});
@@ -15,11 +16,14 @@ function Finalizar() {
   const [produtos, setProdutos] = useState([]);
   const usuarioId = localStorage.getItem('userId');
   const userName = localStorage.getItem('userName');
+  const [observacao, setObservacao] = useState("");
+  const [contadorCaracteres, setContadorCaracteres] = useState(0);
   const [opcoesSelecionadas, setOpcoesSelecionadas] = useState({
     enderecoSelecionado: false,
     formaPagamentoSelecionada: false
   });
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
 
@@ -28,6 +32,12 @@ function Finalizar() {
       return;
     }
   }, []);
+  const getLocalTime = () => {
+    const timeZone = 'America/Sao_Paulo';
+    const now = new Date();
+    return format(now, 'HH:mm', { timeZone });
+  };
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -85,7 +95,7 @@ function Finalizar() {
     const usuarioId = localStorage.getItem('userId');
 
     if (!token || !usuarioId) {
-      window.location.href = '/login';
+      navigate('/login');
       return;
     }
 
@@ -101,7 +111,8 @@ function Finalizar() {
 
     const data = new Date();
     const dataAtual = data.toISOString().slice(0, 10);
-    const horaAtual = `${data.getHours().toString().padStart(2, '0')}:${data.getMinutes().toString().padStart(2, '0')}`;
+    const horaAtual = getLocalTime();
+    console.log(horaAtual);
     setHoraPedido(horaAtual);
 
     const produtosParaEnviar = produtos.map(({ produto, quantidade }) => ({
@@ -113,12 +124,13 @@ function Finalizar() {
       const res = await axios.post('http://localhost:6969/finalizar', {
         entregaCasa,
         formaPagamento,
-        horaPedido,
+        horaAtual,
         total,
         dataAtual,
         usuarioId,
         produtos: produtosParaEnviar,
         userName,
+        observacao,
       }, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -136,7 +148,7 @@ function Finalizar() {
         text: 'Seu pedido foi finalizado com sucesso.',
         confirmButtonText: 'OK',
       });
-      window.location.href = '/acompanhar';
+       navigate('/acompanhar'); 
     } catch (err) {
       console.error('Erro ao finalizar pedido:', err);
       Swal.fire({
@@ -147,6 +159,14 @@ function Finalizar() {
       });
     }
   };
+  const handleObservacaoChange = (event) => {
+    const textoObservacao = event.target.value;
+    if (textoObservacao.length <= 100) {
+      setObservacao(textoObservacao);
+      setContadorCaracteres(textoObservacao.length);
+    }
+  };
+ 
 
   return (
     <div className="finalizar container-flex mx-3 ">
@@ -212,6 +232,26 @@ function Finalizar() {
                 <FaRegCreditCard size={25} style={{ marginRight: '5px' }} />Cartão
               </p>
               <input type="radio" className="checkbox" checked={formaPagamento === 'cartão'} onChange={() => handleFormaPagamentoChange('cartão')} />
+            </div>
+          </div>
+        </div>
+
+        <div className="info-obs mt-4">
+          <div className="endereco-info">
+            <p className="mx-2 mb-0">Alguma observação?</p>
+          </div>
+          <div className="outras-informacoes-obs">
+            <div className="container-obs">
+              <div className="textarea-wrapper">
+                <textarea
+                  type="text"
+                  placeholder="Ex: Tire a cebola, adicione maionese..."
+                  className="obs-finalizar"
+                  value={observacao}
+                  onChange={handleObservacaoChange}
+                />
+                <span className="contar-caracteres">{contadorCaracteres}/100</span>
+              </div>
             </div>
           </div>
         </div>

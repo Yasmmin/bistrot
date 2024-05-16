@@ -1,3 +1,6 @@
+.container-fluid {
+    margin-bottom: 80px; /* Adiciona uma margem inferior para criar espaço para a TabBar */
+}
 .tab-bar {
     position: fixed;
     bottom: 0;
@@ -11,7 +14,7 @@
     min-width: 300px;
     padding-top: 1rem;
     padding-bottom: 1rem;
- 
+    
 }
 
 .tab-bar a {

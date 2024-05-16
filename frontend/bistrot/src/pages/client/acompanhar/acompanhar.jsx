@@ -1,12 +1,14 @@
-import Progressbar from "../../../components/progressbar/Progressbar"
+import Progressbar from "../../../components/progressbar/Progressbar";
 import { IoIosArrowBack } from 'react-icons/io';
 import { Link } from "react-router-dom";
+import TabBar from "../../../components/tabBar/tabBar";
+import './acompanhar.css'; // Importe o arquivo de estilos
 
 function Acompanhar() {
   return (
-    <div className="body-acompanhar">
-    
-    <div className="header mt-4 mb-2">
+    <div className="body-acompanhar w-100">
+      <TabBar />
+      <div className="mt-4 mb-2">
         <div className="d-flex align-items-center">
           <Link to="/">
             <button className="btn border-0">
@@ -17,12 +19,11 @@ function Acompanhar() {
         </div>
       </div>
       
-      <div className="conteudo-acompanhar ">
-      <Progressbar/>
+      <div className="conteudo-acompanhar">
+        <Progressbar />
       </div>
-
     </div>
-  )
+  );
 }
 
-export default Acompanhar
+export default Acompanhar;

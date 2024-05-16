@@ -52,6 +52,7 @@
     flex-direction: column; 
     justify-content: space-between; 
     align-items: start;
+    width: 100%;
 }
 
 
