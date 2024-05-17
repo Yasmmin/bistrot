@@ -46,7 +46,7 @@ function PedidoAnteriores() {
                     .map((pedido, index) => (
                         <div key={index} className="pedido">
                             <div className="status-pedidos-anteriores d-flex align-items-center">
-                                {(pedido.status_pedido.toLowerCase() === "em processo" || pedido.status_pedido.toLowerCase() === "em análise") ? (
+                                {(pedido.status_pedido.toLowerCase() === "em processo" ||pedido.status_pedido.toLowerCase() === "finalizado" || pedido.status_pedido.toLowerCase() === "em análise") ? (
                                     <IoMdAlert className="icone-alerta ms-3 me-2" />
                                 ) : (
                                     <BsCheckCircleFill className="icone-sucesso ms-3 me-2" />
@@ -55,7 +55,7 @@ function PedidoAnteriores() {
                                     <p className="mb-0 me-4">{pedido.status_pedido} - Nº {pedido.numero_pedido}</p>
                                 </div>
 
-                                {(pedido.status_pedido.toLowerCase() === "em processo" || pedido.status_pedido.toLowerCase() === "em análise") && (
+                                {(pedido.status_pedido.toLowerCase() === "em processo" ||pedido.status_pedido.toLowerCase() === "finalizado" || pedido.status_pedido.toLowerCase() === "em análise") && (
                                     <div className="col acompanhar-redirect">
                                         <Link to="/acompanhar" className="acompanhar-redirect ms-5"><CiShare1 /> Acompanhar</Link>
                                     </div>
