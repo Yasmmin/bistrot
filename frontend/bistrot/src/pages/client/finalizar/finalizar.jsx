@@ -21,16 +21,17 @@ function Finalizar() {
     enderecoSelecionado: false,
     formaPagamentoSelecionada: false
   });
+    const [troco, setTroco] = useState(0);
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      window.location.href = '/login';
+    navigate('/login');
       return;
     }
-  }, []);
+  }, );
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -68,15 +69,65 @@ function Finalizar() {
       setFormaPagamento('');
     }
   };
-
+  
   const handleFormaPagamentoChange = (value) => {
+    if (value === 'dinheiro') {
+        Swal.fire({
+            title: 'Precisa de troco para?',
+            html: `
+                <input id="swal-input1" class="swal2-input" placeholder="R$ 0,00" maxlength="9">
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Não preciso de troco',
+            customClass: {
+                actions: 'swal2-actions-reverse',
+                confirmButton: 'swal2-confirm-button',
+                cancelButton: 'swal2-cancel-button'
+            },
+            preConfirm: () => {
+                const trocoValue = document.getElementById('swal-input1').value;
+                const trocoNumerico = parseFloat(trocoValue.replace('R$ ', '').replace(',', '.')) || 0;
+                if (!trocoValue || isNaN(trocoNumerico)) {
+                    Swal.showValidationMessage('Por favor, insira um valor válido.');
+                } else {
+                    setTroco(trocoNumerico);
+                }
+            }
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+                setTroco('Sem troco');
+            }
+        });
+
+        document.querySelector('.swal2-input').addEventListener('input', (event) => {
+            let value = event.target.value;
+            value = value.replace(/[^\d,]/g, '');
+
+            let [inteiros, decimais] = value.split(',');
+            inteiros = inteiros.substring(0, 3);
+
+            inteiros = inteiros.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            if (decimais !== undefined) {
+                decimais = decimais.substring(0, 2);
+                event.target.value = `R$ ${inteiros},${decimais}`;
+            } else {
+                event.target.value = `R$ ${inteiros}`;
+            }
+        });
+    } else {
+        setTroco('Sem troco');
+    }
     setFormaPagamento(value);
     setOpcoesSelecionadas({
-      ...opcoesSelecionadas,
-      enderecoSelecionado: entregaCasa !== '',
-      formaPagamentoSelecionada: value !== ''
+        ...opcoesSelecionadas,
+        enderecoSelecionado: entregaCasa !== '',
+        formaPagamentoSelecionada: value !== ''
     });
-  };
+};
+
+
 
   const taxaFrete = entregaCasa === 'Entregar' ? 5 : 0;
   const total = subtotal + taxaFrete;
@@ -112,6 +163,7 @@ function Finalizar() {
 
     try {
       const res = await axios.post('http://localhost:6969/finalizar', {
+      
         entregaCasa,
         formaPagamento,
         horaPedido: horaAtual,
@@ -121,6 +173,7 @@ function Finalizar() {
         produtos: produtosParaEnviar,
         userName,
         observacao,
+        troco,
       }, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -137,7 +190,6 @@ function Finalizar() {
         text: 'Seu pedido foi finalizado com sucesso.',
         confirmButtonText: 'OK',
       });
-      window.location.href = '/acompanhar';
       navigate('/acompanhar'); 
     } catch (err) {
       console.error('Erro ao finalizar pedido:', err);

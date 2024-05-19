@@ -582,13 +582,13 @@ app.get('/endereco', verifyUser, (req, res) => {
 });
 
 app.post('/finalizar', verifyUser, (req, res) => {
-    const { entregaCasa, formaPagamento, horaPedido, observacao, total, dataAtual, userName, produtos } = req.body;
+    const { entregaCasa, formaPagamento, horaPedido, observacao, total, dataAtual, userName, produtos, troco, } = req.body;
 
     // Verificar se os dados foram recebidos corretamente
-    console.log("Dados recebidos no backend:", { userId: req.userId, entregaCasa, formaPagamento, observacao, horaPedido, dataAtual, userName, produtos });
+    console.log("Dados recebidos no backend:", { userId: req.userId, entregaCasa, formaPagamento, observacao, horaPedido, dataAtual, userName,produtos,troco });
 
     // Montar os valores para a query SQL
-    const values = [req.userId, formaPagamento, entregaCasa, horaPedido, observacao, total, dataAtual, userName];
+    const values = [req.userId, formaPagamento, entregaCasa, horaPedido, observacao, total, dataAtual, userName,troco];
     const produtosArray = []; // Inicializar o array para os produtos
 
     // Convertendo o objeto JSON de produtos em um array de objetos para inserção no banco de dados
@@ -602,7 +602,7 @@ app.post('/finalizar', verifyUser, (req, res) => {
     // Adicionando "Em análise" como o status padrão
     values.push("Em análise");
 
-    const sqlQuery = "INSERT INTO pedido (id_cliente, forma_pagamento, forma_entrega, hora_pedido, obs, valor_total, data, nome_cliente, produtos, status_pedido) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const sqlQuery = "INSERT INTO pedido (id_cliente, forma_pagamento, forma_entrega, hora_pedido, obs, valor_total, data, nome_cliente, troco,produtos, status_pedido) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
     // Executar a query SQL
     db.query(sqlQuery, values, (err, result) => {

@@ -14,6 +14,7 @@ function Pedidos() {
         const fetchPedido = async () => {
             try {
                 const res = await axios.get("http://localhost:6969/pedidos");
+
                 setRecords([...res.data]);
             } catch (err) {
                 console.error(err);
@@ -21,7 +22,15 @@ function Pedidos() {
         };
         fetchPedido();
     }, []);
-    
+
+    function formatarTroco(valor) {
+        // Se o valor do troco for 0, retornar 'Sem troco'
+        if (valor === 'Sem troco') {
+            return 'Sem troco';
+        }
+        return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
     async function handleAceitarPedido(numeroPedido) {
         try {
             await axios.put(`http://localhost:6969/pedidos/${numeroPedido}/status`, { novoStatus: "Em produção" });
@@ -113,15 +122,15 @@ function Pedidos() {
                                 <div className="conteudo" key={index}>
                                     <div className="d-flex justify-content-between mx-2">
                                         <div className="d-flex align-items-center">
-                                            
-            
+
+
                                             <p className="mb-0 fw-bold">Pedido #{pedido.numero_pedido}</p>
                                         </div>
                                         <span><CiClock2 size={20} />{formatarHora(pedido.hora_pedido)} </span>
                                     </div>
                                     <hr className="mx-auto mt-1" style={{ width: '95%' }} />
-                                  
-                                   {/*sessão de informações do pedido*/}
+
+                                    {/*sessão de informações do pedido*/}
                                     <div className="info-pedido row mt-1">
                                         <div className="info-produtos-pedido col-6 ">
                                             {pedido.produtos.map((produto, index) => (
@@ -132,6 +141,11 @@ function Pedidos() {
                                             <p><b>Pagamento:</b> {pedido.forma_pagamento}</p>
                                             <p><b>Cliente:</b> {pedido.nome_cliente}</p>
                                             <p><b>Email:</b> {pedido.email}</p>
+
+                                            {pedido.forma_pagamento === "dinheiro" && (
+                                                <p><b>Troco:</b> {formatarTroco(pedido.troco)}</p>
+                                            )}
+
                                         </div>
                                     </div>
                                     <hr className="mx-auto mb-2" style={{ width: '95%' }} />
@@ -165,7 +179,7 @@ function Pedidos() {
                                 <div className="conteudo" key={index}>
                                     <div className="d-flex justify-content-between mx-2">
                                         <div className="d-flex align-items-center">
-                                           
+
                                             <p className="mb-0 fw-bold">Pedido #{pedido.numero_pedido}</p>
                                         </div>
                                         <span><CiClock2 size={20} />{formatarHora(pedido.hora_pedido)} </span>
@@ -182,7 +196,11 @@ function Pedidos() {
                                             <p><b>Pagamento:</b> {pedido.forma_pagamento}</p>
                                             <p><b>Cliente:</b> {pedido.nome_cliente}</p>
                                             <p><b>Email:</b> {pedido.email}</p>
+                                            {pedido.forma_pagamento === "dinheiro" && (
+                                                <p><b>Troco:</b> {Number(pedido.troco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                            )}
                                         </div>
+
                                     </div>
                                     <hr className="mx-auto mb-2" style={{ width: '95%' }} />
                                     <div className="info-endereco-pedido text-start ms-3">
@@ -212,7 +230,7 @@ function Pedidos() {
                                 <div className="conteudo" key={index}>
                                     <div className="d-flex justify-content-between mx-2">
                                         <div className="d-flex align-items-center">
-                                         
+
                                             <p className="mb-0 fw-bold">Pedido #{pedido.numero_pedido}</p>
                                         </div>
                                         <span><CiClock2 size={20} />{formatarHora(pedido.hora_pedido)} </span>
@@ -237,7 +255,7 @@ function Pedidos() {
                                         {pedido.forma_entrega === "Entregar" && (
                                             <p className="mb-0"><b>Endereço:</b> {pedido.bairro}, {pedido.rua}, {pedido.casa}</p>
                                         )}
-                                        <p><b>Total: {Number(pedido.valor_total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b></p>
+                                        <p><b>Total: {String(pedido.valor_total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b></p>
                                     </div>
                                     <div className="info-producao-botoes row ">
                                         <div className="col">
