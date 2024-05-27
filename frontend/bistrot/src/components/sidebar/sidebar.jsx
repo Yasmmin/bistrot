@@ -111,19 +111,6 @@ function Sidebar() {
                                 </Link>
                             </li>
 
-                            <li className="nav-item mb-2">
-                                <Link
-                                    to="#"
-                                    className={`nav-link ${activeTab === '/Estatisticas' ? 'active' : ''}`}
-                                    onClick={() => handleTabClick('/Estatisticas')}
-                                >
-                                    <div className="icon-sidebar">
-                                        <GoGraph />
-                                    </div>
-                                    Estatísticas
-                                </Link>
-                            </li>
-
                             <li className="nav-item">
                                 <Link
                                     to="/funcionarios"
@@ -134,6 +121,19 @@ function Sidebar() {
                                         <FaUsersCog />
                                     </div>
                                     Funcionários
+                                </Link>
+                            </li>
+
+                            <li className="nav-item  mt-2 mb-2">
+                                <Link
+                                    to="/estatisticas"
+                                    className={`nav-link ${activeTab === '/Estatisticas' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('/Estatisticas')}
+                                >
+                                    <div className="icon-sidebar">
+                                        <GoGraph />
+                                    </div>
+                                    Estatísticas
                                 </Link>
                             </li>
 

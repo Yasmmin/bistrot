@@ -27,6 +27,7 @@ import Progressbar from './components/progressbar/Progressbar';
 import Acompanhar from './pages/client/acompanhar/acompanhar';
 import Redefinir from './pages/auth/senha/redefinir';
 import TodosOsPedidos from './pages/admin/todosOsPedidos/todosOsPedidos';
+import Estatistica from './pages/admin/estatisticas/estatistica';
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
         <Route path='/senha' element={<Senha />}></Route>
         <Route path='/pedidosAnteriores' element={<PedidoAnteriores />}></Route>
         <Route path='/todosOsPedidos' element={<TodosOsPedidos />}></Route>
+        <Route path='/estatisticas' element={<Estatistica />}></Route>
       </Routes>
     </BrowserRouter>
   )

@@ -70,8 +70,18 @@ function Cadastro() {
                 console.log(res.data);
                 if (res.data.Status === "Sucesso!") {
                     navigate('/login');
+                } else if (res.data.Error === "E-mail já cadastrado") {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "O e-mail já está cadastrado!",
+                    });
                 } else {
-                    alert("Erro");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Erro ao cadastrar. Tente novamente mais tarde.",
+                    });
                 }
             })
             .catch(err => {

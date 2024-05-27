@@ -46,26 +46,44 @@ app.use('/files', express.static(imagePath));
 //--- Cadastro de usuários ---------------------------------------------------------------------------------------------------------------------//
 
 app.post('/cadastro', (req, res) => {
-    bcrypt.hash(req.body.senha.toString(), salt, (err, hash) => {
+    const { nome, email, senha } = req.body;
+
+    // Verifica se o e-mail já existe
+    const checkEmailSql = "SELECT * FROM cliente WHERE email = ?";
+    db.query(checkEmailSql, [email], (err, result) => {
         if (err) {
-            console.error("Erro ao criptografar a senha:", err);
-            return res.json({ Error: "Erro ao criptografar a senha" });
+            console.error("Erro ao verificar e-mail no servidor:", err);
+            return res.json({ Error: "Erro ao verificar e-mail no servidor", details: err.message });
         }
 
-        const sql = "INSERT INTO cliente (`nome`, `email`, `senha`, `role`) VALUES (?, ?, ?, 'cliente')";
-        const values = [req.body.nome, req.body.email, hash];
+        if (result.length > 0) {
+          
+            return res.json({ Error: "E-mail já cadastrado" });
+        } else {
+            // E-mail não existe, prossiga com o cadastro
+            bcrypt.hash(senha.toString(), salt, (err, hash) => {
+                if (err) {
+                    console.error("Erro ao criptografar a senha:", err);
+                    return res.json({ Error: "Erro ao criptografar a senha" });
+                }
 
-        db.query(sql, values, (err, result) => {
-            if (err) {
-                console.error("Erro ao inserir dados no servidor:", err);
-                return res.json({ Error: "Erro ao inserir dados no servidor", details: err.message });
-            }
+                const sql = "INSERT INTO cliente (`nome`, `email`, `senha`, `role`) VALUES (?, ?, ?, 'cliente')";
+                const values = [nome, email, hash];
 
-            console.log("Dados inseridos com sucesso:", result);
-            return res.json({ Status: "Sucesso!" });
-        });
+                db.query(sql, values, (err, result) => {
+                    if (err) {
+                        console.error("Erro ao inserir dados no servidor:", err);
+                        return res.json({ Error: "Erro ao inserir dados no servidor", details: err.message });
+                    }
+
+                    console.log("Dados inseridos com sucesso:", result);
+                    return res.json({ Status: "Sucesso!" });
+                });
+            });
+        }
     });
 });
+
 
 //--- Cadastro de produto ---------------------------------------------------------------------------------------------------------------------//
 const storage = multer.diskStorage({

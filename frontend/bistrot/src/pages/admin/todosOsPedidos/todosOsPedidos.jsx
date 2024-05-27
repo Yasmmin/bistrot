@@ -19,6 +19,8 @@ function TodosOsPedidos() {
         switch (status.toLowerCase()) {
             case 'entregue':
             case 'retirado':
+            case 'finalizado':
+            case 'saindo para entrega':
                 return 'status-cor-green';
             case 'recusado':
             case 'expirado':
