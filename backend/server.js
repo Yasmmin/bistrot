@@ -57,7 +57,7 @@ app.post('/cadastro', (req, res) => {
         }
 
         if (result.length > 0) {
-          
+
             return res.json({ Error: "E-mail já cadastrado" });
         } else {
             // E-mail não existe, prossiga com o cadastro
@@ -594,7 +594,7 @@ app.get('/endereco', verifyUser, (req, res) => {
             casa: userData.casa,
             bairro: userData.bairro,
             complemento: userData.complemento
-            
+
         });
     });
 });
@@ -603,10 +603,10 @@ app.post('/finalizar', verifyUser, (req, res) => {
     const { entregaCasa, formaPagamento, horaPedido, observacao, total, dataAtual, userName, produtos, troco, } = req.body;
 
     // Verificar se os dados foram recebidos corretamente
-    console.log("Dados recebidos no backend:", { userId: req.userId, entregaCasa, formaPagamento, observacao, horaPedido, dataAtual, userName,produtos,troco });
+    console.log("Dados recebidos no backend:", { userId: req.userId, entregaCasa, formaPagamento, observacao, horaPedido, dataAtual, userName, produtos, troco });
 
     // Montar os valores para a query SQL
-    const values = [req.userId, formaPagamento, entregaCasa, horaPedido, observacao, total, dataAtual, userName,troco];
+    const values = [req.userId, formaPagamento, entregaCasa, horaPedido, observacao, total, dataAtual, userName, troco];
     const produtosArray = []; // Inicializar o array para os produtos
 
     // Convertendo o objeto JSON de produtos em um array de objetos para inserção no banco de dados
@@ -628,11 +628,11 @@ app.post('/finalizar', verifyUser, (req, res) => {
             console.error("Erro ao inserir dados no banco de dados:", err);
             return res.status(500).json({ error: "Erro interno do servidor" });
         }
-        const numeroPedido = result.insertId; 
+        const numeroPedido = result.insertId;
         console.log("Dados inseridos no banco de dados com sucesso:", result);
-        return res.status(200).json({ 
-            message: "Pedido finalizado com sucesso", 
-            numero_pedido: numeroPedido 
+        return res.status(200).json({
+            message: "Pedido finalizado com sucesso",
+            numero_pedido: numeroPedido
         });
     });
 });
@@ -640,7 +640,14 @@ app.post('/finalizar', verifyUser, (req, res) => {
 
 //--- Recuperar Pedidos do Banco de Dados -----------------------------------------------//
 app.get('/pedidos', (req, res) => {
-    const sql = "SELECT p.*, c.rua, c.casa, c.bairro, c.complemento,c.email FROM pedido p JOIN cliente c ON p.id_cliente = c.id";
+    const { date } = req.query;
+    let sql = "SELECT p.*, c.rua, c.casa, c.bairro, c.complemento,c.email FROM pedido p JOIN cliente c ON p.id_cliente = c.id";
+
+    // Se a data for fornecida, adicione uma cláusula WHERE para filtrar os pedidos pela data
+    if (date) {
+        sql += ` WHERE DATE(p.data) = '${date}'`;
+    }
+
     db.query(sql, (err, data) => {
         if (err) {
             console.log(err);
@@ -650,9 +657,81 @@ app.get('/pedidos', (req, res) => {
     });
 });
 
+
+app.get('/faturamento', (req, res) => {
+    const period = req.query.period;
+    let sql = "";
+    const currentYear = new Date().getFullYear();
+    switch (period) {
+        case 'daily':
+            sql = `
+                SELECT DATE_FORMAT(p.data, '%Y-%m-%d') as name, SUM(p.valor_total) as valor_total
+                FROM pedido p
+                WHERE YEAR(p.data) = ${currentYear}
+                GROUP BY DATE_FORMAT(p.data, '%Y-%m-%d')
+            `;
+            break;
+
+        case 'weekly':
+            sql = `
+        SELECT 
+            days_of_week.name,
+            COALESCE(SUM(p.valor_total), 0) as valor_total
+        FROM (
+            SELECT 'Domingo' as name, CURDATE() - INTERVAL (DAYOFWEEK(CURDATE()) - 1) DAY as date
+            UNION SELECT 'Segunda', CURDATE() - INTERVAL (DAYOFWEEK(CURDATE()) - 2) DAY
+            UNION SELECT 'Terça', CURDATE() - INTERVAL (DAYOFWEEK(CURDATE()) - 3) DAY
+            UNION SELECT 'Quarta', CURDATE() - INTERVAL (DAYOFWEEK(CURDATE()) - 4) DAY
+            UNION SELECT 'Quinta', CURDATE() - INTERVAL (DAYOFWEEK(CURDATE()) - 5) DAY
+            UNION SELECT 'Sexta', CURDATE() - INTERVAL (DAYOFWEEK(CURDATE()) - 6) DAY
+            UNION SELECT 'Sábado', CURDATE() - INTERVAL (DAYOFWEEK(CURDATE()) - 7) DAY
+        ) as days_of_week
+        LEFT JOIN (
+            SELECT 
+                DATE(data) as date, 
+                SUM(valor_total) as valor_total
+            FROM pedido
+            WHERE YEAR(data) = 2024 
+                AND status_pedido IN ('retirado', 'entregue', 'finalizado') /* Corrigido para o nome correto da coluna */
+            GROUP BY DATE(data)
+        ) as p ON days_of_week.date = p.date
+        GROUP BY days_of_week.name
+    `;
+            break;
+
+        case 'monthly':
+            sql = `
+                SELECT DATE_FORMAT(p.data, '%M') as name, SUM(p.valor_total) as valor_total
+                FROM pedido p
+                WHERE YEAR(p.data) = ${currentYear}
+                GROUP BY DATE_FORMAT(p.data, '%M')
+            `;
+            break;
+        case 'yearly':
+            sql = `
+                SELECT YEAR(p.data) as name, SUM(p.valor_total) as valor_total
+                FROM pedido p
+                GROUP BY YEAR(p.data)
+            `;
+            break;
+        default:
+            return res.status(400).json({ error: "Invalid period" });
+    }
+
+    db.query(sql, (err, data) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Erro ao buscar dados de faturamento", details: err.message });
+        }
+        return res.json(data);
+    });
+});
+
+
+
 // Endpoint para atualizar o status do pedido
 app.put('/pedidos/:numero_pedido/status', (req, res) => {
-    const pedidoNumero = req.params.numero_pedido; 
+    const pedidoNumero = req.params.numero_pedido;
     const novoStatus = req.body.novoStatus;
 
     // Verifique se o pedido com o número fornecido existe no banco de dados
@@ -705,9 +784,9 @@ app.get('/pedidos/:numero_pedido/status', (req, res) => {
 });
 
 app.post('/redefinir-senha', async (req, res) => {
-    const { email, code, novaSenha } = req.body; 
-    
-    
+    const { email, code, novaSenha } = req.body;
+
+
     // Verificar se o email existe na tabela cliente
     const sql = "SELECT * FROM cliente WHERE email = ?";
     db.query(sql, [email], async (err, result) => {
