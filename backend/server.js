@@ -662,16 +662,10 @@ app.get('/faturamento', (req, res) => {
     const period = req.query.period;
     let sql = "";
     const currentYear = new Date().getFullYear();
-    switch (period) {
-        case 'daily':
-            sql = `
-                SELECT DATE_FORMAT(p.data, '%Y-%m-%d') as name, SUM(p.valor_total) as valor_total
-                FROM pedido p
-                WHERE YEAR(p.data) = ${currentYear}
-                GROUP BY DATE_FORMAT(p.data, '%Y-%m-%d')
-            `;
-            break;
+    const currentMonth = new Date().getMonth() + 1; // Get the current month (0-11) and add 1 to make it (1-12)
+    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
 
+    switch (period) {
         case 'weekly':
             sql = `
         SELECT 
@@ -701,19 +695,54 @@ app.get('/faturamento', (req, res) => {
 
         case 'monthly':
             sql = `
-                SELECT DATE_FORMAT(p.data, '%M') as name, SUM(p.valor_total) as valor_total
-                FROM pedido p
-                WHERE YEAR(p.data) = ${currentYear}
-                GROUP BY DATE_FORMAT(p.data, '%M')
+                SELECT 
+                    days_of_month.day as name,
+                    COALESCE(SUM(p.valor_total), 0) as valor_total
+                FROM (
+                    ${Array.from({ length: daysInMonth }, (_, i) => `
+                        SELECT ${i + 1} as day, DATE('${currentYear}-${currentMonth}-${i + 1}') as date
+                    `).join(' UNION ALL ')}
+                ) as days_of_month
+                LEFT JOIN (
+                    SELECT 
+                        DATE(data) as date, 
+                        SUM(valor_total) as valor_total
+                    FROM pedido
+                    WHERE YEAR(data) = ${currentYear}
+                        AND MONTH(data) = ${currentMonth}
+                        AND status_pedido IN ('retirado', 'entregue', 'finalizado')
+                    GROUP BY DATE(data)
+                ) as p ON days_of_month.date = p.date
+                GROUP BY days_of_month.day
+                ORDER BY days_of_month.day
             `;
             break;
         case 'yearly':
             sql = `
-                SELECT YEAR(p.data) as name, SUM(p.valor_total) as valor_total
-                FROM pedido p
-                GROUP BY YEAR(p.data)
-            `;
+                    SELECT 
+                        months.month_number,
+                        months.name,
+                        COALESCE(SUM(p.valor_total), 0) as valor_total
+                    FROM (
+                        SELECT 1 as month_number, 'Janeiro' as name
+                        UNION SELECT 2, 'Fevereiro'
+                        UNION SELECT 3, 'Março'
+                        UNION SELECT 4, 'Abril'
+                        UNION SELECT 5, 'Maio'
+                        UNION SELECT 6, 'Junho'
+                        UNION SELECT 7, 'Julho'
+                        UNION SELECT 8, 'Agosto'
+                        UNION SELECT 9, 'Setembro'
+                        UNION SELECT 10, 'Outubro'
+                        UNION SELECT 11, 'Novembro'
+                        UNION SELECT 12, 'Dezembro'
+                    ) as months
+                    LEFT JOIN pedido p ON MONTH(p.data) = months.month_number AND YEAR(p.data) = ${currentYear} AND status_pedido IN ('retirado', 'entregue', 'finalizado')
+                    GROUP BY months.month_number, months.name
+                    ORDER BY months.month_number
+                `;
             break;
+
         default:
             return res.status(400).json({ error: "Invalid period" });
     }
@@ -726,8 +755,6 @@ app.get('/faturamento', (req, res) => {
         return res.json(data);
     });
 });
-
-
 
 // Endpoint para atualizar o status do pedido
 app.put('/pedidos/:numero_pedido/status', (req, res) => {
@@ -754,8 +781,7 @@ app.put('/pedidos/:numero_pedido/status', (req, res) => {
                 console.error("Erro ao atualizar status do pedido:", err);
                 return res.status(500).json({ error: "Erro interno do servidor" });
             }
-
-            // Retorna uma mensagem de sucesso
+            
             return res.json({ message: `Status do pedido atualizado para '${novoStatus}'` });
         });
     });

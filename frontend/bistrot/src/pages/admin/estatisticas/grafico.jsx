@@ -6,18 +6,24 @@ import './estatistica.css';
 const LineChartComponent = () => {
     const [filter, setFilter] = useState('daily');
     const [chartData, setChartData] = useState([]);
-    const [maxValue, setMaxValue] = useState(0); 
+    const [maxValue, setMaxValue] = useState(0);
 
     const fetchData = async (selectedFilter) => {
         try {
             const response = await axios.get(`http://localhost:6969/faturamento`, {
                 params: { period: selectedFilter }
             });
+
             setChartData(response.data);
         } catch (error) {
             console.error("Erro ao buscar dados de faturamento", error);
         }
     };
+    useEffect(() => {
+        // Definindo "Semanal" como o filtro padrão ao montar a página
+        setFilter('weekly');
+    }, []);
+    
 
     useEffect(() => {
         fetchData(filter);
@@ -39,7 +45,6 @@ const LineChartComponent = () => {
                 <h3>Faturamento - Finalizados</h3>
                 <div className="filter-dropdown me-4">
                     <select value={filter} onChange={handleFilterChange}>
-                        <option value="daily">Diário</option>
                         <option value="weekly">Semanal</option>
                         <option value="monthly">Mensal</option>
                         <option value="yearly">Anual</option>
@@ -51,10 +56,12 @@ const LineChartComponent = () => {
                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" style={{ fontSize: '10pt' }} />
-                    <YAxis domain={[0, maxValue]} />
+                    <YAxis domain={[0, maxValue]} tickFormatter={(value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} />
+
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="valor_total" stroke="#8884d8" activeDot={{ r: 8 }} />
+                    <Line type="monotone" dataKey="valor_total" stroke="#8884d8" activeDot={{ r: 8 }}
+                        formatter={(value) => parseFloat(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} />
                 </LineChart>
             </ResponsiveContainer>
         </div>
