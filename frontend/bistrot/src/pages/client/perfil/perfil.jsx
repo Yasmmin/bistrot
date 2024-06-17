@@ -1,19 +1,23 @@
-//dependencias
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom"; 
 
-//icones
+// Ícones
 import { IoIosArrowBack } from 'react-icons/io';
 import { CiUser } from 'react-icons/ci';
 import { MdOutlineEmail } from 'react-icons/md';
-//arquivos
+
+// Imagem padrão
 import userPadrao from '../../../../../../backend/image/users/userPadrao.svg';
+
+// Componente de loading e sem permissão
 import SemPermissao from '../../../components/permissão/semPermissao';
 import Loading from '../../../components/loading/loading';
-import './perfil.css'
+
+// Estilos
+import './perfil.css';
 
 function Perfil() {
   const [auth, setAuth] = useState(false);
@@ -29,11 +33,8 @@ function Perfil() {
   const [editando, setEditando] = useState(false);
   const [imagemSelecionada, setImagemSelecionada] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-
-  axios.defaults.withCredentials = true;
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,13 +43,12 @@ function Perfil() {
           navigate("/login");
           return;
         }
-        
+  
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         const response = await axios.get('http://localhost:6969/perfil');
         if (response.data.Status === 'Sucesso!') {
-          setAuth(true);
           const userData = response.data;
-          setFoto(userData.foto);
+          setFoto(userData.foto ? `http://localhost:6969/users/${userData.foto}` : userPadrao);
           setNome(userData.nome);
           setEmail(userData.email);
           setTelefone(userData.telefone);
@@ -56,24 +56,29 @@ function Perfil() {
           setCasa(userData.casa);
           setBairro(userData.bairro);
           setComplemento(userData.complemento);
-          localStorage.setItem('perfil_cliente', JSON.stringify(response.data));
-          setLoading(false);
+          setAuth(true);
         } else {
           console.error('Erro ao carregar perfil:', response.data.Error);
-          setAuth(false);
-          setLoading(false);
         }
       } catch (error) {
         console.error('Erro na requisição:', error);
+      } finally {
+        setLoading(false);
       }
     };
-
+  
     fetchData();
-  }, );
+  }, []); 
 
+  useEffect(() => {
+    if (imagemSelecionada) {
+      setFoto(URL.createObjectURL(imagemSelecionada));
+    }
+  }, [imagemSelecionada]);
+  
+  
 
-
-  const handleSave = () => {
+  const handleSave = async () => {
     const formData = new FormData();
     if (imagemSelecionada) {
       formData.append('foto', imagemSelecionada);
@@ -86,18 +91,19 @@ function Perfil() {
     formData.append('casa', casa);
     formData.append('bairro', bairro);
     formData.append('complemento', complemento);
-
-    axios.put(`http://localhost:6969/perfil`, formData, { withCredentials: true })
-      .then(response => {
-        console.log('Resposta do servidor:', response.data);
+  
+    try {
+      const response = await axios.put(`http://localhost:6969/perfil`, formData, { withCredentials: true });
+      console.log('Resposta do servidor:', response.data);
+      if (response.data.foto) {
         setFoto(response.data.foto);
-        setEditando(false);
-
-      })
-      .catch(error => {
-        console.error('Erro ao salvar dados do perfil:', error);
-      });
+      }
+      setEditando(false);
+    } catch (error) {
+      console.error('Erro ao salvar dados do perfil:', error);
+    }
   };
+  
 
   const handleLogout = () => {
     if (editando) {
@@ -119,13 +125,13 @@ function Perfil() {
             .then(() => {
               // Limpar localStorage
               localStorage.clear();
-  
+
               Swal.fire(
                 'Desconectado!',
                 'Indo para página de Login',
                 'success'
               );
-  
+
               setTimeout(() => {
                 window.location.href = '/login';
               }, 1000);
@@ -151,46 +157,44 @@ function Perfil() {
         <div className='container-fluid ' style={{ minWidth: '400px' }}>
           <div className='d-flex flex-column text-center '>
             <div className='d-flex align-items-center mt-4'>
-
               <Link to='/'>
                 <button className='btn border-0'>
                   <IoIosArrowBack size={32} />
                 </button>
               </Link>
-
               <h2 className='ms-2 mb-2'>{editando ? 'Salvar perfil' : 'Editar perfil'}</h2>
             </div>
 
-            <div className="d-flex justify-content-center align-items-center">
-              <label htmlFor="fotoInput">
-                <img
-                  className="mt-3 mb-3 img-fluid"
-                  src={imagemSelecionada ? URL.createObjectURL(imagemSelecionada) : (foto ? `http://localhost:6969/users/${foto}` : userPadrao)}
-                  alt="Foto de perfil"
-                  style={{
-                    width: '12rem',
-                    height: '12rem',
-                    objectFit: 'cover',
-                    borderRadius: '50%',
-                    cursor: editando ? 'pointer' : 'default',
-                    maxWidth: '600px'
-                  }}
-                />
-              </label>
-              {editando && (
-                <input
-                  id="fotoInput"
-                  type="file"
-                  style={{ display: 'none' }}
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    setImagemSelecionada(file);
-                  }}
-                />
-              )}
-            </div>
+         <div className="d-flex justify-content-center align-items-center">
+  <label htmlFor="fotoInput">
+    <img
+      className="mt-3 mb-3 img-fluid"
+      src={foto || userPadrao}
+      alt="Foto de perfil"
+      style={{
+        width: '12rem',
+        height: '12rem',
+        objectFit: 'cover',
+        borderRadius: '50%',
+        cursor: editando ? 'pointer' : 'default',
+        maxWidth: '600px'
+      }}
+    />
+  </label>
+  {editando && (
+    <input
+      id="fotoInput"
+      type="file"
+      style={{ display: 'none' }}
+      onChange={(e) => {
+        const file = e.target.files[0];
+        setImagemSelecionada(file);
+      }}
+    />
+  )}
+</div>
 
-            <label className='text-start fw-bold mx-1'>Nome</label>
+
             <div className='mb-2 mr-2 ' style={{ minWidth: '350px' }}>
               <div className='input-group mb-3 text-center'>
                 <span className='input-group-text fundo'>
@@ -205,11 +209,9 @@ function Perfil() {
                   onChange={e => setNome(e.target.value)}
                   readOnly={!editando}
                 />
-
               </div>
             </div>
 
-            <label className='text-start fw-bold mx-1'>Email</label>
             <div className='mb-2 mr-2' style={{ minWidth: '350px' }}>
               <div className='input-group mb-3 text-center'>
                 <span className='input-group-text fundo'>
@@ -223,7 +225,6 @@ function Perfil() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   readOnly={!editando}
-
                 />
               </div>
             </div>
@@ -282,62 +283,54 @@ function Perfil() {
               </div>
             </div>
 
-            <div className='row'>
-              <div className='col coluna-esquerda'>
-                <div className='mb-3 w-100'>
-                  <label className='fw-bold mx-1' style={{ textAlign: 'left', display: 'block' }}>Rua</label>
-                  <div className='input-group mb-4 text-center'>
-                    <span className='input-group-text fundo'>
-                      <CiUser />
-                    </span>
-                    <input
-                      type='text'
-                      className='form-control'
-                      placeholder='Nº da casa'
-                      style={{ backgroundColor: '#f8f9fa' }}
-                      value={rua}
-                      readOnly={!editando}
-                      onChange={e => setRua(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className='col coluna-direita'>
-                <div className='mb-3 w-100'>
-                  <label className='fw-bold mx-1' style={{ textAlign: 'left', display: 'block' }}>Nº da casa</label>
-                  <div className='input-group mb-4 text-center'>
-                    <span className='input-group-text fundo'>
-                      <CiUser />
-                    </span>
-                    <input
-                      type='text'
-                      className='form-control'
-                      placeholder='Nº da casa'
-                      style={{ backgroundColor: '#f8f9fa' }}
-                      value={casa}
-                      readOnly={!editando}
-                      onChange={e => setCasa(e.target.value)}
-                    />
-                  </div>
-                </div>
+            <div className='mb-3 w-100'>
+              <label className='fw-bold mx-1' style={{ textAlign: 'left', display: 'block' }}>Rua</label>
+              <div className='input-group mb-3 text-center'>
+                <span className='input-group-text fundo'>
+                  <CiUser />
+                </span>
+                <input
+                  type='text'
+                  className='form-control'
+                  placeholder='Rua'
+                  style={{ backgroundColor: '#f8f9fa' }}
+                  value={rua}
+                  readOnly={!editando}
+                  onChange={e => setRua(e.target.value)}
+                />
               </div>
             </div>
 
-            {editando ? (
-              <button onClick={handleSave} className='btn btn-primary w-100 mb-2 mt-3' style={{ minWidth: '350px' }}>Salvar</button>
-            ) : (
-              <button onClick={() => setEditando(true)} className='btn btn-primary w-100 mb-2 mt-3' style={{ minWidth: '350px' }}>Editar</button>
-            )}
+            <div className='mb-3 w-100'>
+              <label className='fw-bold mx-1' style={{ textAlign: 'left', display: 'block' }}>Casa</label>
+              <div className='input-group mb-3 text-center'>
+                <span className='input-group-text fundo'>
+                  <CiUser />
+                </span>
+                <input
+                  type='text'
+                  className='form-control'
+                  placeholder='Casa'
+                  style={{ backgroundColor: '#f8f9fa' }}
+                  value={casa}
+                  readOnly={!editando}
+                  onChange={e => setCasa(e.target.value)}
+                />
+              </div>
+            </div>
 
-            <button onClick={handleLogout} className='btn btn-danger w-100 mb-5' style={{ minWidth: '350px' }}>{editando ? 'Descartar' : 'Desconectar-se'}</button>
+            <div className='mb-2 text-center'>
+              {editando ? (
+                <button onClick={handleSave} className='btn btn-primary w-100 mb-2 mt-3' style={{ minWidth: '350px' }}>Salvar</button>
+              ) : (
+                <button onClick={() => setEditando(true)} className='btn btn-primary w-100 mb-2 mt-3' style={{ minWidth: '350px' }}>Editar</button>
+              )}
+              <button onClick={handleLogout} className='btn btn-danger w-100 mb-5' style={{ minWidth: '350px' }}>{editando ? 'Descartar' : 'Desconectar-se'}</button>
+            </div>
           </div>
         </div>
       ) : (
-        // Se não autenticado, exibe mensagens e botão de login
-        <div>
-          <SemPermissao />
-        </div>
+        <SemPermissao />
       )}
     </div>
   );
