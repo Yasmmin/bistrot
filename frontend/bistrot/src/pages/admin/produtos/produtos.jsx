@@ -24,10 +24,14 @@ function Produtos() {
     const fetchProdutos = async () => {
       try {
         const res = await axios.get("http://localhost:6969/produtos");
-        setProdutos(res.data);
-        setRecords([...res.data]);
+        if (res.data && Array.isArray(res.data)) {
+          setProdutos(res.data);
+          setRecords([...res.data]);
+        } else {
+          console.error("Dados inválidos recebidos da API:", res.data);
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Erro ao buscar produtos:", err);
       }
     };
     fetchProdutos();
@@ -56,11 +60,6 @@ function Produtos() {
         await axios.delete(`http://localhost:6969/produtos/${id}`);
         setProdutos(produtos.filter(produto => produto.id !== id));
         Swal.fire('Excluído!', 'O produto foi excluído com sucesso.', 'success');
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-
       } catch (err) {
         console.error(err);
         Swal.fire('Erro', 'Houve um erro ao excluir o produto.', 'error');
