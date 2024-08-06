@@ -25,8 +25,8 @@ function CriarProduto() {
   const navigate = useNavigate();
 
   // Adicionar estado para o preço formatado
-  const [precoFormatado, setPrecoFormatado] = useState('R$ 0,00'); // Certifique-se de que isso está definido
-
+  const [precoFormatado, setPrecoFormatado] = useState('R$ 0,00');
+  
   // Função para formatar o preço à medida que o usuário digita
   const handlePrecoChange = (event) => {
     const inputPreco = event.target.value.replace(/[^\d]/g, '');
@@ -234,7 +234,7 @@ function CriarProduto() {
                   aria-describedby="basic-addon1"
                   style={{ backgroundColor: '#ffff', borderLeft: 'none' }}
                   onChange={handlePrecoChange}
-                  value={precoFormatado} // Usar o valor formatado
+                  value={precoFormatado} 
                   required
                 />
               </div>

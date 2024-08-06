@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./style.css";
 import { AiOutlineShoppingCart, AiOutlineFilter } from "react-icons/ai";
@@ -24,33 +24,20 @@ function Home() {
       const now = new Date();
       const hour = now.getHours();
       const dayOfWeek = now.getDay();
-      // Verifica se é segunda a sexta-feira e está dentro do horário de funcionamento
-      // horario de funcionamento das 11 da manhã até as 14 da tarde
-      if (dayOfWeek >= 1 && dayOfWeek <= 5 && hour >= 11 && hour < 23) {
-        return true;
-      } else {
-        return false;
-      }
+      
+      // Horário de funcionamento das 11 da manhã até as 14 da tarde
+      return dayOfWeek >= 1 && dayOfWeek <= 5 && hour >= 11 && hour < 14;
     };
 
     setIsOpen(checkOpenStatus());
 
     const fetchProdutos = async () => {
       try {
-        const cachedProdutos = localStorage.getItem("produtos");
-        if (cachedProdutos) {
-          const parsedProdutos = JSON.parse(cachedProdutos);
-          setProdutos(parsedProdutos);
-          setRecords(parsedProdutos); // Inicialmente exibir todos os produtos
-          setLoading(false);
-        } else {
-          const res = await axios.get("http://localhost:6969/produtos");
-          const produtosData = res.data;
-          setProdutos(produtosData);
-          setRecords(produtosData); // Inicialmente exibir todos os produtos
-          setLoading(false);
-          localStorage.setItem("produtos", JSON.stringify(produtosData));
-        }
+        const res = await axios.get("http://localhost:6969/produtos");
+        const produtosData = res.data;
+        setProdutos(produtosData);
+        setRecords(produtosData);
+        setLoading(false);
       } catch (err) {
         console.error(err);
         setLoading(false);
@@ -63,6 +50,11 @@ function Home() {
     const cartKey = `carrinhoProdutos_${userId}`;
     const cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
     setCartItems(cartItems.length);
+
+    // Atualizar produtos a cada 3 segundos
+    const intervalId = setInterval(fetchProdutos, 3000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const Filter = (event) => {
@@ -91,19 +83,18 @@ function Home() {
 
   const toggleCategories = () => {
     setShowCategories(!showCategories);
-    // Calcular a posição do dropdown
     const filterIcon = document.querySelector(".filter-icon");
     if (filterIcon) {
       const rect = filterIcon.getBoundingClientRect();
-      // Ajuste para abrir um pouco mais para a esquerda
-      const dropdownLeft = rect.left - 50; // Ajuste de 50 pixels para a esquerda
+    
+      const dropdownLeft = rect.left - 50; 
       setDropdownPosition({ top: rect.bottom, left: dropdownLeft });
     }
   };
 
   const selectCategory = (category) => {
     if (category === "") {
-      setRecords(produtos); // Exibe todos os produtos
+      setRecords(produtos); 
     } else {
       // Filtra os produtos pela categoria selecionada
       const filteredProdutos = produtos.filter(
@@ -111,7 +102,7 @@ function Home() {
       );
       setRecords(filteredProdutos);
     }
-    setShowCategories(false); // Fechar o dropdown ao selecionar uma categoria
+    setShowCategories(false);
   };
 
   return (
