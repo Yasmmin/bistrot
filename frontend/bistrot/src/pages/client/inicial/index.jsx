@@ -24,10 +24,21 @@ function Home() {
       const now = new Date();
       const hour = now.getHours();
       const dayOfWeek = now.getDay();
-      
-      // Horário de funcionamento das 11 da manhã até as 14 da tarde
-      return dayOfWeek >= 1 && dayOfWeek <= 5 && hour >= 11 && hour < 14;
+
+      // Horário de funcionamento: Segunda a Sábado: 07:00 - 12:55, Domingo até as 23:00
+      if (dayOfWeek >= 1 && dayOfWeek <= 5 && hour >= 7 && hour < 13) {
+        return true;
+      } else if (dayOfWeek === 0 && hour >= 0 && hour < 23) {
+        return true;
+      } else {
+        return false;
+      }
     };
+
+    setIsOpen(checkOpenStatus());
+
+    // O resto do código permane
+
 
     setIsOpen(checkOpenStatus());
 

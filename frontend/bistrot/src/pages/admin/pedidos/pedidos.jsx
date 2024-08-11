@@ -6,6 +6,8 @@ import axios from "axios";
 //icones análise
 import { CiClock2 } from "react-icons/ci";
 import { LuRefreshCcw } from "react-icons/lu";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Pedidos() {
     const [records, setRecords] = useState([]);
@@ -14,14 +16,32 @@ function Pedidos() {
         const fetchPedido = async () => {
             try {
                 const res = await axios.get("http://localhost:6969/pedidos");
+                const formattedRecords = res.data.map(pedido => ({
+                    ...pedido,
+                    produtos: JSON.parse(pedido.produtos),
+                }));
 
-                setRecords([...res.data]);
+                if (formattedRecords.length > records.length) {
+                    console.log('Novo pedido recebido, tentando tocar som...');
+                    const audio = new Audio('./../../../assets/som1.wav');
+                    audio.play().catch(err => console.error('Erro ao tocar o som:', err));
+                    toast.info("Novo pedido recebido!");
+                    setRecords(formattedRecords);
+
+
+                } else {
+                    setRecords(formattedRecords);
+                }
             } catch (err) {
                 console.error(err);
             }
         };
-        fetchPedido();
-    }, []);
+        // Configurar intervalo para verificar novos pedidos
+        const intervalId = setInterval(fetchPedido, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [records]);
+
 
     function formatarTroco(valor) {
         // Se o valor do troco for 0, retornar 'Sem troco'
@@ -269,6 +289,7 @@ function Pedidos() {
                         </div>
                     </div>
                 </div>
+                <ToastContainer />
             </div>
         </div>
     );
