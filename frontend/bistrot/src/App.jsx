@@ -40,13 +40,12 @@ function App() {
         <Route path='/perfil' element={<Perfil />}></Route>
         <Route path='/permissao' element={<SemPermissao />}></Route>
         <Route path='/carrinho' element={<Carrinho />}></Route>
-
-        <Route path='/pedidos' element={<Pedidos />}></Route>
+        
         <Route path='/infoproduto/:id' element={<InfoProduto />}></Route>
         <Route path='/finalizar' element={<Finalizar />}></Route>
         <Route path='/novoendereco' element={<NovoEndereco />}></Route>
         <Route path='/progress' element={<Progressbar />}></Route>
-        <Route path='/acompanhar' element={<Acompanhar />}></Route>
+        <Route path='/acompanhar/:numeroPedido' element={<Acompanhar />}></Route> {/* Rota modificada */}
         <Route path='/redefinir' element={<Redefinir />}></Route>
 
         {/*Rotas que serão privadas - tem que fazer*/}

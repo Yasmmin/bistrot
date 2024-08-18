@@ -7,8 +7,6 @@ import './cadastro.css';
 import Loading from "../../../components/loading/loading";
 
 // import de icones
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook, FaApple } from 'react-icons/fa';
 import { FaUser } from 'react-icons/fa6';
 import { IoIosLock } from 'react-icons/io';
 import { IoEyeSharp } from "react-icons/io5";
@@ -168,30 +166,10 @@ function Cadastro() {
                         </button>
                     </div>
 
-                    <div className="mb-3 form-check d-flex align-items-center justify-content-center">
-                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                        <label className="form-check-label mx-2 mt-1" htmlFor="exampleCheck1">
-                            Lembrar de mim
-                        </label>
-                    </div>
 
-                    <button type="submit" className="btn btn-dark w-100 rounded-4 mb-3" >Cadastre-se</button>
+                    <button type="submit" className="btn btn-dark w-100 rounded-4 mb-2" >Cadastre-se</button>
 
-                    <div className="text-center">
-                        <p> ou continue com</p>
-                    </div>
-
-                    <div className="d-flex align-items-center justify-content-center">
-                        <div className="border border-1 border-solid rounded-3 px-3 py-2 mr-2 icon-container">
-                            <FaFacebook size={25} />
-                        </div>
-                        <div className="border border-1 border-solid rounded-3 mx-5 px-3 py-2 ml-2 icon-container">
-                            <FcGoogle size={25} />
-                        </div>
-                        <div className="border border-1 border-solid rounded-3 px-3 py-2 mr-2 icon-container">
-                            <FaApple size={25} />
-                        </div>
-                    </div>
+    
 
                     <div className="text-center mt-4">
                         <p>Ja tem uma conta?

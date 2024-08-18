@@ -22,7 +22,7 @@
 
 .search-icon {
     position: absolute;
-    left: 0.5rem;
+    left: 1rem;
     top: 50%;
     transform: translateY(-50%);
     color: #636262;

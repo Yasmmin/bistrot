@@ -2,7 +2,7 @@ import Progressbar from "../../../components/progressbar/Progressbar";
 import { IoIosArrowBack } from 'react-icons/io';
 import { Link } from "react-router-dom";
 import TabBar from "../../../components/tabBar/tabBar";
-import './acompanhar.css'; // Importe o arquivo de estilos
+import './acompanhar.css'; 
 
 function Acompanhar() {
   return (

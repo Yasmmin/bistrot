@@ -131,17 +131,16 @@ function Finalizar() {
 
   const taxaFrete = entregaCasa === 'Entregar' ? 5 : 0;
   const total = subtotal + taxaFrete;
-
   const handleFinalizarPedido = async () => {
     const token = localStorage.getItem('token');
     const usuarioId = localStorage.getItem('userId');
-
+  
     if (!token || !usuarioId) {
       window.location.href = '/login';
       navigate('/login');
       return;
     }
-
+  
     if (entregaCasa === '' || formaPagamento === '') {
       Swal.fire({
         icon: 'warning',
@@ -151,19 +150,18 @@ function Finalizar() {
       });
       return;
     }
-
+  
     const data = new Date();
     const dataAtual = data.toISOString().slice(0, 10);
     const horaAtual = `${data.getHours().toString().padStart(2, '0')}:${data.getMinutes().toString().padStart(2, '0')}`;
-
+  
     const produtosParaEnviar = produtos.map(({ produto, quantidade }) => ({
       nome: produto.nome,
       quantidade,
     }));
-
+  
     try {
       const res = await axios.post('http://localhost:6969/finalizar', {
-      
         entregaCasa,
         formaPagamento,
         horaPedido: horaAtual,
@@ -190,7 +188,7 @@ function Finalizar() {
         text: 'Seu pedido foi finalizado com sucesso.',
         confirmButtonText: 'OK',
       });
-      navigate('/acompanhar'); 
+      navigate('/pedidosAnteriores'); // Redireciona para a página de pedidos anteriores
     } catch (err) {
       console.error('Erro ao finalizar pedido:', err);
       Swal.fire({
@@ -201,6 +199,7 @@ function Finalizar() {
       });
     }
   };
+  
 
   const handleObservacaoChange = (event) => {
     const textoObservacao = event.target.value;

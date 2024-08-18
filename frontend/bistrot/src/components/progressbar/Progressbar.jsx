@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Circle from "./circle";
+import Circle from './circle';
 import './progressbar.css';
 import Swal from 'sweetalert2';
-
+import { useParams } from 'react-router-dom'; 
 function Progressbar() {
+    const { numeroPedido } = useParams(); 
     const [active, setActive] = useState(1);
     const [height, setHeight] = useState(0);
     const circle = 4;
@@ -19,22 +20,19 @@ function Progressbar() {
     const handleConfirmarClick = async () => {
         try {
             console.log('Botão clicado');
-            const numeroPedido = localStorage.getItem('numeroPedido');
             const formaEntrega = localStorage.getItem('formaEntrega');
             const novoStatus = formaEntrega === 'Retirar' ? 'Retirado' : 'Entregue';
             await axios.put(`http://localhost:6969/pedidos/${numeroPedido}/status`, { novoStatus });
-            setActive(4); 
+            setActive(4);
 
             if (novoStatus === "Entregue" || novoStatus === "Retirado") {
-
-                localStorage.removeItem('numeroPedido');
                 localStorage.removeItem('formaEntrega');
-               
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Pedido confirmado com sucesso!',
                     showConfirmButton: false,
-                    timer: 1500 
+                    timer: 1500
                 }).then(() => {
                     window.location.href = "/";
                 });
@@ -47,9 +45,11 @@ function Progressbar() {
     useEffect(() => {
         const fetchOrderStatus = async () => {
             try {
-                const numeroPedido = localStorage.getItem('numeroPedido');
+                console.log('Número do Pedido:', numeroPedido);
                 const response = await axios.get(`http://localhost:6969/pedidos/${numeroPedido}/status`);
+                console.log('Resposta da API:', response.data);
                 const status = response.data.status;
+                console.log('Status do Pedido:', status);
 
                 switch (status) {
                     case "Em análise":
@@ -72,8 +72,10 @@ function Progressbar() {
             }
         };
 
-        fetchOrderStatus();
-    }, []);
+        if (numeroPedido) {
+            fetchOrderStatus();
+        }
+    }, [numeroPedido]);
 
     useEffect(() => {
         setHeight((80 / (circle - 1)) * (active - 1));
@@ -103,9 +105,9 @@ function Progressbar() {
                         ))}
                     </div>
                 </div>
-                <div >
+                <div>
                     <p className="mb-0 mt-3" style={{ fontWeight: 'bolder', fontSize: '13pt' }}>Tudo certo com o seu pedido?</p>
-                    <p style={{ fontSize: '11pt' }}>Confirme assim que receber ou retirar o pedidos e nos ajude a saber se deu tudo certo</p>
+                    <p style={{ fontSize: '11pt' }}>Confirme assim que receber ou retirar o pedido e nos ajude a saber se deu tudo certo</p>
                 </div>
                 <div className="button-confirmar-variavel">
                     {active >= 3 ? (
@@ -124,10 +126,9 @@ function Progressbar() {
                         </button>
                     )}
                 </div>
-    
             </div>
         </div>
     );
-}        
+}
 
 export default Progressbar;

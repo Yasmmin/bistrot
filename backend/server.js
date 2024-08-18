@@ -38,9 +38,9 @@ const db = mysql.createConnection({
 
 //--- Recuperação de fotos cadastradas---------------------------------------------------------------------------------------------------------------------//
 
-const __filename = fileURLToPath(import.meta.url); //Obter o caminho absoluto do arquivo atual
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const imagePath = path.join(__dirname, 'image', 'produtos'); //Caminho para o diretório de imagens de produtos
+const imagePath = path.join(__dirname, 'image', 'produtos');
 app.use('/files', express.static(imagePath));
 
 //--- Cadastro de usuários ---------------------------------------------------------------------------------------------------------------------//
@@ -60,7 +60,7 @@ app.post('/cadastro', (req, res) => {
 
             return res.json({ Error: "E-mail já cadastrado" });
         } else {
-            // E-mail não existe, prossiga com o cadastro
+    
             bcrypt.hash(senha.toString(), salt, (err, hash) => {
                 if (err) {
                     console.error("Erro ao criptografar a senha:", err);

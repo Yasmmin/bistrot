@@ -37,11 +37,6 @@ function Home() {
 
     setIsOpen(checkOpenStatus());
 
-    // O resto do código permane
-
-
-    setIsOpen(checkOpenStatus());
-
     const fetchProdutos = async () => {
       try {
         const res = await axios.get("http://localhost:6969/produtos");
@@ -145,7 +140,7 @@ function Home() {
         </div>
       )}
 
-      <div className="content-container d-flex flex-column justify-content-between align-items-center mt-3 mx-2 mx-md-4">
+      <div className="content-container d-flex flex-column justify-content-between align-items-center mt-3 mx-1 mx-4">
         <form className="search-form w-100">
           <div className="search-container position-relative">
             {!searchFocused && <CiSearch className="search-icon" />}

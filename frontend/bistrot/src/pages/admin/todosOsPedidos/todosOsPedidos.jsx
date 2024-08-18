@@ -4,7 +4,6 @@ import { BsChevronExpand } from "react-icons/bs";
 import Sidebar from "../../../components/sidebar/sidebar";
 import "./todosOsPedidos.css";
 
-
 function TodosOsPedidos() {
     const [pedidos, setPedidos] = useState([]);
     const [records, setRecords] = useState([]);
@@ -14,7 +13,7 @@ function TodosOsPedidos() {
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
     };
-    
+
     const getStatusColor = (status) => {
         switch (status.toLowerCase()) {
             case 'entregue':
@@ -31,17 +30,27 @@ function TodosOsPedidos() {
                 return '';
         }
     }
+
+    const fetchPedidos = async () => {
+        try {
+            const res = await axios.get("http://localhost:6969/pedidos");
+            // Parse the produtos field
+            const pedidosComProdutos = res.data.map(pedido => ({
+                ...pedido,
+                produtos: pedido.produtos ? JSON.parse(pedido.produtos) : []
+            }));
+            setPedidos(pedidosComProdutos);
+            setRecords(pedidosComProdutos);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
-        const fetchPedidos = async () => {
-            try {
-                const res = await axios.get("http://localhost:6969/pedidos");
-                setPedidos(res.data);
-                setRecords(res.data);
-            } catch (err) {
-                console.error(err);
-            }
-        };
         fetchPedidos();
+
+        const intervalId = setInterval(fetchPedidos, 3000);
+        return () => clearInterval(intervalId);
     }, []);
 
     const filterRecords = (selectedStatus) => {
@@ -58,7 +67,7 @@ function TodosOsPedidos() {
                 pedido.numero_pedido.toString().toLowerCase().includes(selectedStatus.toLowerCase()) ||
                 pedido.status_pedido.toString().toLowerCase().includes(selectedStatus.toLowerCase()) ||
                 new Date(pedido.data).toLocaleDateString('pt-BR').toLowerCase().includes(selectedStatus.toLowerCase()) ||
-                pedido.produtos.some((produto) => produto.nome.toLowerCase().includes(selectedStatus.toLowerCase()));
+                (Array.isArray(pedido.produtos) && pedido.produtos.some((produto) => produto.nome.toLowerCase().includes(selectedStatus.toLowerCase())));
 
             return statusMatches || searchTermMatches;
         });
@@ -142,7 +151,13 @@ function TodosOsPedidos() {
                                                 </span>
                                             </td>
                                             <td>{new Date(pedido.data).toLocaleDateString('pt-BR')}</td>
-                                            <td>{pedido.produtos.map((produto) => `${produto.nome} `).join(', ')}</td>
+                                            <td>
+                                                {Array.isArray(pedido.produtos) && pedido.produtos.length > 0 ?
+                                                    pedido.produtos.map((produto, index) => (
+                                                        <span key={index}>{produto.nome}{index < pedido.produtos.length - 1 ? ', ' : ''}</span>
+                                                    ))
+                                                    : 'Produtos indisponíveis'}
+                                            </td>
                                             <td>{formatCurrency(pedido.valor_total)}</td>
                                         </tr>
                                     ))

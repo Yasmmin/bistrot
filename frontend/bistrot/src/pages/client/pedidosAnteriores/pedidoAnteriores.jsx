@@ -13,17 +13,24 @@ function PedidoAnteriores() {
     const [pedidosAnteriores, setPedidosAnteriores] = useState([]);
     const userId = localStorage.getItem('userId');
 
+    // Função para buscar os pedidos
+    const fetchPedidos = async () => {
+        try {
+            const res = await axios.get(`http://localhost:6969/pedidos/${userId}`);
+            setPedidosAnteriores(res.data);
+        } catch (error) {
+            console.error('Erro ao buscar pedidos:', error);
+        }
+    };
+
+    // Atualiza os pedidos a cada 3 segundos
     useEffect(() => {
-        const fetchPedidos = async () => {
-            try {
-                const res = await axios.get(`http://localhost:6969/pedidos/${userId}`);
-                setPedidosAnteriores(res.data);
-            } catch (error) {
-                console.error('Erro ao buscar pedidos:', error);
-            }
-        };
         if (userId) {
-            fetchPedidos();
+            fetchPedidos(); // Buscar imediatamente ao montar o componente
+            const intervalId = setInterval(fetchPedidos, 3000); // Atualiza a cada 3 segundos
+
+            // Limpeza do intervalo quando o componente for desmontado
+            return () => clearInterval(intervalId);
         }
     }, [userId]);
 
@@ -46,7 +53,7 @@ function PedidoAnteriores() {
                     .map((pedido, index) => (
                         <div key={index} className="pedido">
                             <div className="status-pedidos-anteriores d-flex align-items-center">
-                                {(pedido.status_pedido.toLowerCase() === "em processo" ||pedido.status_pedido.toLowerCase() === "finalizado" || pedido.status_pedido.toLowerCase() === "em análise") ? (
+                                {(pedido.status_pedido.toLowerCase() === "em processo" || pedido.status_pedido.toLowerCase() === "em análise") ? (
                                     <IoMdAlert className="icone-alerta ms-3 me-2" />
                                 ) : (
                                     <BsCheckCircleFill className="icone-sucesso ms-3 me-2" />
@@ -55,16 +62,13 @@ function PedidoAnteriores() {
                                     <p className="mb-0 me-4">{pedido.status_pedido} - Nº {pedido.numero_pedido}</p>
                                 </div>
 
-                                {(pedido.status_pedido.toLowerCase() === "em processo" ||pedido.status_pedido.toLowerCase() === "finalizado" || pedido.status_pedido.toLowerCase() === "em análise") && (
-                                    <div className="col acompanhar-redirect">
-                                        <Link to="/acompanhar" className="acompanhar-redirect ms-5"><CiShare1 /> Acompanhar</Link>
-                                    </div>
-                                )}
-
+                                <div className="col acompanhar-redirect">
+                                    <Link to={`/acompanhar/${pedido.numero_pedido}`} className="acompanhar-redirect ms-5"><CiShare1 /> Acompanhar</Link>
+                                </div>
                             </div>
                             <div className="row ms-2">
                                 <div className="col mb-2">
-                                    {pedido.produtos.map((produto, index) => (
+                                    {Array.isArray(pedido.produtos) && pedido.produtos.map((produto, index) => (
                                         <p key={index} className="produtos-pedidos-anteriores mb-0">{produto.quantidade}x {produto.nome}</p>
                                     ))}
                                 </div>
@@ -81,7 +85,7 @@ function PedidoAnteriores() {
                     ))}
             </div>
         </div>
-    )
+    );
 }
 
 export default PedidoAnteriores;
