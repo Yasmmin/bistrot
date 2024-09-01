@@ -3,12 +3,14 @@ import axios from 'axios';
 import Circle from './circle';
 import './progressbar.css';
 import Swal from 'sweetalert2';
-import { useParams } from 'react-router-dom'; 
+import { useParams, useNavigate } from 'react-router-dom';
+
 function Progressbar() {
-    const { numeroPedido } = useParams(); 
+    const { numeroPedido } = useParams();
     const [active, setActive] = useState(1);
     const [height, setHeight] = useState(0);
     const circle = 4;
+    const navigate = useNavigate(); // Usado para redirecionamento
 
     const stepsText = [
         "Pedido criado e sendo analisado",
@@ -51,21 +53,33 @@ function Progressbar() {
                 const status = response.data.status;
                 console.log('Status do Pedido:', status);
 
-                switch (status) {
-                    case "Em análise":
-                        setActive(1);
-                        break;
-                    case "Em produção":
-                        setActive(2);
-                        break;
-                    case "Finalizado":
-                        setActive(3);
-                        break;
-                    case "Entregue":
-                        setActive(4);
-                        break;
-                    default:
-                        setActive(1);
+                if (status.toLowerCase() === "recusado") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Pedido Cancelado',
+                        text: 'O seu pedido foi recusado.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        navigate('/pedidosanteriores'); 
+                    });
+                } else {
+                    switch (status) {
+                        case "Em análise":
+                            setActive(1);
+                            break;
+                        case "Em produção":
+                            setActive(2);
+                            break;
+                        case "Finalizado":
+                            setActive(3);
+                            break;
+                        case "Entregue":
+                            setActive(4);
+                            break;
+                        default:
+                            setActive(1);
+                    }
                 }
             } catch (error) {
                 console.error('Erro ao buscar status do pedido:', error.message);
@@ -73,9 +87,12 @@ function Progressbar() {
         };
 
         if (numeroPedido) {
-            fetchOrderStatus();
+            fetchOrderStatus(); // Chamada inicial
+            const intervalId = setInterval(fetchOrderStatus, 1000); // Atualizar a cada 1 segundo
+
+            return () => clearInterval(intervalId); // Limpar o intervalo ao desmontar o componente
         }
-    }, [numeroPedido]);
+    }, [numeroPedido, navigate]);
 
     useEffect(() => {
         setHeight((80 / (circle - 1)) * (active - 1));

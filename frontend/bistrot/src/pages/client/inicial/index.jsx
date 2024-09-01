@@ -26,7 +26,7 @@ function Home() {
       const dayOfWeek = now.getDay();
 
       // Horário de funcionamento: Segunda a Sábado: 07:00 - 12:55, Domingo até as 23:00
-      if (dayOfWeek >= 1 && dayOfWeek <= 5 && hour >= 7 && hour < 13) {
+      if (dayOfWeek >= 1 && dayOfWeek <= 6 && hour >= 7 && hour < 24) {
         return true;
       } else if (dayOfWeek === 0 && hour >= 0 && hour < 23) {
         return true;
