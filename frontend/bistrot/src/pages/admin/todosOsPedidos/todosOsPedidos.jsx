@@ -9,38 +9,39 @@ function TodosOsPedidos() {
     const [records, setRecords] = useState([]);
     const [orderAsc, setOrderAsc] = useState(true);
     const [statusFilter, setStatusFilter] = useState('Todos');
+    const [isFiltering, setIsFiltering] = useState(false);
 
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-    };
+    const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
     const getStatusColor = (status) => {
-        switch (status.toLowerCase()) {
-            case 'entregue':
-            case 'retirado':
-            case 'finalizado':
-            case 'saindo para entrega':
-                return 'status-cor-green';
-            case 'recusado':
-            case 'expirado':
-                return 'status-cor-red';
-            case 'em análise':
-                return 'status-cor-yellow';
-            default:
-                return '';
-        }
-    }
+        const statusColors = {
+            'entregue': 'status-cor-green',
+            'retirado': 'status-cor-green',
+            'finalizado': 'status-cor-green',
+            'saindo para entrega': 'status-cor-green',
+            'recusado': 'status-cor-red',
+            'expirado': 'status-cor-red',
+            'em análise': 'status-cor-yellow'
+        };
+        return statusColors[status.toLowerCase()] || '';
+    };
 
     const fetchPedidos = async () => {
         try {
             const res = await axios.get("http://localhost:6969/pedidos");
-            // Parse the produtos field
-            const pedidosComProdutos = res.data.map(pedido => ({
+            const novosPedidos = res.data.map(pedido => ({
                 ...pedido,
                 produtos: pedido.produtos ? JSON.parse(pedido.produtos) : []
             }));
-            setPedidos(pedidosComProdutos);
-            setRecords(pedidosComProdutos);
+            setPedidos(novosPedidos);
+
+            // Atualiza registros com o filtro ativo ou mantém os registros atuais
+            if (!isFiltering) {
+                setRecords(novosPedidos);
+            } else {
+                const registrosFiltrados = filtrarPedidos(novosPedidos, statusFilter);
+                setRecords(registrosFiltrados);
+            }
         } catch (err) {
             console.error(err);
         }
@@ -48,38 +49,37 @@ function TodosOsPedidos() {
 
     useEffect(() => {
         fetchPedidos();
-
         const intervalId = setInterval(fetchPedidos, 3000);
         return () => clearInterval(intervalId);
-    }, []);
+    }, [isFiltering, statusFilter]);
 
-    const filterRecords = (selectedStatus) => {
-        setStatusFilter(selectedStatus);
+    const filtrarPedidos = (pedidos, searchTerm) => {
+        const term = searchTerm.toLowerCase();
+        if (term === 'todos') return pedidos;
 
-        if (selectedStatus === 'Todos') {
-            setRecords(pedidos);
-            return;
-        }
-
-        const filteredPedidos = pedidos.filter((pedido) => {
-            const statusMatches = pedido.status_pedido.toLowerCase() === selectedStatus.toLowerCase();
-            const searchTermMatches = pedido.nome_cliente.toLowerCase().includes(selectedStatus.toLowerCase()) ||
-                pedido.numero_pedido.toString().toLowerCase().includes(selectedStatus.toLowerCase()) ||
-                pedido.status_pedido.toString().toLowerCase().includes(selectedStatus.toLowerCase()) ||
-                new Date(pedido.data).toLocaleDateString('pt-BR').toLowerCase().includes(selectedStatus.toLowerCase()) ||
-                (Array.isArray(pedido.produtos) && pedido.produtos.some((produto) => produto.nome.toLowerCase().includes(selectedStatus.toLowerCase())));
-
-            return statusMatches || searchTermMatches;
+        return pedidos.filter((pedido) => {
+            if (['em análise', 'em processo', 'entregue', 'retirado', 'expirado'].includes(term)) {
+                return pedido.status_pedido.toLowerCase() === term;
+            }
+            return (
+                pedido.nome_cliente.toLowerCase().includes(term) ||
+                pedido.numero_pedido.toString().includes(term) ||
+                new Date(pedido.data).toLocaleDateString('pt-BR').includes(term) ||
+                pedido.produtos.some(produto => produto.nome.toLowerCase().includes(term))
+            );
         });
+    };
 
-        setRecords(filteredPedidos);
+    const filterRecords = (searchTerm) => {
+        setIsFiltering(true);
+        setStatusFilter(searchTerm);
+        const registrosFiltrados = filtrarPedidos(pedidos, searchTerm);
+        setRecords(registrosFiltrados);
     };
 
     const toggleOrder = () => {
         const orderedPedidos = [...records].sort((a, b) => {
-            const dateA = new Date(a.data);
-            const dateB = new Date(b.data);
-            return orderAsc ? dateA - dateB : dateB - dateA;
+            return orderAsc ? new Date(a.data) - new Date(b.data) : new Date(b.data) - new Date(a.data);
         });
         setRecords(orderedPedidos);
         setOrderAsc(!orderAsc);
@@ -152,11 +152,9 @@ function TodosOsPedidos() {
                                             </td>
                                             <td>{new Date(pedido.data).toLocaleDateString('pt-BR')}</td>
                                             <td>
-                                                {Array.isArray(pedido.produtos) && pedido.produtos.length > 0 ?
-                                                    pedido.produtos.map((produto, index) => (
-                                                        <span key={index}>{produto.nome}{index < pedido.produtos.length - 1 ? ', ' : ''}</span>
-                                                    ))
-                                                    : 'Produtos indisponíveis'}
+                                                {pedido.produtos.length > 0 ? pedido.produtos.map((produto, index) => (
+                                                    <span key={index}>{produto.nome}{index < pedido.produtos.length - 1 ? ', ' : ''}</span>
+                                                )) : 'Produtos indisponíveis'}
                                             </td>
                                             <td>{formatCurrency(pedido.valor_total)}</td>
                                         </tr>
