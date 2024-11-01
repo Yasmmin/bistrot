@@ -9,27 +9,26 @@ function Progressbar() {
     const { numeroPedido } = useParams();
     const [active, setActive] = useState(1);
     const [height, setHeight] = useState(0);
-    const circle = 4;
-    const navigate = useNavigate(); // Usado para redirecionamento
+    const circle = 5;
+    const navigate = useNavigate();
 
     const stepsText = [
         "Pedido criado e sendo analisado",
         "Pedido aceito e sendo preparado",
         "Pedido finalizado",
-        "Pedido retirado"
+        "Saindo para entrega",
+        "Pedido entregue ou retirado"
     ];
 
     const handleConfirmarClick = async () => {
         try {
-            console.log('Botão clicado');
             const formaEntrega = localStorage.getItem('formaEntrega');
             const novoStatus = formaEntrega === 'Retirar' ? 'Retirado' : 'Entregue';
             await axios.put(`http://localhost:6969/pedidos/${numeroPedido}/status`, { novoStatus });
-            setActive(4);
+            setActive(5);
 
             if (novoStatus === "Entregue" || novoStatus === "Retirado") {
                 localStorage.removeItem('formaEntrega');
-
                 Swal.fire({
                     icon: 'success',
                     title: 'Pedido confirmado com sucesso!',
@@ -47,11 +46,8 @@ function Progressbar() {
     useEffect(() => {
         const fetchOrderStatus = async () => {
             try {
-                console.log('Número do Pedido:', numeroPedido);
                 const response = await axios.get(`http://localhost:6969/pedidos/${numeroPedido}/status`);
-                console.log('Resposta da API:', response.data);
                 const status = response.data.status;
-                console.log('Status do Pedido:', status);
 
                 if (status.toLowerCase() === "recusado") {
                     Swal.fire({
@@ -74,8 +70,12 @@ function Progressbar() {
                         case "Finalizado":
                             setActive(3);
                             break;
-                        case "Entregue":
+                        case "Saindo para entrega":
                             setActive(4);
+                            break;
+                        case "Entregue":
+                        case "Retirado":
+                            setActive(5);
                             break;
                         default:
                             setActive(1);
@@ -87,10 +87,10 @@ function Progressbar() {
         };
 
         if (numeroPedido) {
-            fetchOrderStatus(); // Chamada inicial
-            const intervalId = setInterval(fetchOrderStatus, 1000); // Atualizar a cada 1 segundo
+            fetchOrderStatus();
+            const intervalId = setInterval(fetchOrderStatus, 1000);
 
-            return () => clearInterval(intervalId); // Limpar o intervalo ao desmontar o componente
+            return () => clearInterval(intervalId);
         }
     }, [numeroPedido, navigate]);
 
@@ -108,6 +108,7 @@ function Progressbar() {
                     <div className="progress" style={{ height: `${height}%`, background: '#1BAC4B' }}></div>
                     <div className="circleContainer">
                         {[...Array(circle).keys()].map((index) => (
+                            (isRetirada && index === 3) ? null : ( // Omitir o quarto círculo se for retirada
                             <div key={index} className="circleWithText">
                                 <Circle
                                     className={index + 1 <= active ? "circle active" : "circle"}
@@ -116,9 +117,10 @@ function Progressbar() {
                                     {index + 1}
                                 </Circle>
                                 <div className="text">
-                                    {isRetirada && index === 3 ? "Pedido retirado" : stepsText[index]}
+                                    {isRetirada && index === 4 ? "Pedido retirado" : stepsText[index]}
                                 </div>
                             </div>
+                            )
                         ))}
                     </div>
                 </div>
@@ -127,7 +129,7 @@ function Progressbar() {
                     <p style={{ fontSize: '11pt' }}>Confirme assim que receber ou retirar o pedido e nos ajude a saber se deu tudo certo</p>
                 </div>
                 <div className="button-confirmar-variavel">
-                    {active >= 3 ? (
+                    {(isRetirada && active >= 3) || (!isRetirada && active >= 4) ? (
                         <button
                             className="button-confirmar confirm-button-green"
                             onClick={handleConfirmarClick}

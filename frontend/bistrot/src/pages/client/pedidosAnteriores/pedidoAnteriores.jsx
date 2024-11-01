@@ -74,9 +74,11 @@ function PedidoAnteriores() {
                                         </div>
                                     </>
                                 )}
-                                {pedido.status_pedido.toLowerCase() !== "recusado" && (
+                                {pedido.status_pedido.toLowerCase() !== "recusado" && pedido.status_pedido.toLowerCase() !== "entregue" && pedido.status_pedido.toLowerCase() !== "retirado" && (
                                     <div className="col acompanhar-redirect">
-                                        <Link to={`/acompanhar/${pedido.numero_pedido}`} className="acompanhar-redirect ms-5"><CiShare1 /> Acompanhar</Link>
+                                        <Link to={`/acompanhar/${pedido.numero_pedido}`} className="acompanhar-redirect ms-5">
+                                            <CiShare1 /> Acompanhar
+                                        </Link>
                                     </div>
                                 )}
                             </div>

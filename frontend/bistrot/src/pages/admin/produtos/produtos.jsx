@@ -55,17 +55,19 @@ function Produtos() {
       cancelButtonText: 'Cancelar'
     });
 
-    if (confirmResult.isConfirmed) {
-      try {
-        await axios.delete(`http://localhost:6969/produtos/${id}`);
-        setProdutos(produtos.filter(produto => produto.id !== id));
-        Swal.fire('Excluído!', 'O produto foi excluído com sucesso.', 'success');
-      } catch (err) {
-        console.error(err);
-        Swal.fire('Erro', 'Houve um erro ao excluir o produto.', 'error');
-      }
+     if (confirmResult.isConfirmed) {
+    try {
+      await axios.delete(`http://localhost:6969/produtos/${id}`);
+      const updatedProdutos = produtos.filter(produto => produto.id !== id);
+      setProdutos(updatedProdutos);
+      setRecords(updatedProdutos); // atualiza o records também
+      Swal.fire('Excluído!', 'O produto foi excluído com sucesso.', 'success');
+    } catch (err) {
+      console.error(err);
+      Swal.fire('Erro', 'Houve um erro ao excluir o produto.', 'error');
     }
-  };
+  }
+};
 
   return (
     <div className="d-flex">
