@@ -1,16 +1,13 @@
-//dependencias do projeto
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import Swal from 'sweetalert2';
-
-//icones
 import { IoIosArrowBack } from 'react-icons/io';
-
-//arquivos
+import { AiOutlineShoppingCart } from 'react-icons/ai';
 import Loading from "../../../components/loading/loading";
 import SemPermissao from "../../../components/permissão/semPermissao";
 import './style.css';
+
 function InfoProduto() {
     const { id } = useParams();
     const [auth, setAuth] = useState(false);
@@ -48,7 +45,6 @@ function InfoProduto() {
         setCarrinhoProdutos(storedCarrinhoProdutos);
     }, [userId]);
 
-
     const add = () => {
         setQuantidade(quantidade + 1);
     };
@@ -61,9 +57,7 @@ function InfoProduto() {
 
     const adicionarProdutoAoCarrinho = () => {
         const userIdLocalStorage = localStorage.getItem('userId');
-
         if (!userIdLocalStorage) {
-            // Tratar o caso em que o usuário não está autenticado
             Swal.fire({
                 icon: 'error',
                 text: 'Faça login para adicionar produtos ao carrinho!',
@@ -117,11 +111,16 @@ function InfoProduto() {
                 <Loading message="Carregando produto..." />
             ) : auth ? (
                 <div className="produto-detalhes">
-                    <img
-                        src={`http://localhost:6969/files/${produto.foto}`}
-                        alt={produto.nome}
-                        className="detalhe-foto"
-                    />
+                    <div className="image-container">
+                        <img
+                            src={`http://localhost:6969/files/${produto.foto}`}
+                            alt={produto.nome}
+                            className="detalhe-foto"
+                        />
+                        <Link to="/carrinho" className="cart-icon">
+                            <AiOutlineShoppingCart size={30} />
+                        </Link>
+                    </div>
                     <Link to="/" className="btn btn-voltar">
                         <IoIosArrowBack size={39} className="icon" />
                     </Link>
@@ -159,6 +158,5 @@ function InfoProduto() {
         </div>
     );
 }
-
 
 export default InfoProduto;

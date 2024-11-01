@@ -202,7 +202,7 @@ function Home() {
                   <Link
                     to={`/infoproduto/${produto.id}`}
                     key={produto.id}
-                    className="produto-card mb-3 mx-1"
+                    className="produto-card mb-3 "
                   >
                     <img
                       className="produto-foto mt-2"
