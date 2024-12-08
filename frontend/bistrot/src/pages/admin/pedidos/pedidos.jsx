@@ -2,7 +2,7 @@ import Sidebar from "../../../components/sidebar/sidebar";
 import './pedidos.css';
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import { Modal, Button } from 'react-bootstrap';
 //icones análise
 import { CiClock2 } from "react-icons/ci";
 import { LuRefreshCcw } from "react-icons/lu";
@@ -11,6 +11,18 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function Pedidos() {
     const [records, setRecords] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [modalData, setModalData] = useState(null);
+
+    const handleShowModal = (pedido) => {
+        setModalData(pedido);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalData(null);
+        setShowModal(false);
+    };
 
     useEffect(() => {
         const fetchPedido = async () => {
@@ -143,8 +155,43 @@ function Pedidos() {
                                     <div className="d-flex justify-content-between mx-2">
                                         <div className="d-flex align-items-center">
 
+                                            <button
+                                                className="button-info-pedido"
+                                                onClick={() => handleShowModal(pedido)}
+                                            >
+                                                <span><CiClock2 className="me-2" /> Pedido #{pedido.numero_pedido}</span>
+                                            </button>
+                                            <Modal show={showModal} onHide={handleCloseModal}>
+                                                <Modal.Header closeButton>
+                                                    <Modal.Title>Detalhes do Pedido #{modalData?.numero_pedido}</Modal.Title>
+                                                </Modal.Header>
+                                                <Modal.Body>
+                                                    {modalData && (
+                                                        <div>
+                                                            <p><b>Cliente:</b> {modalData.nome_cliente}</p>
+                                                            <p><b>Email:</b> {modalData.email}</p>
+                                                            <p><b>Forma de Entrega:</b> {modalData.forma_entrega}</p>
+                                                            <p><b>observações:</b> {modalData.obs}</p>
+                                                            {modalData.forma_entrega === "Entregar" && (
+                                                                <p><b>Endereço:</b> {modalData.bairro}, {modalData.rua}, {modalData.casa}</p>
+                                                            )}
+                                                            <p><b>Produtos:</b></p>
+                                                            <ul>
+                                                                {modalData.produtos.map((produto, index) => (
+                                                                    <li key={index}>{produto.quantidade}x {produto.nome}</li>
+                                                                ))}
+                                                            </ul>
+                                                            <p><b>Total:</b> {Number(modalData.valor_total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                                        </div>
+                                                    )}
+                                                </Modal.Body>
+                                                <Modal.Footer>
+                                                    <Button variant="secondary" onClick={handleCloseModal}>
+                                                        Fechar
+                                                    </Button>
+                                                </Modal.Footer>
+                                            </Modal>
 
-                                            <p className="mb-0 fw-bold">Pedido #{pedido.numero_pedido}</p>
                                         </div>
                                         <span><CiClock2 size={20} />{formatarHora(pedido.hora_pedido)} </span>
                                     </div>

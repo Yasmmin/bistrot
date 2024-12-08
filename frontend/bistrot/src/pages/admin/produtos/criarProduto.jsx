@@ -12,7 +12,6 @@ import { IoMdPricetags } from 'react-icons/io';
 import { SlPicture } from 'react-icons/sl';
 import { MdOutlineChecklist } from 'react-icons/md';
 import { FaRuler } from 'react-icons/fa';
-import { GoAlert } from 'react-icons/go';
 import { MdSaveAs } from 'react-icons/md';
 import { FaTrashCan } from 'react-icons/fa6';
 
@@ -312,29 +311,7 @@ function CriarProduto() {
                 </select>
               </div>
 
-              {/* Campo Restrição alérgica */}
-              <div className="input-group mb-4">
-                <span className="input-group-text" style={{ borderRight: 'none',backgroundColor:'#ffff'}}>
-                  <GoAlert size={23} />
-                </span>
-                <select
-                  className="form-select"
-                  style={{ borderLeft: 'none', backgroundColor: '#ffff' }}
-                  onChange={e => setValues({ ...values, restricaoalergica: e.target.value })}
-                  required
-                >
-                  <option disabled selected>
-                    restrição alérgica
-                  </option>
-                  <option value="Nenhuma">Nenhuma</option>
-                  <option value="Amendoim">Contém Amendoim</option>
-                  <option value="Gluten">Contém Glúten</option>
-                  <option value="Leite">Contém Leite</option>
-                  <option value="Ovo">Contém Ovos</option>
-                  <option value="Peixe/crustáceos">Contém Peixes/crustáceos</option>
-                  <option value="soja">Contém soja</option>
-                </select>
-              </div>
+          
             </div>
 
             {/* Botão salvar - manda pro banco de dados */}

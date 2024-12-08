@@ -8,15 +8,28 @@
 .info-preco-admin {
     color: #1BAC4B;
     font-weight: bold;
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
 }
 
 .produto-card-admin {
-    background-color: #ffffff;
-    box-shadow: 2px 2px 15px 5px rgba(0, 0, 0, 0.072);
-    border-radius: 10px;
-    transition: transform 0.5s ease, box-shadow 0.3s ease;
-}
+    width: 250px; /* Define largura fixa */
+    height: 350px; /* Define altura fixa */
 
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
 .produto-card-admin:hover {
     transform: translateY(-2px) scale(1.0); 
     box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2); 
@@ -48,18 +61,21 @@
 .produto-admin h4 {
     margin-top: 0.5rem;
 }
-
 .img-produto-admin {
     width: 100%;
-    height: 120px;
-    display: grid;
-    margin: 0 auto;
-    object-fit: contain;
-    border-radius: 25px;
-}
-
+    height: 150px;
+    object-fit: cover; /* Ajusta a imagem ao tamanho do card */
+    border-radius: 5px;
+  }
 .form-control:focus,
 .form-control:active {
   box-shadow: none !important;
   border-color: #ced4da !important;
 }
+.info-nome-admin {
+    font-size: 1rem; /* Tamanho base */
+    font-weight: bold;
+    overflow: hidden; /* Oculta texto excedente */
+    text-overflow: ellipsis; /* Adiciona "..." no texto longo */
+    white-space: nowrap; /* Evita que o texto quebre linha */
+  }
